@@ -91,7 +91,7 @@ Simulation is the single source of truth for mutable gameplay state.
 
 - Only Simulation systems may create, mutate, remove, or restore gameplay instances.
 - Each state field has one owning system. Other systems interact through explicit methods, commands, queries, or facts; they do not retain writable aliases to another owner's collections.
-- `GameSimulation`/`GameSession` is the composition root and deterministic tick coordinator. It does not move business rules into Godot callbacks.
+- `GameSession` is the composition root and deterministic tick coordinator. It does not move business rules into Godot callbacks.
 - Application coordinates multi-system use cases and transaction-like workflows, but mutations occur through Simulation owners.
 - Presentation never owns authoritative HP, XP, inventory, Souls, bindings, cooldowns, AI state, world-object state, or save state.
 - Godot nodes cache only presentation state: node references, animation playback position, interpolation samples, UI selection, hover/focus, camera shake, particles, and audio handles.

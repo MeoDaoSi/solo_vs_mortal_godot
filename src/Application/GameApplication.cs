@@ -38,7 +38,12 @@ public sealed class GameApplication
     public bool UsePlayerStatPill(PillId pillId) => _session.Progression.UsePlayerStatPill(pillId);
     public IReadOnlyList<string> AcquireNearbySouls() => _session.Souls.AcquireNear(_session.Player.State.Position, _session.Definitions.Soul.PickupRadius).Select(soul => soul.Id).ToArray();
     public BindSoulResult BindSoul(string soulId, string bannerId) => _session.SoulBanners.Bind(soulId, bannerId);
-    public UnbindSoulResult UnbindSoul(string soulId, string bannerId) => _session.SoulBanners.Unbind(soulId, bannerId);
+    public UnbindSoulResult UnbindSoul(string soulId, string bannerId)
+    {
+        var runtime = _session.Summons.Runtime(soulId);
+        if (runtime.Status is SoulRuntimeStatus.Summoned or SoulRuntimeStatus.Possessed) return new(false, UnbindSoulFailure.SoulActive);
+        return _session.SoulBanners.Unbind(soulId, bannerId);
+    }
     public int AddEssence(string profileId, double amount) => _session.Essence.Add(profileId, amount);
     public int AddBloodline(string profileId, double amount) => _session.Bloodline.Add(profileId, amount);
     public StartPossessionResult StartPossession(string soulId) => _session.Possession.Start(soulId);
@@ -52,6 +57,29 @@ public sealed class GameApplication
     public string? ActivePossessionSoulId => _session.Possession.ActiveSoulId;
     public double PossessionRemainingSeconds() => _session.Possession.RemainingSeconds;
     public IReadOnlyList<InventoryItem> Inventory() => _session.Progression.InventorySnapshot();
+    public IReadOnlyList<SoulLinkView> SoulLinks()
+    {
+        var banner = _session.SoulBanners.Starter();
+        var bound = banner?.BoundSoulIds.ToHashSet(StringComparer.Ordinal) ?? [];
+        var activeCount = _session.Summons.ActiveCount;
+        return _session.Souls.OwnedSouls().Select(soul =>
+        {
+            var runtime = _session.Summons.Runtime(soul.Id);
+            var state = runtime.Status switch
+            {
+                SoulRuntimeStatus.Summoned => SoulLinkState.Manifested,
+                SoulRuntimeStatus.Dispersed => SoulLinkState.Dispersed,
+                SoulRuntimeStatus.Possessed => SoulLinkState.Possessed,
+                _ => SoulLinkState.Dormant,
+            };
+            var linked = banner is not null && bound.Contains(soul.Id);
+            var cost = _session.Souls.Cost(soul.Id) ?? 0;
+            var canPossess = linked && runtime.Status == SoulRuntimeStatus.Ready && _session.Definitions.SoulNatures.Natures.TryGetValue(soul.SoulNatureId, out var nature) && nature.PossessionProfileId is not null;
+            var canDevour = !linked && runtime.Status == SoulRuntimeStatus.Ready && _session.Devouring.Previews(soul.Id).Count > 0;
+            var canSummon = linked && runtime.Status == SoulRuntimeStatus.Ready && banner is not null && activeCount < banner.Computed.ActiveLimit;
+            return new SoulLinkView(soul.Id, soul.Origin.DisplayName, linked ? banner!.Id : null, state, cost, runtime.Stability, canSummon, canPossess, canDevour);
+        }).ToArray();
+    }
     public IReadOnlyList<WorldObjectSnapshot> WorldObjects() => _session.Definitions.DefaultMap.Objects.Values.Select(item => new WorldObjectSnapshot(item.Id, item.Type, item.AssetId, item.Position, item.Blocking, _session.World.IsDestroyed(item.Id))).ToArray();
     public AssetSnapshot Asset(string logicalId) { var asset = _session.Definitions.Assets.Get(logicalId); return new(asset.Id, asset.File, asset.FrameWidth, asset.FrameHeight); }
     public AnimationClipSnapshot MonsterAnimation(string speciesId, int rank, string actionId)

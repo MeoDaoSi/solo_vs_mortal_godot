@@ -1,6 +1,6 @@
 # Runtime and export acceptance budget
 
-These are initial measurable gates for the hardening phase. They may be tightened with representative-content profiling; changes require recorded evidence.
+These are initial measurable runtime and export gates for the game. They may be tightened with representative-content profiling; changes require recorded evidence.
 
 ## Reference scenario
 

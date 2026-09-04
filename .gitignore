@@ -1,6 +1,27 @@
-# Godot 4+ specific ignores
+# Godot and .NET generated output
 .godot/
-.vs/
+.dotnet/
+build/
+export/
+exports/
+/android/
 **/bin/
 **/obj/
-/android/
+
+# IDE and local machine state
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userprefs
+.DS_Store
+Thumbs.db
+
+# Logs, reports, crash dumps, and temporary files
+logs/
+*.log
+*.tmp
+*.bak
+*.dmp
+*.stackdump

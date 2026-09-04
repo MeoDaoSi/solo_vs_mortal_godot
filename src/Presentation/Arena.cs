@@ -31,6 +31,7 @@ public partial class Arena : Node2D
     private string _facing = "front";
     private string _lastSoulSignature = "";
     private string? _pendingDevourSoulId;
+    private DevourMode _pendingDevourMode = DevourMode.Essence;
     private string _lastFeatureSignature = "";
     private string _lastScreenSignature = "";
     private int _visualRank;
@@ -123,13 +124,16 @@ public partial class Arena : Node2D
         {
             var row = new HBoxContainer(); var label = new Label { Text = $"{soul.DisplayName}  Lv.{soul.Level}", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, TooltipText = soul.SoulNatureId }; row.AddChild(label);
             var banner = snapshot.SoulBanners.FirstOrDefault(); var bound = banner?.BoundSoulIds.Contains(soul.Id) == true;
-            var bind = new Button { Text = bound ? "Đã bind" : "Bind", Disabled = bound }; bind.Pressed += () => { if (banner is not null && _application.BindSoul(soul.Id, banner.Id).Success) { Toast("Đã bind Soul."); RefreshSnapshot(); } }; row.AddChild(bind);
-            var devour = new Button { Text = "Devour", Disabled = bound || !_application.DevourPreviews(soul.Id).Any(item => item.Mode == DevourMode.Essence) }; devour.Pressed += () => ShowDevourConfirmation(soul.Id); row.AddChild(devour); _soulList.AddChild(row);
+            var link = _application.SoulLinks().FirstOrDefault(item => item.SoulId == soul.Id); var runtime = _application.SoulRuntime(soul.Id);
+            var bind = new Button { Text = bound ? "Gỡ Hồn Liên" : "Thiết lập Hồn Liên", Disabled = banner is null || (bound && !string.IsNullOrEmpty(link?.BannerId) && runtime.Status is SoulRuntimeStatus.Summoned or SoulRuntimeStatus.Possessed) };
+            bind.Pressed += () => { if (banner is null) return; var ok = bound ? _application.UnbindSoul(soul.Id, banner.Id).Success : _application.BindSoul(soul.Id, banner.Id).Success; if (ok) { Toast(bound ? "Đã gỡ bind Soul." : "Đã bind Soul."); RefreshSnapshot(); } }; row.AddChild(bind);
+            foreach (var preview in _application.DevourPreviews(soul.Id)) { var devour = new Button { Text = $"Devour {preview.DisplayName} (+{preview.Reward:0})", Disabled = bound }; devour.Pressed += () => ShowDevourConfirmation(soul.Id, preview.Mode); row.AddChild(devour); }
+            _soulList.AddChild(row);
         }
         if (snapshot.OwnedSouls.Count == 0) _soulList.AddChild(new Label { Text = "Chưa sở hữu Soul. Nhấn E gần orb." });
     }
-    private void ShowDevourConfirmation(string soulId) { _pendingDevourSoulId = soulId; var preview = _application.DevourPreviews(soulId).FirstOrDefault(item => item.Mode == DevourMode.Essence); if (preview is null) return; var dialog = GetNode<ConfirmationDialog>("Hud/DevourConfirm"); dialog.DialogText = $"Hấp thụ {preview.DisplayName} (+{preview.Reward} điểm)?\nThao tác này không thể hoàn tác."; dialog.PopupCentered(); }
-    private void ConfirmDevour() { if (_pendingDevourSoulId is null) return; var result = _application.DevourSoul(_pendingDevourSoulId, DevourMode.Essence); _pendingDevourSoulId = null; Toast(result.Success ? $"Đã hấp thụ {result.Reward} điểm Tinh Hoa." : "Không thể hấp thụ Soul."); RefreshSnapshot(); }
+    private void ShowDevourConfirmation(string soulId, DevourMode mode) { _pendingDevourSoulId = soulId; _pendingDevourMode = mode; var preview = _application.DevourPreviews(soulId).FirstOrDefault(item => item.Mode == mode); if (preview is null) return; var dialog = GetNode<ConfirmationDialog>("Hud/DevourConfirm"); dialog.DialogText = $"Hấp thụ {preview.DisplayName} (+{preview.Reward:0})?\nThao tác này không thể hoàn tác."; dialog.PopupCentered(); }
+    private void ConfirmDevour() { if (_pendingDevourSoulId is null) return; var result = _application.DevourSoul(_pendingDevourSoulId, _pendingDevourMode); _pendingDevourSoulId = null; Toast(result.Success ? $"Đã hấp thụ {result.Reward:0} điểm." : "Không thể hấp thụ Soul."); RefreshSnapshot(); }
     private void DevourFirstEssence()
     {
         var soul = _snapshot?.OwnedSouls.FirstOrDefault(item => !_snapshot.SoulBanners.Any(banner => banner.BoundSoulIds.Contains(item.Id)) && _application.DevourPreviews(item.Id).Any(preview => preview.Mode == DevourMode.Essence));
@@ -156,10 +160,10 @@ public partial class Arena : Node2D
         _featureList.AddChild(new Label { Text = banner is null ? "Hồn Phiên: chưa tạo" : $"Hồn Phiên {banner.Tier}  Lv.{banner.Level}\nÔ: {banner.UsedCapacity}/{banner.CapacityLimit}  •  Ô: {banner.BoundSoulIds.Count}/{banner.SlotLimit}" });
         var inventory = _application.Inventory(); _featureList.AddChild(new Label { Text = inventory.Count == 0 ? "Vật phẩm: trống" : "Vật phẩm: " + string.Join(", ", inventory.Select(item => $"{item.StableId}×{item.Count}")) });
         var progression = new HBoxContainer(); progression.AddChild(new Label { Text = "Tiến độ", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }); var xp = new Button { Text = "+20 XP" }; xp.Pressed += () => { _application.AddPlayerXp(20); Toast("Đã nhận 20 XP."); RefreshSnapshot(); }; progression.AddChild(xp); var craft = new Button { Text = "Chế Power" }; craft.Pressed += () => { Toast(_application.Craft(PillId.Power) ? "Đã chế Power Pill." : "Thiếu nguyên liệu."); RefreshSnapshot(); }; progression.AddChild(craft); _featureList.AddChild(progression);
-        var possession = new Label { Text = _application.ActivePossessionSoulId is { } active ? $"Phụ hồn: {active} ({Math.Ceiling(_application.PossessionRemainingSeconds())}s)" : "Phụ hồn: không hoạt động" }; _featureList.AddChild(possession);
+        var possession = new Label { Text = _application.ActivePossessionSoulId is { } active ? $"Đảo chiều Hồn Liên: {active} ({Math.Ceiling(_application.PossessionRemainingSeconds())}s)" : "Đảo chiều Hồn Liên: không hoạt động" }; _featureList.AddChild(possession);
         foreach (var soul in snapshot.OwnedSouls.Where(soul => banner?.BoundSoulIds.Contains(soul.Id) == true))
         {
-            var runtime = _application.SoulRuntime(soul.Id); var row = new HBoxContainer(); row.AddChild(new Label { Text = $"{soul.DisplayName}: {runtime.Status}", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
+            var link = _application.SoulLinks().First(item => item.SoulId == soul.Id); var runtime = _application.SoulRuntime(soul.Id); var row = new HBoxContainer(); row.AddChild(new Label { Text = $"{soul.DisplayName}: {link.State} · Tải {link.SoulCost} · Ổn định {link.Stability:P0}", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
             var summon = new Button { Text = runtime.Status == SoulRuntimeStatus.Summoned ? "Thu hồi" : "Triệu hồi", Disabled = runtime.Status is SoulRuntimeStatus.Dispersed or SoulRuntimeStatus.Possessed };
             summon.Pressed += () => { if (runtime.Status == SoulRuntimeStatus.Summoned) _application.UnsummonSoul(soul.Id); else _application.SummonSoul(soul.Id, banner!.Id, new SimVec2(_snapshot!.Player.Position.X + 36, _snapshot.Player.Position.Y)); RefreshSnapshot(); }; row.AddChild(summon);
             var possess = new Button { Text = "Phụ hồn", Disabled = runtime.Status != SoulRuntimeStatus.Ready || _application.ActivePossessionSoulId is not null }; possess.Pressed += () => { var result = _application.StartPossession(soul.Id); Toast(result.Success ? "Đã bắt đầu phụ hồn." : "Không thể phụ hồn Soul này."); RefreshSnapshot(); }; row.AddChild(possess); _featureList.AddChild(row);

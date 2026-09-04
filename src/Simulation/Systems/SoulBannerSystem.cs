@@ -9,7 +9,7 @@ namespace SoloVsMortal.Simulation.Systems;
 
 public enum BindSoulFailure { BannerNotFound, SoulNotOwned, SoulAlreadyBound, SlotLimitReached, CapacityReached }
 public sealed record BindSoulResult(bool Success, BindSoulFailure? Failure = null, int? SlotIndex = null);
-public enum UnbindSoulFailure { BannerNotFound, SoulNotBound }
+public enum UnbindSoulFailure { BannerNotFound, SoulNotBound, SoulActive }
 public sealed record UnbindSoulResult(bool Success, UnbindSoulFailure? Failure = null);
 
 public sealed class SoulBannerSystem

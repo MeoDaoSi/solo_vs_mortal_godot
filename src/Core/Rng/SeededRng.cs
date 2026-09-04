@@ -1,6 +1,6 @@
 namespace SoloVsMortal.Core.Rng;
 
-/// <summary>Mulberry32 RNG with uint32 behavior matching the Phaser implementation.</summary>
+/// <summary>Mulberry32 RNG with explicit uint32 behavior for deterministic simulation.</summary>
 public sealed class SeededRng
 {
     private uint _state;

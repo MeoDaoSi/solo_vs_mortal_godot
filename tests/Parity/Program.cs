@@ -80,7 +80,7 @@ if (failures.Count > 0)
     return 1;
 }
 
-Console.WriteLine("Migration parity checks passed.");
+Console.WriteLine("Deterministic parity checks passed.");
 return 0;
 
 void Near(double actual, double expected, double tolerance, string label)
@@ -214,11 +214,18 @@ void CheckSoulAndBannerParity()
     Equal(binding.SlotIndex, 0, "First Soul Banner slot");
     Equal(session.SoulBanners.UsedCapacity(banner), 1, "Soul Banner used capacity");
     Equal(session.SoulBanners.Bind(owned.Id, banner.Id).Failure, BindSoulFailure.SoulAlreadyBound, "Reject duplicate binding");
+    var application = new GameApplication(session);
+    var linked = application.SoulLinks().Single(item => item.SoulId == owned.Id);
+    Equal(linked.State, SoulLinkState.Dormant, "Soul Link dormant state");
+    Equal(linked.SoulCost, 1, "Soul Link load");
+    Equal(linked.CanSummon, true, "Soul Link summon availability");
 
     var summoned = session.Summons.Summon(owned.Id, banner.Id, new Vec2(20, 30));
     Equal(summoned.Success, true, "Summon bound Soul");
     Equal(session.Summons.ActiveCount, 1, "Active summon count");
     Equal(session.Summons.Runtime(owned.Id).Status, SoulRuntimeStatus.Summoned, "Summoned runtime state");
+    Equal(application.SoulLinks().Single(item => item.SoulId == owned.Id).State, SoulLinkState.Manifested, "Soul Link manifested state");
+    Equal(application.UnbindSoul(owned.Id, banner.Id).Failure, UnbindSoulFailure.SoulActive, "Reject unbind active Soul Link");
     session.Allies.TakeDamage(summoned.SummonUid!, 10_000);
     Equal(session.Summons.Runtime(owned.Id).Status, SoulRuntimeStatus.Dispersed, "Defeated summon disperses Soul");
     Near(session.Summons.Runtime(owned.Id).RecoverySeconds, 10, 1e-10, "Soul recovery duration");
