@@ -1,0 +1,122 @@
+[
+  {
+    "id": "mon_skeleton",
+    "species": "SKELETON",
+    "displayName": "Skeleton",
+    "soulNatureId": "UNDEAD_WARRIOR",
+    "defaultRank": 1,
+    "levelRange": { "min": 1, "max": 30 },
+    "ai": { "aggroRadius": 140, "attackRange": 28 },
+    "soulDrop": {
+      "chance": 1.0,
+      "maxCount": 1,
+      "rankChanceScale": {
+        "1": 1.0,
+        "2": 0.7,
+        "3": 0.5,
+        "4": 0.4,
+        "5": 0.3,
+        "6": 0.3,
+        "7": 0.3,
+        "8": 0.3,
+        "9": 0.3
+      }
+    },
+    "assets": {
+      "sprite": "chibi-skeleton",
+      "animations": {
+        "idle": "mon-art-SKELETON-0-idle",
+        "walk": "mon-art-SKELETON-0-walk",
+        "attack": "mon-art-SKELETON-0-attack",
+        "hit": "mon-art-SKELETON-0-hit",
+        "death": "mon-art-SKELETON-0-death"
+      }
+    },
+    "audio": {
+      "spawn": "monster/skeleton/spawn",
+      "attack": "monster/skeleton/attack",
+      "hit": "monster/skeleton/hit",
+      "death": "monster/skeleton/death"
+    }
+  },
+  {
+    "id": "mon_goblin",
+    "species": "GOBLIN",
+    "displayName": "Goblin",
+    "soulNatureId": "GOBLIN_RAIDER",
+    "defaultRank": 1,
+    "levelRange": { "min": 1, "max": 30 },
+    "ai": { "aggroRadius": 150, "attackRange": 26 },
+    "soulDrop": {
+      "chance": 1.0,
+      "maxCount": 1,
+      "rankChanceScale": {
+        "1": 1.0,
+        "2": 0.7,
+        "3": 0.5,
+        "4": 0.4,
+        "5": 0.3,
+        "6": 0.3,
+        "7": 0.3,
+        "8": 0.3,
+        "9": 0.3
+      }
+    },
+    "assets": {
+      "sprite": "monster/goblin/media",
+      "animations": {
+        "idle": "mon-art-GOBLIN-0-idle",
+        "walk": "mon-art-GOBLIN-0-walk",
+        "attack": "mon-art-GOBLIN-0-attack",
+        "hit": "mon-art-GOBLIN-0-hit",
+        "death": "mon-art-GOBLIN-0-death"
+      }
+    },
+    "audio": {
+      "spawn": "monster/goblin/spawn",
+      "attack": "monster/goblin/attack",
+      "hit": "monster/goblin/hit",
+      "death": "monster/goblin/death"
+    }
+  },
+  {
+    "id": "mon_golem",
+    "species": "GOLEM",
+    "displayName": "Golem Đất",
+    "soulNatureId": "STONE_CONSTRUCT",
+    "defaultRank": 4,
+    "levelRange": { "min": 31, "max": 60 },
+    "ai": { "aggroRadius": 110, "attackRange": 28 },
+    "soulDrop": {
+      "chance": 1.0,
+      "maxCount": 1,
+      "rankChanceScale": {
+        "1": 1.0,
+        "2": 0.7,
+        "3": 0.5,
+        "4": 0.4,
+        "5": 0.3,
+        "6": 0.3,
+        "7": 0.3,
+        "8": 0.3,
+        "9": 0.3
+      }
+    },
+    "assets": {
+      "sprite": "golems-chibi",
+      "animations": {
+        "idle": "mon-art-GOLEM-0-idle",
+        "walk": "mon-art-GOLEM-0-walk",
+        "attack": "mon-art-GOLEM-0-attack",
+        "hit": "mon-art-GOLEM-0-hit",
+        "death": "mon-art-GOLEM-0-death"
+      }
+    },
+    "audio": {
+      "spawn": "monster/skeleton/spawn",
+      "attack": "monster/skeleton/attack",
+      "hit": "monster/skeleton/hit",
+      "death": "monster/skeleton/death"
+    }
+  }
+]

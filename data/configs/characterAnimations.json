@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "player": {
+    "id": "player_swordsman",
+    "displayName": "Kiếm Sĩ",
+    "source": "spritesheet",
+    "formCount": 3,
+    "ranksPerForm": 3,
+    "assetIdPattern": "player.sword.l{form}.{action}",
+    "animationKeyPattern": "player-sword-L{form}-{direction}-{action}",
+    "cell": { "width": 64, "height": 64 },
+    "origin": { "x": 0.5, "y": 0.6875 },
+    "scale": 2.5,
+    "directions": { "front": 0, "left": 1, "right": 2, "back": 3 },
+    "actions": [
+      { "id": "idle", "displayName": "Đứng Yên", "assetAction": "idle", "columns": 12, "frameRate": 6, "repeat": -1, "framesByDirection": { "back": 4 } },
+      { "id": "walk", "displayName": "Di Chuyển", "assetAction": "walk", "columns": 6, "frameRate": 10, "repeat": -1 },
+      { "id": "run", "displayName": "Chạy", "assetAction": "run", "columns": 8, "frameRate": 12, "repeat": -1 },
+      { "id": "attack", "displayName": "Tấn Công", "assetAction": "attack", "columns": 8, "frameRate": 12, "repeat": 0 },
+      { "id": "hurt", "displayName": "Trúng Đòn", "assetAction": "hurt", "columns": 5, "frameRate": 8, "repeat": 0 },
+      { "id": "death", "displayName": "Bại Trận", "assetAction": "death", "columns": 7, "frameRate": 8, "repeat": 0 }
+    ]
+  },
+  "monsters": [
+    {
+      "id": "chibi_skeleton",
+      "species": "SKELETON",
+      "displayName": "Skeleton",
+      "source": "frameSequence",
+      "rootDir": "assets/images/chibi-skeleton",
+      "framePathPattern": "{rootDir}/{formDirectory}/PNG/PNG Sequences/{actionDirectory}/0_{filePrefix}_{actionDirectory}_{frame}.png",
+      "sourceFrameSize": 900,
+      "cellSize": 90,
+      "scale": 1,
+      "forms": [
+        { "directory": "Skeleton_Crusader_1", "filePrefix": "Skeleton_Crusader", "displayName": "Skeleton Chiến Binh I" },
+        { "directory": "Skeleton_Crusader_2", "filePrefix": "Skeleton_Crusader", "displayName": "Skeleton Chiến Binh II" },
+        { "directory": "Skeleton_Crusader_3", "filePrefix": "Skeleton_Crusader", "displayName": "Skeleton Chiến Binh III" }
+      ]
+    },
+    {
+      "id": "chibi_golem",
+      "species": "GOLEM",
+      "displayName": "Golem Đất",
+      "source": "frameSequence",
+      "rootDir": "assets/images/golems-chibi",
+      "framePathPattern": "{rootDir}/{formDirectory}/PNG/PNG Sequences/{actionDirectory}/0_{filePrefix}_{actionDirectory}_{frame}.png",
+      "sourceFrameSize": 900,
+      "cellSize": 90,
+      "scale": 1,
+      "forms": [
+        { "directory": "Golem_1", "filePrefix": "Golem", "displayName": "Golem Đất I" },
+        { "directory": "Golem_2", "filePrefix": "Golem", "displayName": "Golem Đất II" },
+        { "directory": "Golem_3", "filePrefix": "Golem", "displayName": "Golem Đất III" }
+      ]
+    },
+    {
+      "id": "chibi_goblin",
+      "species": "GOBLIN",
+      "displayName": "Goblin",
+      "source": "frameSequence",
+      "rootDir": "assets/images/orc-ogre-and-goblin-chibi",
+      "framePathPattern": "{rootDir}/{formDirectory}/PNG/PNG Sequences/{actionDirectory}/0_{filePrefix}_{actionDirectory}_{frame}.png",
+      "sourceFrameSize": 900,
+      "cellSize": 90,
+      "scale": 1,
+      "forms": [
+        { "directory": "Goblin", "filePrefix": "Goblin", "displayName": "Goblin" },
+        { "directory": "Orc", "filePrefix": "Orc", "displayName": "Orc" },
+        { "directory": "Ogre", "filePrefix": "Ogre", "displayName": "Ogre" }
+      ]
+    }
+  ],
+  "monsterActions": [
+    { "id": "idle", "displayName": "Đứng Yên", "directory": "Idle", "frameCount": 18, "frameRate": 6, "repeat": -1 },
+    { "id": "walk", "displayName": "Di Chuyển", "directory": "Walking", "frameCount": 24, "frameRate": 12, "repeat": -1 },
+    { "id": "attack", "displayName": "Tấn Công", "directory": "Slashing", "frameCount": 12, "frameRate": 12, "repeat": 0 },
+    { "id": "hit", "displayName": "Trúng Đòn", "directory": "Hurt", "frameCount": 12, "frameRate": 10, "repeat": 0 },
+    { "id": "death", "displayName": "Bại Trận", "directory": "Dying", "frameCount": 15, "frameRate": 8, "repeat": 0 }
+  ]
+}

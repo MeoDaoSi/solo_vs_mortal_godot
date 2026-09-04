@@ -4,25 +4,26 @@
 
 Migrate the existing playable prototype from TypeScript + Phaser 3 to Godot 4.7 C# while preserving gameplay behavior, deterministic simulation, stable IDs, save compatibility, Vietnamese player-facing names, and the existing art catalogue. Treat the Phaser repository as the behavioral reference until each vertical slice reaches parity.
 
-The target dependency direction remains:
+The product's long-term dependency direction is defined in `docs/ARCHITECTURE.md`:
 
 ```text
-Presentation -> Application -> Simulation -> Systems / Config / Data / Core
+Presentation -> Application -> Simulation -> Data / Core
 ```
 
-Godot nodes must stay in Presentation. Engine-independent gameplay code should remain plain C# so it can be tested without constructing a scene tree.
+Godot nodes must stay in Presentation. Engine-independent gameplay code should remain plain C# so it can be tested without constructing a scene tree. Simulation is the sole owner of mutable gameplay state; Data contains immutable Definitions, never live instances.
 
-## Proposed target structure
+## Destination structure
 
 ```text
 assets/                  Imported source art and audio
 data/configs/            JSON content copied with stable IDs
 scenes/                  Godot scenes and reusable scene components
 src/Core/                IDs, math, events, RNG, simulation clock
-src/Data/                DTOs, validation, registries, save migrations
-src/Systems/             Shared formulas such as CP and sprite stages
-src/Simulation/          Player, monsters, combat, Souls, progression
-src/Application/         Commands, queries, facades, save boundary
+src/Data/Definitions/    Immutable authored content, validation, registries
+src/Simulation/Rules/    Pure gameplay formulas such as CP and sprite stages
+src/Simulation/State/    Live session/entity state records
+src/Simulation/Systems/  Stateful gameplay owners by feature
+src/Application/         Commands, queries, facades, persistence boundary
 src/Presentation/        Godot nodes, input, camera, UI, animation, audio
 tests/                   Engine-independent C# parity and regression tests
 ```
@@ -54,7 +55,7 @@ Exit: a versioned parity checklist and representative input/output fixtures exis
 
 ### 1. Foundation port
 
-- Port `core`, shared `systems`, canonical balance config, data types, validators, and registries to engine-independent C#.
+- Port `core`, canonical Definitions, validators, registries, and the Phaser top-level `systems` files to engine-independent C#. Rename those pure formula modules to `Simulation/Rules`; do not recreate a top-level `Systems` layer.
 - Preserve JSON keys, enum wire values, IDs, rounding order, seeded RNG behavior, and immutable query results.
 - Mirror the current Vitest coverage, beginning with RNG, rank, CP, clock, and validation.
 

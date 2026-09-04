@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 3,
+  "traits": [
+    { "id": "UNDEAD", "displayName": "Bất Tử" },
+    { "id": "WARRIOR", "displayName": "Chiến Binh" },
+    { "id": "HUMANOID", "displayName": "Hình Người" },
+    { "id": "RAIDER", "displayName": "Kẻ Đột Kích" },
+    { "id": "CONSTRUCT", "displayName": "Tạo Vật" },
+    { "id": "EARTH", "displayName": "Thổ Hệ" }
+  ],
+  "capabilities": [
+    { "id": "BREAK_FRAGILE_WALL", "displayName": "Phá Tường Nứt" }
+  ],
+  "costProfiles": [
+    { "id": "BASIC_SOUL", "displayName": "Hồn Lực Cơ Bản", "cost": 1 }
+  ],
+  "devourXpProfiles": [
+    {
+      "id": "STANDARD_CULTIVATION_XP",
+      "displayName": "Tu Vi Hồn Tướng",
+      "baseXp": 20,
+      "xpPerSoulLevel": 5,
+      "xpPerOriginRank": 10
+    }
+  ],
+  "essenceProfiles": [
+    {
+      "id": "STONE_ESSENCE",
+      "displayName": "Tinh Hoa Đá",
+      "milestones": [
+        { "requiredPoints": 3, "displayName": "Thạch Thể I", "modifiers": { "defPercent": 0.02 } },
+        { "requiredPoints": 10, "displayName": "Thạch Thể II", "modifiers": { "defPercent": 0.04 } },
+        { "requiredPoints": 25, "displayName": "Thạch Thể III", "modifiers": { "defPercent": 0.06 } }
+      ]
+    }
+  ],
+  "bloodlineProfiles": [
+    {
+      "id": "STONE_SPIRIT_BLOODLINE",
+      "displayName": "Huyết Mạch Thạch Linh",
+      "milestones": [
+        { "requiredPoints": 3, "displayName": "Ngủ Yên", "modifiers": { "hpPercent": 0.01 } },
+        { "requiredPoints": 10, "displayName": "Thức Tỉnh", "modifiers": { "hpPercent": 0.02 } },
+        { "requiredPoints": 25, "displayName": "Tinh Luyện", "modifiers": { "hpPercent": 0.03 } }
+      ]
+    }
+  ],
+  "possessionProfiles": [
+    {
+      "id": "STONE_BODY_POSSESSION",
+      "displayName": "Thạch Thể Phụ Hồn",
+      "durationSeconds": 30,
+      "cooldownSeconds": 15,
+      "modifiers": { "defPercent": 0.25, "speedPercent": -0.15 },
+      "capabilityIds": ["BREAK_FRAGILE_WALL"]
+    }
+  ],
+  "natures": [
+    {
+      "id": "UNDEAD_WARRIOR",
+      "displayName": "Bản Chất Chiến Binh Bất Tử",
+      "traitIds": ["UNDEAD", "WARRIOR"],
+      "soulCostProfileId": "BASIC_SOUL",
+      "devour": { "xpProfileId": "STANDARD_CULTIVATION_XP" }
+    },
+    {
+      "id": "GOBLIN_RAIDER",
+      "displayName": "Bản Chất Goblin Đột Kích",
+      "traitIds": ["HUMANOID", "RAIDER"],
+      "soulCostProfileId": "BASIC_SOUL",
+      "devour": { "xpProfileId": "STANDARD_CULTIVATION_XP" }
+    },
+    {
+      "id": "STONE_CONSTRUCT",
+      "displayName": "Bản Chất Tạo Vật Đá",
+      "traitIds": ["CONSTRUCT", "EARTH"],
+      "soulCostProfileId": "BASIC_SOUL",
+      "devour": {
+        "xpProfileId": "STANDARD_CULTIVATION_XP",
+        "essenceProfileId": "STONE_ESSENCE",
+        "essenceContribution": 1,
+        "bloodlineProfileId": "STONE_SPIRIT_BLOODLINE",
+        "bloodlineContribution": 1
+      },
+      "possessionProfileId": "STONE_BODY_POSSESSION"
+    }
+  ]
+}

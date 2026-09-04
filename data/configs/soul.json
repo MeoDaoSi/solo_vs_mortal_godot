@@ -1,0 +1,28 @@
+{
+  "pickupRadius": 24,
+  "orbByRank": {
+    "1": "soul.orb.no_boc",
+    "2": "soul.orb.ky_si",
+    "3": "soul.orb.thong_linh",
+    "4": "soul.orb.thong_linh",
+    "5": "soul.orb.thong_linh",
+    "6": "soul.orb.thong_linh",
+    "7": "soul.orb.thong_linh",
+    "8": "soul.orb.thong_linh",
+    "9": "soul.orb.thong_linh"
+  },
+  "summon": {
+    "stabilityRecoverySeconds": 10,
+    "ai": {
+      "aggroRadius": 260,
+      "attackRange": 28
+    },
+    "areaRadius": 56,
+    "followMinDistance": 34,
+    "leashRadius": 340,
+    "arriveDistance": 12
+  },
+  "xp": {
+    "maxLevel": 90
+  }
+}

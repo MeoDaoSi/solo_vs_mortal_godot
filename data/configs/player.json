@@ -1,0 +1,5 @@
+{
+  "id": "player",
+  "displayName": "Hunter",
+  "combat": { "attackRange": 40 }
+}

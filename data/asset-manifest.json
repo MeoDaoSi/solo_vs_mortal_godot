@@ -1,0 +1,641 @@
+{
+    "schemaVersion":  1,
+    "assets":  [
+                   {
+                       "id":  "tiles.arena.ground",
+                       "type":  "image",
+                       "file":  "images/tiles/arena/ground_style_01.png"
+                   },
+                   {
+                       "id":  "map.desert.background",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/bg.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land01",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_1.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land02",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_2.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land03",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_3.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land04",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_4.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land05",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_5.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land06",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_6.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land07",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_7.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land08",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_8.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land09",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_9.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land10",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_10.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land11",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_11.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land12",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_12.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land13",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_13.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land14",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_14.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land15",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_15.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land16",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_16.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land17",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_17.png"
+                   },
+                   {
+                       "id":  "map.desert.terrain.land18",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/land_18.png"
+                   },
+                   {
+                       "id":  "map.desert.road.01",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_1.png"
+                   },
+                   {
+                       "id":  "map.desert.road.02",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_2.png"
+                   },
+                   {
+                       "id":  "map.desert.road.03",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_3.png"
+                   },
+                   {
+                       "id":  "map.desert.road.04",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_4.png"
+                   },
+                   {
+                       "id":  "map.desert.road.05",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_5.png"
+                   },
+                   {
+                       "id":  "map.desert.road.06",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_6.png"
+                   },
+                   {
+                       "id":  "map.desert.road.07",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_7.png"
+                   },
+                   {
+                       "id":  "map.desert.road.08",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_8.png"
+                   },
+                   {
+                       "id":  "map.desert.road.09",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_9.png"
+                   },
+                   {
+                       "id":  "map.desert.road.10",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_10.png"
+                   },
+                   {
+                       "id":  "map.desert.road.11",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_11.png"
+                   },
+                   {
+                       "id":  "map.desert.road.12",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_12.png"
+                   },
+                   {
+                       "id":  "map.desert.road.13",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_13.png"
+                   },
+                   {
+                       "id":  "map.desert.road.14",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_14.png"
+                   },
+                   {
+                       "id":  "map.desert.road.15",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_15.png"
+                   },
+                   {
+                       "id":  "map.desert.road.16",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_16.png"
+                   },
+                   {
+                       "id":  "map.desert.road.17",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_17.png"
+                   },
+                   {
+                       "id":  "map.desert.road.18",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_18.png"
+                   },
+                   {
+                       "id":  "map.desert.road.19",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_19.png"
+                   },
+                   {
+                       "id":  "map.desert.road.20",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_20.png"
+                   },
+                   {
+                       "id":  "map.desert.road.21",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_21.png"
+                   },
+                   {
+                       "id":  "map.desert.road.22",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_22.png"
+                   },
+                   {
+                       "id":  "map.desert.road.23",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_23.png"
+                   },
+                   {
+                       "id":  "map.desert.road.24",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_24.png"
+                   },
+                   {
+                       "id":  "map.desert.road.25",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_25.png"
+                   },
+                   {
+                       "id":  "map.desert.road.26",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/road_26.png"
+                   },
+                   {
+                       "id":  "map.desert.lake",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/lake.png"
+                   },
+                   {
+                       "id":  "map.desert.building.01",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/building_1.png"
+                   },
+                   {
+                       "id":  "map.desert.building.02",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/building_2.png"
+                   },
+                   {
+                       "id":  "map.desert.building.03",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/building_3.png"
+                   },
+                   {
+                       "id":  "map.desert.building.04",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/building_4.png"
+                   },
+                   {
+                       "id":  "map.desert.building.05",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/building_5.png"
+                   },
+                   {
+                       "id":  "map.desert.decor.01",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/decor_1.png"
+                   },
+                   {
+                       "id":  "map.desert.decor.02",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/decor_2.png"
+                   },
+                   {
+                       "id":  "map.desert.decor.03",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/decor_3.png"
+                   },
+                   {
+                       "id":  "map.desert.decor.04",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/decor_4.png"
+                   },
+                   {
+                       "id":  "map.desert.decor.05",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/decor_5.png"
+                   },
+                   {
+                       "id":  "map.desert.decor.06",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/decor_6.png"
+                   },
+                   {
+                       "id":  "map.desert.decor.07",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/decor_7.png"
+                   },
+                   {
+                       "id":  "map.desert.decor.08",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/decor_8.png"
+                   },
+                   {
+                       "id":  "map.desert.greenery.01",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/greenery_1.png"
+                   },
+                   {
+                       "id":  "map.desert.greenery.02",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/greenery_2.png"
+                   },
+                   {
+                       "id":  "map.desert.greenery.03",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/greenery_3.png"
+                   },
+                   {
+                       "id":  "map.desert.greenery.04",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/greenery_4.png"
+                   },
+                   {
+                       "id":  "map.desert.greenery.05",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/greenery_5.png"
+                   },
+                   {
+                       "id":  "map.desert.greenery.06",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/greenery_6.png"
+                   },
+                   {
+                       "id":  "map.desert.greenery.07",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/greenery_7.png"
+                   },
+                   {
+                       "id":  "map.desert.greenery.08",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/greenery_8.png"
+                   },
+                   {
+                       "id":  "map.desert.greenery.09",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/greenery_9.png"
+                   },
+                   {
+                       "id":  "map.desert.greenery.10",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/greenery_10.png"
+                   },
+                   {
+                       "id":  "map.desert.stones.01",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/stones_1.png"
+                   },
+                   {
+                       "id":  "map.desert.stones.02",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/stones_2.png"
+                   },
+                   {
+                       "id":  "map.desert.stones.03",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/stones_3.png"
+                   },
+                   {
+                       "id":  "map.desert.stones.04",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/stones_4.png"
+                   },
+                   {
+                       "id":  "map.desert.stones.05",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/stones_5.png"
+                   },
+                   {
+                       "id":  "map.desert.stones.06",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/stones_6.png"
+                   },
+                   {
+                       "id":  "map.desert.stones.07",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/stones_7.png"
+                   },
+                   {
+                       "id":  "map.desert.stones.08",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/stones_8.png"
+                   },
+                   {
+                       "id":  "map.desert.stones.09",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/stones_9.png"
+                   },
+                   {
+                       "id":  "map.desert.stones.10",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/stones_10.png"
+                   },
+                   {
+                       "id":  "map.desert.stones.11",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/stones_11.png"
+                   },
+                   {
+                       "id":  "map.desert.stones.12",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/stones_12.png"
+                   },
+                   {
+                       "id":  "map.desert.tree.01",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/tree_1.png"
+                   },
+                   {
+                       "id":  "map.desert.tree.02",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/tree_2.png"
+                   },
+                   {
+                       "id":  "map.desert.tree.03",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/tree_3.png"
+                   },
+                   {
+                       "id":  "map.desert.tree.04",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/tree_4.png"
+                   },
+                   {
+                       "id":  "map.desert.tree.05",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/tree_5.png"
+                   },
+                   {
+                       "id":  "map.desert.tree.06",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/tree_6.png"
+                   },
+                   {
+                       "id":  "map.desert.tree.07",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/tree_7.png"
+                   },
+                   {
+                       "id":  "map.desert.tree.08",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/tree_8.png"
+                   },
+                   {
+                       "id":  "map.desert.tree.09",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/tree_9.png"
+                   },
+                   {
+                       "id":  "map.desert.tree.10",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/tree_10.png"
+                   },
+                   {
+                       "id":  "map.desert.tree.11",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/tree_11.png"
+                   },
+                   {
+                       "id":  "map.desert.tree.12",
+                       "type":  "image",
+                       "file":  "images/map/desert/PNG/tree_12.png"
+                   },
+                   {
+                       "id":  "player.sword.l1.idle",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl1/Without_shadow/Swordsman_lvl1_Idle_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l1.walk",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl1/Without_shadow/Swordsman_lvl1_Walk_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l1.run",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl1/Without_shadow/Swordsman_lvl1_Run_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l1.attack",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl1/Without_shadow/Swordsman_lvl1_attack_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l1.hurt",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl1/Without_shadow/Swordsman_lvl1_Hurt_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l1.death",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl1/Without_shadow/Swordsman_lvl1_Death_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l2.idle",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl2/Without_shadow/Swordsman_lvl2_Idle_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l2.walk",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl2/Without_shadow/Swordsman_lvl2_Walk_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l2.run",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl2/Without_shadow/Swordsman_lvl2_Run_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l2.attack",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl2/Without_shadow/Swordsman_lvl2_attack_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l2.hurt",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl2/Without_shadow/Swordsman_lvl2_Hurt_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l2.death",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl2/Without_shadow/Swordsman_lvl2_Death_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l3.idle",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl3/Without_shadow/Swordsman_lvl3_Idle_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l3.walk",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl3/Without_shadow/Swordsman_lvl3_Walk_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l3.run",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl3/Without_shadow/Swordsman_lvl3_Run_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l3.attack",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl3/Without_shadow/Swordsman_lvl3_attack_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l3.hurt",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl3/Without_shadow/Swordsman_lvl3_Hurt_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+                   {
+                       "id":  "player.sword.l3.death",
+                       "type":  "spritesheet",
+                       "file":  "images/swordsman-character/PNG/Swordsman_lvl3/Without_shadow/Swordsman_lvl3_Death_without_shadow.png",
+                       "frameWidth":  64,
+                       "frameHeight":  64
+                   },
+{
+                        "id":  "soul.orb.no_boc",
+                        "type":  "image",
+                        "file":  "images/soul/no_boc.png"
+                    },
+                    {
+                        "id":  "soul.orb.ky_si",
+                        "type":  "image",
+                        "file":  "images/soul/ky_si.png"
+                    },
+                    {
+                        "id":  "soul.orb.thong_linh",
+                        "type":  "image",
+                        "file":  "images/soul/thong_linh.png"
+                    },
+                    {
+                        "id":  "soul.orb.quan_vuong",
+                        "type":  "image",
+                        "file":  "images/soul/quan_vuong.png"
+                    },
+                    {
+                        "id":  "soulBanner.banner.tan_hon",
+                        "type":  "image",
+                        "file":  "images/soul_banner/tan_hon.png"
+                    },
+                    {
+                        "id":  "soulBanner.banner.vo_gian",
+                        "type":  "image",
+                        "file":  "images/soul_banner/vo_gian.png"
+                    },
+                    {
+                        "id":  "soulBanner.banner.hoang_tuyen",
+                        "type":  "image",
+                        "file":  "images/soul_banner/hoang_tuyen.png"
+                    },
+                    {
+                        "id":  "soulBanner.banner.da_xoa_long",
+                        "type":  "image",
+                        "file":  "images/soul_banner/da_xoa_long.png"
+                    }
+                ]
+}
