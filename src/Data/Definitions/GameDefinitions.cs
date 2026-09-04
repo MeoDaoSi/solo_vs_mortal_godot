@@ -58,13 +58,19 @@ public sealed class GameDefinitions
         SoulDefinition soul,
         IReadOnlyDictionary<string, MonsterDefinition> monsters,
         IReadOnlyDictionary<string, SoulBannerDefinition> bannersById,
-        SoulNatureDefinitions soulNatures)
+        SoulNatureDefinitions soulNatures,
+        AssetDefinitions assets,
+        CharacterAnimationDefinitions characterAnimations,
+        IReadOnlyDictionary<string, MapDefinition> maps)
     {
         Player = player;
         Soul = soul;
         _monsters = monsters;
         _bannersById = bannersById;
         SoulNatures = soulNatures;
+        Assets = assets;
+        CharacterAnimations = characterAnimations;
+        Maps = maps;
         _bannersByTier = new ReadOnlyDictionary<SoulBannerTier, SoulBannerDefinition>(
             bannersById.Values.ToDictionary(item => item.Tier));
     }
@@ -72,6 +78,9 @@ public sealed class GameDefinitions
     public PlayerDefinition Player { get; }
     public SoulDefinition Soul { get; }
     public SoulNatureDefinitions SoulNatures { get; }
+    public AssetDefinitions Assets { get; }
+    public CharacterAnimationDefinitions CharacterAnimations { get; }
+    public IReadOnlyDictionary<string, MapDefinition> Maps { get; }
     public IEnumerable<MonsterDefinition> Monsters => _monsters.Values;
     public IEnumerable<SoulBannerDefinition> SoulBanners => _bannersById.Values;
 
@@ -79,6 +88,8 @@ public sealed class GameDefinitions
     public SoulBannerDefinition SoulBanner(string id) => Lookup(_bannersById, id, "Soul Banner");
     public SoulBannerDefinition SoulBanner(SoulBannerTier tier) => Lookup(_bannersByTier, tier, "Soul Banner tier");
     public SoulBannerDefinition StarterSoulBanner => SoulBanner(SoulBannerTier.NhapMon);
+    public MapDefinition Map(string id) => Lookup(Maps, id, "map");
+    public MapDefinition DefaultMap => Map("desert");
 
     private static TValue Lookup<TKey, TValue>(IReadOnlyDictionary<TKey, TValue> source, TKey key, string label)
         where TKey : notnull => source.TryGetValue(key, out var value)
@@ -105,7 +116,32 @@ public static class GameDefinitionLoader
         var monsters = ParseMonsters(ReadRoot(directory, "monsters.json"), soulNatures.Natures.Keys.ToHashSet(StringComparer.Ordinal));
         var soul = ParseSoul(ReadRoot(directory, "soul.json"));
         var banners = ParseBanners(ReadRoot(directory, "soulBanner.json"));
-        return new GameDefinitions(player, soul, monsters, banners, soulNatures);
+        var assets = AssetDefinitionLoader.Load(Path.GetFullPath(Path.Combine(directory, "..", "asset-manifest.json")));
+        var animations = CharacterAnimationDefinitionLoader.Load(Path.Combine(directory, "characterAnimations.json"));
+        ValidateAnimationReferences(monsters, animations, assets);
+        var defaultMap = MapDefinitionLoader.Load(Path.Combine(directory, "desert.json"), assets, soulNatures);
+        var maps = new ReadOnlyDictionary<string, MapDefinition>(new Dictionary<string, MapDefinition>(StringComparer.Ordinal) { [defaultMap.Id] = defaultMap });
+        return new GameDefinitions(player, soul, monsters, banners, soulNatures, assets, animations, maps);
+    }
+
+    private static void ValidateAnimationReferences(
+        IReadOnlyDictionary<string, MonsterDefinition> monsters,
+        CharacterAnimationDefinitions animations,
+        AssetDefinitions assets)
+    {
+        foreach (var monster in monsters.Values)
+            if (!animations.MonstersBySpecies.ContainsKey(monster.SpeciesId))
+                throw new DefinitionException($"Monster '{monster.Id}' has no animation descriptor for species '{monster.SpeciesId}'.");
+
+        var player = animations.Player;
+        foreach (var form in Enumerable.Range(1, player.FormCount))
+        foreach (var action in player.Actions.Values)
+        {
+            var assetId = player.AssetIdPattern
+                .Replace("{form}", form.ToString(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal)
+                .Replace("{action}", action.AssetAction, StringComparison.Ordinal);
+            _ = assets.Get(assetId);
+        }
     }
 
     private static JsonElement ReadRoot(string directory, string filename)

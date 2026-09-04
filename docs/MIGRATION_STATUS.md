@@ -5,7 +5,7 @@ Status values are `NOT STARTED`, `IN PROGRESS`, `BLOCKED`, and `COMPLETE`. A pha
 | Phase | Status | Current evidence | Next gate |
 | --- | --- | --- | --- |
 | 0 — Baseline and parity contract | IN PROGRESS | Source revision and inventory recorded in `PARITY_BASELINE.md`; canonical configs copied | Generate representative golden fixtures and complete asset classification |
-| 1 — Foundation port | IN PROGRESS | Foundation rules ported; full Soul Nature graph plus Player/Monster/Soul/Soul Banner definitions validate at boot, including stable IDs, uniqueness, modifier fields, ascending milestones, paired contributions, and all cross-references | Complete map/animation/asset-manifest validation and add parity fixtures/tests |
+| 1 — Foundation port | IN PROGRESS | Foundation rules and all canonical definition registries are ported; boot validates Soul Nature, map, animation and logical asset cross-references; source-revision golden fixtures and a dependency-free C# parity harness exist | Verify source asset-file existence and run the explicit parity command before marking complete |
 | 2 — Simulation and application | IN PROGRESS | Headless `GameSession`, owned stage state, and Application command/query boundary created | Add systems only after their Phase 1 rules and definitions have fixtures |
 | 3 — First playable slice | IN PROGRESS | Godot `Main` is a thin adapter that starts/ticks Application | Build Arena after Player/Monster/Combat foundation is usable |
 | 4 — Full feature parity | IN PROGRESS | Feature ownership and acceptance matrix created in `FEATURE_PARITY.md` | Complete vertical slices against the matrix |

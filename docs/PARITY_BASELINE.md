@@ -27,3 +27,7 @@ Runtime code and canonical design documents take precedence over historical chan
 ## Asset migration policy
 
 The source manifest and JSON descriptors remain the logical-ID authority during parity work. Assets are copied per vertical slice rather than importing all 2,458 files immediately. Runtime state and saves reference stable logical IDs, never imported Godot paths.
+
+## Foundation golden fixture
+
+`tests/Fixtures/foundation-golden.json` records Mulberry32 and Combat Power outputs generated from this source revision. `tests/Parity` is a dependency-free C# executable that checks those values plus rank boundaries, sprite stages, progression caps, and successful loading of every canonical Definition registry. It is intentionally separate from the Godot runtime project.
