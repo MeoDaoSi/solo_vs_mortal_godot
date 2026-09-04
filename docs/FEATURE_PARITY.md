@@ -4,9 +4,9 @@ This is the acceptance matrix for Phaser-to-Godot behavior. A feature is complet
 
 | Feature | Definition owner | Runtime owner | Godot presentation | Save impact | Status |
 | --- | --- | --- | --- | --- | --- |
-| Player movement/collision | Player/map definitions | Player system | Character body adapter | Position is currently not persisted | NOT STARTED |
-| Combat and damage | Balance definitions | Combat and actor systems | Animation/VFX adapter | HP | NOT STARTED |
-| Monster spawn/AI/death | Monster definitions | Monster system | Monster view nodes | None currently | NOT STARTED |
+| Player movement/collision | Player/map definitions | Player system | Character body adapter | Position is currently not persisted | SIMULATION IN PROGRESS |
+| Combat and damage | Balance definitions | Combat and actor systems | Animation/VFX adapter | HP | SIMULATION IN PROGRESS |
+| Monster spawn/AI/death | Monster definitions | Monster system | Monster view nodes | None currently | SIMULATION IN PROGRESS |
 | Player rank/progression | Balance definitions | Progression system | HUD/actions | Save v2+ | NOT STARTED |
 | Drops, materials, pills | Item/balance definitions | Progression system | Inventory/crafting UI | Save v2+ | NOT STARTED |
 | Soul acquisition/progression | Soul Nature definitions | Soul system | Orb/inventory views | Save v1+ | NOT STARTED |

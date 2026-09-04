@@ -1,5 +1,6 @@
 using SoloVsMortal.Simulation;
 using SoloVsMortal.Data.Definitions;
+using SoloVsMortal.Core.Math;
 
 namespace SoloVsMortal.Application;
 
@@ -19,6 +20,8 @@ public sealed class GameApplication
     public void Start() => _session.Start();
 
     public void Tick(double deltaSeconds) => _session.Tick(deltaSeconds);
+    public void SetInput(Vec2 move, bool attackPressed) => _session.SetInput(move, attackPressed);
+    public string SpawnMonster(string definitionId, int? level = null, Vec2? position = null) => _session.SpawnMonster(definitionId, level, position).Uid;
 
     public GameSnapshot Snapshot() => new(
         _session.State.Stage,
@@ -26,5 +29,7 @@ public sealed class GameApplication
         _session.Definitions.Monsters.Count(),
         _session.Definitions.SoulBanners.Count(),
         _session.Definitions.SoulNatures.Natures.Count,
-        _session.Definitions.SoulNatures.Capabilities.Count);
+        _session.Definitions.SoulNatures.Capabilities.Count,
+        new PlayerSnapshot(_session.Player.State.Uid, _session.Player.State.Position, _session.Player.State.CurrentHp, _session.Player.State.MaxHp, _session.Player.State.Alive, _session.Player.State.Level, _session.Player.State.Rank),
+        _session.Monsters.AliveMonsters().Select(monster => new MonsterSnapshot(monster.Uid, monster.DefinitionId, monster.SpeciesId, monster.Position, monster.CurrentHp, monster.MaxHp, monster.Alive, monster.AiState, monster.Level, monster.Rank)).ToArray());
 }
