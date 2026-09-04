@@ -50,6 +50,17 @@ public sealed class PlayerSystem
         RecomputeStats();
     }
 
+    public void Restore(int level, int rank, int xp, double currentHp, string? titleDisplayName)
+    {
+        if (level < 1 || level > BalanceDefinition.MaximumLevel) level = 1;
+        var expectedRank = CombatPowerRules.GlobalLevelToRank(level);
+        rank = rank >= 1 && rank <= BalanceDefinition.MaximumRank && rank == expectedRank ? rank : expectedRank;
+        State.Level = level; State.Rank = rank; State.Xp = System.Math.Max(0, xp);
+        RecomputeStats();
+        if (double.IsFinite(currentHp) && currentHp > 0) State.CurrentHp = System.Math.Min(System.Math.Truncate(currentHp), State.MaxHp);
+        if (!string.IsNullOrWhiteSpace(titleDisplayName)) State.TitleDisplayName = titleDisplayName.Trim()[..System.Math.Min(120, titleDisplayName.Trim().Length)];
+    }
+
     public void RecomputeStats(IReadOnlyList<StatModifiers>? modifiers = null)
     {
         var ratio = State.MaxHp > 0 ? State.CurrentHp / State.MaxHp : 1;

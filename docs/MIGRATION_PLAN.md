@@ -115,4 +115,4 @@ Exit: reproducible export, acceptable performance, and no unresolved P0/P1 parit
 
 ## Immediate next milestone
 
-Port `Vec2`, `Rect`, `Uid`, `SeededRng`, and `SimulationClock` plus parity fixtures from their current Vitest cases. Then port rank and Combat Power as the first end-to-end deterministic subsystem.
+Build the Phase 3 arena adapter around the completed headless Simulation: map collision, Player/Monster presentation, camera, combat feedback, Soul acquisition HUD, and `user://` save/load. Keep Godot nodes as adapters and reuse the Phase 2 deterministic replay as the behavioral gate.

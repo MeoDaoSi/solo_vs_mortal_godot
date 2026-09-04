@@ -152,3 +152,17 @@ public static class CombatPowerRules
         raw.Def,
         raw.Speed);
 }
+
+public static class ModifierRules
+{
+    public static StatModifiers FromDefinition(StatModifierDefinition definition) => new(
+        definition.HpPercent,
+        definition.AtkPercent,
+        definition.DefPercent,
+        definition.SpeedPercent,
+        definition.HpFlat,
+        definition.AtkFlat,
+        definition.DefFlat,
+        definition.SpeedFlat,
+        definition.Scalar);
+}

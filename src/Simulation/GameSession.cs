@@ -25,8 +25,20 @@ public sealed class GameSession : IDisposable
         Player = new PlayerSystem(Events, uids, definitions.Player, new Vec2(480, 280), new PlayerBounds(960, 540));
         Monsters = new MonsterSystem(Events, uids, rng, definitions, new SpawnArea(0, 0, 960, 540));
         Combat = new CombatSystem(Events, Player, Monsters);
+        Souls = new SoulSystem(Events, uids, rng, definitions);
+        SoulBanners = new SoulBannerSystem(Events, uids, definitions, Souls);
+        SoulBanners.CreateStarter();
+        Allies = new AllySystem(Events, uids, definitions);
+        Summons = new SummonSystem(Events, definitions, Souls, SoulBanners, Allies);
         PlayerModifiers = new PlayerModifierSystem(Player);
         Progression = new ProgressionSystem(Events, rng, Player, PlayerModifiers);
+        Essence = new EssenceSystem(Events, definitions.SoulNatures, PlayerModifiers);
+        Bloodline = new BloodlineSystem(Events, definitions.SoulNatures, PlayerModifiers);
+        Capabilities = new CapabilitySystem();
+        Possession = new PossessionSystem(Events, definitions.SoulNatures, Souls, SoulBanners, Summons, PlayerModifiers, Capabilities);
+        World = new WorldInteractionSystem(Events, definitions.DefaultMap, Capabilities);
+        Player.SetColliders(World.BlockingRects());
+        _worldSubscription = Events.Subscribe<Simulation.Events.WorldObjectDestroyedEvent>(_ => Player.SetColliders(World.BlockingRects()));
     }
 
     public GameSessionState State { get; } = new();
@@ -35,8 +47,18 @@ public sealed class GameSession : IDisposable
     public PlayerSystem Player { get; }
     public MonsterSystem Monsters { get; }
     public CombatSystem Combat { get; }
+    public SoulSystem Souls { get; }
+    public SoulBannerSystem SoulBanners { get; }
+    public AllySystem Allies { get; }
+    public SummonSystem Summons { get; }
     public PlayerModifierSystem PlayerModifiers { get; }
     public ProgressionSystem Progression { get; }
+    public EssenceSystem Essence { get; }
+    public BloodlineSystem Bloodline { get; }
+    public CapabilitySystem Capabilities { get; }
+    public PossessionSystem Possession { get; }
+    public WorldInteractionSystem World { get; }
+    private readonly IDisposable _worldSubscription;
 
     public double ElapsedSeconds => _clock.Time;
 
@@ -53,12 +75,15 @@ public sealed class GameSession : IDisposable
             Player.Update(deltaSeconds, _moveInput);
             Monsters.Update(deltaSeconds, Player.State);
             Combat.Update(deltaSeconds, _attackPressed);
+            Allies.Update(deltaSeconds, Monsters, Player.State.Position);
+            Summons.Update(deltaSeconds);
             Progression.Update(deltaSeconds);
+            Possession.Update(deltaSeconds);
             _clock.Tick(deltaSeconds);
         }
     }
 
     public void SetInput(Vec2 move, bool attackPressed) { _moveInput = move; _attackPressed = attackPressed; }
     public MonsterState SpawnMonster(string definitionId, int? level = null, Vec2? position = null) => Monsters.Spawn(definitionId, new MonsterSpawnOptions(Level: level, Position: position));
-    public void Dispose() { Progression.Dispose(); Combat.Dispose(); }
+    public void Dispose() { _worldSubscription.Dispose(); Summons.Dispose(); Progression.Dispose(); Souls.Dispose(); Combat.Dispose(); }
 }

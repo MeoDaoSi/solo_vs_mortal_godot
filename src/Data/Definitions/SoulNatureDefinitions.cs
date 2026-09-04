@@ -1,16 +1,15 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using SoloVsMortal.Simulation.Rules;
 
 namespace SoloVsMortal.Data.Definitions;
 
 public sealed record NamedDefinition(string Id, string DisplayName);
 public sealed record SoulCostProfileDefinition(string Id, string DisplayName, int Cost);
 public sealed record DevourXpProfileDefinition(string Id, string DisplayName, double BaseXp, double XpPerSoulLevel, double XpPerOriginRank);
-public sealed record ModifierMilestoneDefinition(int RequiredPoints, string DisplayName, StatModifiers Modifiers);
+public sealed record ModifierMilestoneDefinition(int RequiredPoints, string DisplayName, StatModifierDefinition Modifiers);
 public sealed record ModifierProfileDefinition(string Id, string DisplayName, IReadOnlyList<ModifierMilestoneDefinition> Milestones);
-public sealed record PossessionProfileDefinition(string Id, string DisplayName, double DurationSeconds, double CooldownSeconds, StatModifiers Modifiers, IReadOnlyList<string> CapabilityIds);
+public sealed record PossessionProfileDefinition(string Id, string DisplayName, double DurationSeconds, double CooldownSeconds, StatModifierDefinition Modifiers, IReadOnlyList<string> CapabilityIds);
 public sealed record DevourDefinition(string? XpProfileId, string? EssenceProfileId, double? EssenceContribution, string? BloodlineProfileId, double? BloodlineContribution);
 public sealed record SoulNatureDefinition(string Id, string DisplayName, IReadOnlyList<string> TraitIds, string SoulCostProfileId, DevourDefinition? Devour, string? PossessionProfileId);
 
@@ -110,7 +109,7 @@ public static partial class SoulNatureDefinitionLoader
         return new SoulNatureDefinition(Id(item), Text(item, "displayName"), traits, Id(item, "soulCostProfileId"), devour, OptionalId(item, "possessionProfileId"));
     }
 
-    private static StatModifiers Modifiers(JsonElement item)
+    private static StatModifierDefinition Modifiers(JsonElement item)
     {
         var values = new Dictionary<string, double>(StringComparer.Ordinal);
         foreach (var property in item.EnumerateObject())
@@ -120,7 +119,7 @@ public static partial class SoulNatureDefinitionLoader
             values.Add(property.Name, number);
         }
         double Get(string name, double fallback = 0) => values.TryGetValue(name, out var value) ? value : fallback;
-        return new StatModifiers(Get("hpPercent"), Get("atkPercent"), Get("defPercent"), Get("speedPercent"), Get("hpFlat"), Get("atkFlat"), Get("defFlat"), Get("speedFlat"), Get("scalar", 1));
+        return new StatModifierDefinition(Get("hpPercent"), Get("atkPercent"), Get("defPercent"), Get("speedPercent"), Get("hpFlat"), Get("atkFlat"), Get("defFlat"), Get("speedFlat"), Get("scalar", 1));
     }
 
     private static IReadOnlyDictionary<string, NamedDefinition> NamedCollection(JsonElement root, string property) =>

@@ -9,6 +9,16 @@ public enum MaterialId { SpiritCrystal, BeastCore }
 public enum PillId { BreakthroughMinor, BreakthroughMajor, Vitality, Power, Guard, Swift }
 
 public sealed record StatRatios(double Hp, double Atk, double Def, double Speed);
+public sealed record StatModifierDefinition(
+    double HpPercent = 0,
+    double AtkPercent = 0,
+    double DefPercent = 0,
+    double SpeedPercent = 0,
+    double HpFlat = 0,
+    double AtkFlat = 0,
+    double DefFlat = 0,
+    double SpeedFlat = 0,
+    double Scalar = 1);
 public sealed record CpGrowth(double BaseCp, double RankMultiplier, double LevelGrowthRate, double LevelGrowthRate2);
 public sealed record CombatPacing(double MoveSpeedPerSpeed, double AttackCooldownNumerator, double MinimumAttackCooldown);
 public sealed record StatArchetypeDefinition(string DisplayName, StatRatios Ratio, StatRatios Growth);
@@ -35,7 +45,7 @@ public sealed record PillDefinition(
     IReadOnlyDictionary<MaterialId, int> Recipe,
     double? BreakthroughChance = null,
     double? DurationSeconds = null,
-    SoloVsMortal.Simulation.Rules.StatModifiers? Modifiers = null);
+    StatModifierDefinition? Modifiers = null);
 
 public static class BalanceDefinition
 {
@@ -99,6 +109,8 @@ public static class BalanceDefinition
 
     public static CpGrowth Type(EntityType type) => Types[type];
     public static CombatPacing Pacing(EntityType type) => CombatPacingByType[type];
+    public static PillDefinition PillByStableId(string stableId) => Pills.Values.FirstOrDefault(pill => pill.StableId == stableId)
+        ?? throw new KeyNotFoundException($"Unknown pill ID '{stableId}'.");
     public static StatArchetypeDefinition Archetype(StatArchetypeId id) => StatArchetypes[id];
     public static TierRankRangeDefinition TierRange(TierId id) => TierRankRanges[id];
 

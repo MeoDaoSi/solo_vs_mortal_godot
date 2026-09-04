@@ -8,6 +8,7 @@ namespace SoloVsMortal.Simulation.Systems;
 
 public readonly record struct InventoryItem(string StableId, int Count);
 public sealed record TimedPlayerBuff(PillId PillId, double RemainingSeconds, StatModifiers Modifiers);
+public sealed record TimedPlayerBuffRestore(PillId PillId, double RemainingSeconds);
 
 public sealed class ProgressionSystem : IDisposable
 {
@@ -69,7 +70,7 @@ public sealed class ProgressionSystem : IDisposable
         var pill = BalanceDefinition.Pills[pillId];
         if (pill.Modifiers is null || pill.DurationSeconds is null || !Consume(pill.StableId, 1)) return false;
         var index = _playerBuffs.FindIndex(buff => buff.PillId == pillId);
-        var buff = new TimedPlayerBuff(pillId, pill.DurationSeconds.Value, pill.Modifiers);
+        var buff = new TimedPlayerBuff(pillId, pill.DurationSeconds.Value, ModifierRules.FromDefinition(pill.Modifiers));
         if (index >= 0) _playerBuffs[index] = buff; else _playerBuffs.Add(buff);
         RecomputeBuffs(); _events.Publish(new TemporaryPlayerBuffChangedEvent(pillId, true, pill.DurationSeconds.Value)); return true;
     }
@@ -95,6 +96,23 @@ public sealed class ProgressionSystem : IDisposable
     {
         _inventory.Clear();
         foreach (var item in items) if (item.Count > 0 && IsKnownItem(item.StableId)) _inventory[item.StableId] = item.Count;
+    }
+
+    public void RestorePlayerBuffs(IEnumerable<TimedPlayerBuffRestore> buffs)
+    {
+        ArgumentNullException.ThrowIfNull(buffs);
+        _playerBuffs.Clear();
+        foreach (var saved in buffs)
+        {
+            var pill = BalanceDefinition.Pills[saved.PillId];
+            if (pill.Modifiers is null || pill.DurationSeconds is null || !double.IsFinite(saved.RemainingSeconds) || saved.RemainingSeconds <= 0) continue;
+            var remaining = System.Math.Min(pill.DurationSeconds.Value, saved.RemainingSeconds);
+            var runtimeModifiers = ModifierRules.FromDefinition(pill.Modifiers);
+            var index = _playerBuffs.FindIndex(buff => buff.PillId == saved.PillId);
+            var restored = new TimedPlayerBuff(saved.PillId, remaining, runtimeModifiers);
+            if (index >= 0) _playerBuffs[index] = restored; else _playerBuffs.Add(restored);
+        }
+        RecomputeBuffs();
     }
 
     private void OnMonsterDefeated(MonsterDefeatedEvent defeated)

@@ -23,5 +23,9 @@ public sealed class PlayerModifierSystem
     public IReadOnlyList<StatModifiers> Snapshot(PlayerModifierSource source) =>
         _sources.TryGetValue(source, out var values) ? values.ToArray() : Array.Empty<StatModifiers>();
 
-    public void Recompute() => _player.RecomputeStats(_sources.Values.SelectMany(values => values).ToArray());
+    public IReadOnlyDictionary<PlayerModifierSource, IReadOnlyList<StatModifiers>> SnapshotAll() =>
+        _sources.OrderBy(entry => entry.Key).ToDictionary(entry => entry.Key, entry => (IReadOnlyList<StatModifiers>)entry.Value.ToArray());
+
+    public void Recompute() => _player.RecomputeStats(
+        _sources.OrderBy(entry => entry.Key).SelectMany(entry => entry.Value).ToArray());
 }
