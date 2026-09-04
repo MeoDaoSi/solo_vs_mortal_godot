@@ -14,7 +14,10 @@ public partial class Main : Node2D
         _application = GameApplication.CreateFromDefinitionsDirectory(definitionsDirectory);
         _application.Start();
         var snapshot = _application.Snapshot();
-        GD.Print($"SOLO VS MORTAL initialized with {snapshot.MonsterDefinitionCount} monsters and {snapshot.SoulBannerDefinitionCount} Soul Banners.");
+        GD.Print(
+            $"SOLO VS MORTAL initialized with {snapshot.MonsterDefinitionCount} monsters, " +
+            $"{snapshot.SoulBannerDefinitionCount} Soul Banners, {snapshot.SoulNatureDefinitionCount} Soul Natures, " +
+            $"and {snapshot.CapabilityDefinitionCount} capabilities.");
     }
 
     public override void _PhysicsProcess(double delta)

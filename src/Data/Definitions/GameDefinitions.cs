@@ -58,20 +58,20 @@ public sealed class GameDefinitions
         SoulDefinition soul,
         IReadOnlyDictionary<string, MonsterDefinition> monsters,
         IReadOnlyDictionary<string, SoulBannerDefinition> bannersById,
-        IReadOnlySet<string> soulNatureIds)
+        SoulNatureDefinitions soulNatures)
     {
         Player = player;
         Soul = soul;
         _monsters = monsters;
         _bannersById = bannersById;
-        SoulNatureIds = soulNatureIds;
+        SoulNatures = soulNatures;
         _bannersByTier = new ReadOnlyDictionary<SoulBannerTier, SoulBannerDefinition>(
             bannersById.Values.ToDictionary(item => item.Tier));
     }
 
     public PlayerDefinition Player { get; }
     public SoulDefinition Soul { get; }
-    public IReadOnlySet<string> SoulNatureIds { get; }
+    public SoulNatureDefinitions SoulNatures { get; }
     public IEnumerable<MonsterDefinition> Monsters => _monsters.Values;
     public IEnumerable<SoulBannerDefinition> SoulBanners => _bannersById.Values;
 
@@ -101,11 +101,11 @@ public static class GameDefinitionLoader
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(directory);
         var player = ParsePlayer(ReadRoot(directory, "player.json"));
-        var soulNatureIds = ParseStableIds(ReadRoot(directory, "soulNatures.json"), "natures");
-        var monsters = ParseMonsters(ReadRoot(directory, "monsters.json"), soulNatureIds);
+        var soulNatures = SoulNatureDefinitionLoader.Load(Path.Combine(directory, "soulNatures.json"));
+        var monsters = ParseMonsters(ReadRoot(directory, "monsters.json"), soulNatures.Natures.Keys.ToHashSet(StringComparer.Ordinal));
         var soul = ParseSoul(ReadRoot(directory, "soul.json"));
         var banners = ParseBanners(ReadRoot(directory, "soulBanner.json"));
-        return new GameDefinitions(player, soul, monsters, banners, soulNatureIds);
+        return new GameDefinitions(player, soul, monsters, banners, soulNatures);
     }
 
     private static JsonElement ReadRoot(string directory, string filename)

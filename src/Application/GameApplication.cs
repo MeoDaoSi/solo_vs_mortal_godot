@@ -24,5 +24,7 @@ public sealed class GameApplication
         _session.State.Stage,
         _session.ElapsedSeconds,
         _session.Definitions.Monsters.Count(),
-        _session.Definitions.SoulBanners.Count());
+        _session.Definitions.SoulBanners.Count(),
+        _session.Definitions.SoulNatures.Natures.Count,
+        _session.Definitions.SoulNatures.Capabilities.Count);
 }
