@@ -61,7 +61,8 @@ public sealed class GameDefinitions
         SoulNatureDefinitions soulNatures,
         AssetDefinitions assets,
         CharacterAnimationDefinitions characterAnimations,
-        IReadOnlyDictionary<string, MapDefinition> maps)
+        IReadOnlyDictionary<string, MapDefinition> maps,
+        WorldMapDefinitions worldMap)
     {
         Player = player;
         Soul = soul;
@@ -71,6 +72,7 @@ public sealed class GameDefinitions
         Assets = assets;
         CharacterAnimations = characterAnimations;
         Maps = maps;
+        WorldMap = worldMap;
         _bannersByTier = new ReadOnlyDictionary<SoulBannerTier, SoulBannerDefinition>(
             bannersById.Values.ToDictionary(item => item.Tier));
     }
@@ -81,6 +83,7 @@ public sealed class GameDefinitions
     public AssetDefinitions Assets { get; }
     public CharacterAnimationDefinitions CharacterAnimations { get; }
     public IReadOnlyDictionary<string, MapDefinition> Maps { get; }
+    public WorldMapDefinitions WorldMap { get; }
     public IEnumerable<MonsterDefinition> Monsters => _monsters.Values;
     public IEnumerable<SoulBannerDefinition> SoulBanners => _bannersById.Values;
 
@@ -89,7 +92,8 @@ public sealed class GameDefinitions
     public SoulBannerDefinition SoulBanner(SoulBannerTier tier) => Lookup(_bannersByTier, tier, "Soul Banner tier");
     public SoulBannerDefinition StarterSoulBanner => SoulBanner(SoulBannerTier.NhapMon);
     public MapDefinition Map(string id) => Lookup(Maps, id, "map");
-    public MapDefinition DefaultMap => Map("desert");
+    public RegionDefinition StarterRegion => WorldMap.Region(WorldMap.StarterRegionId);
+    public MapDefinition DefaultMap => Map(StarterRegion.MapContentId);
 
     private static TValue Lookup<TKey, TValue>(IReadOnlyDictionary<TKey, TValue> source, TKey key, string label)
         where TKey : notnull => source.TryGetValue(key, out var value)
@@ -119,9 +123,18 @@ public static class GameDefinitionLoader
         var assets = AssetDefinitionLoader.Load(Path.GetFullPath(Path.Combine(directory, "..", "asset-manifest.json")));
         var animations = CharacterAnimationDefinitionLoader.Load(Path.Combine(directory, "characterAnimations.json"));
         ValidateAnimationReferences(monsters, animations, assets);
-        var defaultMap = MapDefinitionLoader.Load(Path.Combine(directory, "desert.json"), assets, soulNatures);
-        var maps = new ReadOnlyDictionary<string, MapDefinition>(new Dictionary<string, MapDefinition>(StringComparer.Ordinal) { [defaultMap.Id] = defaultMap });
-        return new GameDefinitions(player, soul, monsters, banners, soulNatures, assets, animations, maps);
+        var worldMap = WorldMapDefinitionLoader.Load(Path.Combine(directory, "worldMap.json"));
+        var maps = new Dictionary<string, MapDefinition>(StringComparer.Ordinal);
+        foreach (var region in worldMap.Regions.Values)
+        {
+            if (region.MapDefinitionFile is null) continue;
+            var mapPath = Path.Combine(directory, region.MapDefinitionFile.Replace('/', Path.DirectorySeparatorChar));
+            var map = MapDefinitionLoader.Load(mapPath, assets, soulNatures);
+            if (!string.Equals(map.Id, region.MapContentId, StringComparison.Ordinal)) throw new DefinitionException($"Region '{region.Id}' map content '{region.MapContentId}' does not match map definition '{map.Id}'.");
+            if (!maps.TryAdd(map.Id, map)) throw new DefinitionException($"Duplicate map content ID '{map.Id}'.");
+        }
+        if (!maps.ContainsKey(worldMap.Region(worldMap.StarterRegionId).MapContentId)) throw new DefinitionException("Starter region map content is missing.");
+        return new GameDefinitions(player, soul, monsters, banners, soulNatures, assets, animations, new ReadOnlyDictionary<string, MapDefinition>(maps), worldMap);
     }
 
     private static void ValidateAnimationReferences(

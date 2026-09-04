@@ -15,8 +15,10 @@ public sealed record MonsterSpawnOptions(int? Rank = null, int? Level = null, Ve
 public sealed class MonsterSystem
 {
     private readonly Dictionary<string, MonsterState> _monsters = new(StringComparer.Ordinal);
-    private readonly EventBus _events; private readonly UidGenerator _uids; private readonly SeededRng _rng; private readonly GameDefinitions _definitions; private readonly SpawnArea _spawnArea;
+    private readonly EventBus _events; private readonly UidGenerator _uids; private readonly SeededRng _rng; private readonly GameDefinitions _definitions; private SpawnArea _spawnArea;
     public MonsterSystem(EventBus events, UidGenerator uids, SeededRng rng, GameDefinitions definitions, SpawnArea spawnArea) { _events = events; _uids = uids; _rng = rng; _definitions = definitions; _spawnArea = spawnArea; }
+
+    public void SetSpawnArea(SpawnArea spawnArea) => _spawnArea = spawnArea;
 
     public MonsterState Spawn(string definitionId, MonsterSpawnOptions? options = null)
     {

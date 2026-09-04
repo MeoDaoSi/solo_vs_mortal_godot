@@ -1,0 +1,7 @@
+MagicMirror.png
+Source: https://opengameart.org/content/magic-mirrorportal-pixel-sprite
+Author: That One Annoying Pub Player
+License: CC0 1.0 Universal
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The original source states that credit is appreciated but not required.

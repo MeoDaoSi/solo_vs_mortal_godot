@@ -57,6 +57,10 @@ public sealed class GameApplication
     public string? ActivePossessionSoulId => _session.Possession.ActiveSoulId;
     public double PossessionRemainingSeconds() => _session.Possession.RemainingSeconds;
     public IReadOnlyList<InventoryItem> Inventory() => _session.Progression.InventorySnapshot();
+    public string? CurrentMapBackgroundAssetId() => _session.World.CurrentMap.BackgroundAssetId;
+    public IReadOnlyList<WorldMapRegionSnapshot> WorldMapRegions() => _session.WorldMap.Regions.Select(BuildRegionSnapshot).ToArray();
+    public WorldMapRegionSnapshot? RegionDetails(string regionId) => _session.WorldMap.Regions.FirstOrDefault(region => region.Id == regionId) is { } region ? BuildRegionSnapshot(region) : null;
+    public RegionTravelResult TravelToRegion(string regionId) => _session.TravelToRegion(regionId);
     public IReadOnlyList<SoulLinkView> SoulLinks()
     {
         var banner = _session.SoulBanners.Starter();
@@ -80,7 +84,9 @@ public sealed class GameApplication
             return new SoulLinkView(soul.Id, soul.Origin.DisplayName, linked ? banner!.Id : null, state, cost, runtime.Stability, canSummon, canPossess, canDevour);
         }).ToArray();
     }
-    public IReadOnlyList<WorldObjectSnapshot> WorldObjects() => _session.Definitions.DefaultMap.Objects.Values.Select(item => new WorldObjectSnapshot(item.Id, item.Type, item.AssetId, item.Position, item.Blocking, _session.World.IsDestroyed(item.Id))).ToArray();
+    public IReadOnlyList<WorldObjectSnapshot> WorldObjects() => _session.World.CurrentMap.Objects.Values
+        .Select(item => new WorldObjectSnapshot(item.Id, item.Type, item.AssetId, item.Position, item.Blocking, _session.World.IsDestroyed(item.Id), item.ZoneId, item.PresentationScale, _session.World.CurrentMap.Layers[item.LayerId].ZIndex))
+        .ToArray();
     public AssetSnapshot Asset(string logicalId) { var asset = _session.Definitions.Assets.Get(logicalId); return new(asset.Id, asset.File, asset.FrameWidth, asset.FrameHeight); }
     public AnimationClipSnapshot MonsterAnimation(string speciesId, int rank, string actionId)
     {
@@ -107,7 +113,7 @@ public sealed class GameApplication
         _session.Summons.DispersedSnapshot().Select(item => new SoulRuntimeSaveData(item.SoulId, item.RecoverySeconds, item.RecoveryDurationSeconds)).ToArray(),
         new(_session.Essence.Snapshot()), new(_session.Bloodline.Snapshot()),
         _session.Possession.Snapshot() is { } possession ? new(possession.SoulId, possession.ProfileId, possession.RemainingSeconds) : null,
-        new(_session.World.DestroyedObjectIds()));
+        new(_session.World.DestroyedObjectIds(), _session.WorldMap.CurrentRegionId));
 
     public string CaptureSaveJson() => GameSaveCodec.Serialize(CaptureSave());
     public void RestoreSaveJson(string json) => RestoreSave(GameSaveCodec.Deserialize(json));
@@ -136,6 +142,8 @@ public sealed class GameApplication
         }
         if (_session.SoulBanners.Banners().Count == 0) _session.SoulBanners.CreateStarter();
         _session.Possession.Restore(save.Possession is null ? null : new PossessionSaveData(save.Possession.SoulId, save.Possession.ProfileId, save.Possession.RemainingSeconds));
+        if (save.World?.CurrentRegionId is { } savedRegionId && !string.Equals(savedRegionId, _session.WorldMap.CurrentRegionId, StringComparison.Ordinal))
+            _ = _session.TravelToRegion(savedRegionId);
         _session.World.Restore(save.World?.DestroyedObjectIds); _session.Player.SetColliders(_session.World.BlockingRects());
     }
 
@@ -171,12 +179,37 @@ public sealed class GameApplication
         _session.Definitions.SoulBanners.Count(),
         _session.Definitions.SoulNatures.Natures.Count,
         _session.Definitions.SoulNatures.Capabilities.Count,
-        new WorldSnapshot(_session.Definitions.DefaultMap.Width, _session.Definitions.DefaultMap.Height, _session.World.BlockingRects()),
+        new WorldSnapshot(_session.World.CurrentMap.Width, _session.World.CurrentMap.Height, _session.World.BlockingRects()),
         new PlayerSnapshot(_session.Player.State.Uid, _session.Player.State.Position, _session.Player.State.CurrentHp, _session.Player.State.MaxHp, _session.Player.State.Alive, _session.Player.State.Level, _session.Player.State.Xp, _session.Player.State.Rank, _session.Player.State.Stats.Atk, _session.Player.State.Stats.Def, _session.Player.State.Stats.Speed),
         _session.Monsters.AliveMonsters().Select(monster => new MonsterSnapshot(monster.Uid, monster.DefinitionId, monster.SpeciesId, monster.Position, monster.CurrentHp, monster.MaxHp, monster.Alive, monster.AiState, monster.Level, monster.Rank)).ToArray(),
         _session.Allies.AliveAllies().Select(ally => new AllySnapshot(ally.Uid, ally.DefinitionId, ally.SpeciesId, ally.DisplayName, ally.SourceSoulId, ally.Position, ally.CurrentHp, ally.MaxHp, ally.AiState, ally.Level, ally.Rank)).ToArray(),
         _session.Progression.InventorySnapshot().Select(item => new InventoryItemSnapshot(item.StableId, item.Count)).ToArray(),
         _session.Souls.WorldSouls().Select(soul => new WorldSoulSnapshot(soul.Id, soul.SoulNatureId, soul.Position, soul.Origin.Rank, soul.Origin.SpeciesId)).ToArray(),
         _session.Souls.OwnedSouls().Select(soul => new OwnedSoulSnapshot(soul.Id, soul.SoulNatureId, _session.Definitions.SoulNatures.Natures[soul.SoulNatureId].DisplayName, soul.Level, soul.Xp, soul.Origin.Rank, soul.Origin.SpeciesId)).ToArray(),
-        _session.SoulBanners.Banners().Select(banner => new SoulBannerSnapshot(banner.Id, banner.Tier, banner.Level, banner.BoundSoulIds.ToArray(), _session.SoulBanners.UsedCapacity(banner), banner.Computed.SlotLimit, banner.Computed.CapacityLimit, banner.Computed.ActiveLimit)).ToArray());
+        _session.SoulBanners.Banners().Select(banner => new SoulBannerSnapshot(banner.Id, banner.Tier, banner.Level, banner.BoundSoulIds.ToArray(), _session.SoulBanners.UsedCapacity(banner), banner.Computed.SlotLimit, banner.Computed.CapacityLimit, banner.Computed.ActiveLimit)).ToArray(),
+        _session.WorldMap.CurrentRegionId);
+
+    private WorldMapRegionSnapshot BuildRegionSnapshot(RegionDefinition region)
+    {
+        var preview = _session.WorldMap.PreviewTravel(region.Id);
+        return new WorldMapRegionSnapshot(
+            region.Id,
+            region.DisplayName,
+            region.ShortDescription,
+            region.Story,
+            region.MapContentId,
+            region.ScenePath,
+            region.WorldMapPosition,
+            region.WorldMapRadius,
+            region.Biome,
+            region.StarterCandidate,
+            string.Equals(region.Id, _session.WorldMap.CurrentRegionId, StringComparison.Ordinal),
+            region.Available,
+            _session.Definitions.Maps.ContainsKey(region.MapContentId),
+            preview.Success,
+            region.RecommendedLevelRange?.Minimum,
+            region.RecommendedLevelRange?.Maximum,
+            region.TravelConditionIds,
+            region.Tags);
+    }
 }

@@ -54,7 +54,13 @@ var definitions = GameDefinitionLoader.LoadFromDirectory(Path.Combine(projectRoo
 Equal(definitions.Monsters.Count(), 3, "Monster definition count");
 Equal(definitions.SoulBanners.Count(), 3, "Soul Banner definition count");
 Equal(definitions.SoulNatures.Natures.Count, 3, "Soul Nature definition count");
+<<<<<<< ours
 Equal(definitions.Maps.Count, 1, "Map definition count");
+=======
+Equal(definitions.Maps.Count, 2, "Map definition count");
+Equal(definitions.WorldMap.Regions.Count, 5, "World map region count");
+Equal(definitions.WorldMap.StarterRegionId, "desert", "Configured starter region");
+>>>>>>> theirs
 
 CheckPlayerMonsterCombatParity();
 CheckProgressionAndModifierParity();
@@ -62,6 +68,10 @@ CheckSoulAndBannerParity();
 CheckAdvancedSoulAndWorldParity();
 CheckSaveMigrationAndReplayParity();
 CheckDevourParity();
+<<<<<<< ours
+=======
+CheckWorldMapParity();
+>>>>>>> theirs
 
 if (args.Length > 0)
 {
@@ -366,3 +376,65 @@ void CheckDevourParity()
     Equal(session.Essence.Count("STONE_ESSENCE"), 1, "Devour grants Essence contribution");
     Equal(session.Devouring.Execute(soul.Id, DevourMode.Essence).Failure, DevourFailure.SoulNotFound, "Devour rejects missing Soul");
 }
+<<<<<<< ours
+=======
+
+void CheckWorldMapParity()
+{
+    using var session = new GameSession(definitions, 99);
+    session.Start();
+    var application = new GameApplication(session);
+    Equal(session.WorldMap.CurrentRegionId, "desert", "Initial current region from bootstrap data");
+    Equal(application.WorldMapRegions().Count, 5, "World map query returns all regions");
+    var current = application.RegionDetails("desert");
+    Equal(current?.IsCurrent, true, "World map current-region marker");
+    if (string.IsNullOrWhiteSpace(current?.Story)) failures.Add("Current region story is empty.");
+
+    var unavailable = application.RegionDetails("forest");
+    Equal(unavailable?.IsAvailable, false, "Unavailable region state");
+    Equal(application.TravelToRegion("forest").Failure, RegionTravelFailure.RegionUnavailable, "Unavailable region travel rejection");
+    Equal(application.TravelToRegion("missing-region").Failure, RegionTravelFailure.RegionNotFound, "Invalid region ID rejection");
+
+    session.SpawnMonster("mon_skeleton", 1, new Vec2(700, 240));
+    var travel = application.TravelToRegion("volcano");
+    Equal(travel.Success, true, "Valid region travel");
+    Equal(session.WorldMap.CurrentRegionId, "volcano", "Current region updates after travel");
+    Equal(session.World.CurrentMap.Id, "volcano", "World interaction map updates after travel");
+    Equal(session.Monsters.AliveMonsters().Count, 0, "Previous map monsters are cleared on travel");
+    Equal(session.Player.State.Position, new Vec2(384, 256), "Configured destination spawn");
+    var volcanoMonster = session.SpawnMonster("mon_skeleton", 1);
+    if (volcanoMonster.Position.X < 0 || volcanoMonster.Position.X > session.World.CurrentMap.Width || volcanoMonster.Position.Y < 0 || volcanoMonster.Position.Y > session.World.CurrentMap.Height)
+        failures.Add("Monster random spawn escaped the active map bounds.");
+    session.SetInput(new Vec2(1, 0), false); session.Tick(10);
+    if (session.Player.State.Position.X > session.World.CurrentMap.Width || session.Player.State.Position.Y > session.World.CurrentMap.Height)
+        failures.Add("Player movement escaped the active map bounds.");
+    var volcanoSave = application.CaptureSaveJson();
+    using (var restored = new GameSession(definitions, 100))
+    {
+        restored.Start();
+        new GameApplication(restored).RestoreSaveJson(volcanoSave);
+        Equal(restored.WorldMap.CurrentRegionId, "volcano", "Save restores current region");
+        Equal(restored.World.CurrentMap.Id, "volcano", "Save restores active map content");
+    }
+
+    var returnTravel = application.TravelToRegion("desert");
+    Equal(returnTravel.Success, true, "Return travel to starter region");
+    Equal(session.WorldMap.CurrentRegionId, "desert", "Current region updates on return");
+    Equal(session.Player.State.Position, new Vec2(560, 240), "Configured starter spawn");
+    var savedAfterTravel = application.CaptureSave();
+    Equal(savedAfterTravel.World?.CurrentRegionId, "desert", "Save captures current region");
+
+    var desert = definitions.Map("desert");
+    Equal(desert.Zones.Count, 5, "Desert authored zone count");
+    Equal(desert.PlacementRules.Count, 4, "Desert placement rule count");
+    foreach (var spawn in desert.SpawnPoints)
+        if (desert.BlockedObjectIds.Any(id =>
+            desert.Objects[id].Collision is { } collision &&
+            new Rect(desert.Objects[id].Position.X + collision.OffsetX, desert.Objects[id].Position.Y + collision.OffsetY, collision.Width, collision.Height)
+                .OverlapsCircle(spawn.Position.X, spawn.Position.Y, desert.SpawnSafetyRadius)))
+            failures.Add($"Spawn '{spawn.Id}' overlaps a blocking object safety radius.");
+    foreach (var exit in desert.Exits)
+        if (exit.TriggerArea.X < 0 || exit.TriggerArea.Y < 0 || exit.TriggerArea.X + exit.TriggerArea.Width > desert.Width || exit.TriggerArea.Y + exit.TriggerArea.Height > desert.Height)
+            failures.Add($"Exit '{exit.Id}' lies outside the Desert bounds.");
+}
+>>>>>>> theirs

@@ -22,7 +22,8 @@ public sealed class GameSession : IDisposable
         Events = new EventBus();
         var uids = new UidGenerator();
         var rng = new SeededRng(seed);
-        var map = definitions.DefaultMap; var playerSpawn = new Vec2(480, 280);
+        WorldMap = new WorldMapSystem(definitions);
+        var map = WorldMap.CurrentMap; var playerSpawn = map.Spawn(WorldMap.CurrentRegion.DefaultSpawnId).Position;
         Player = new PlayerSystem(Events, uids, definitions.Player, playerSpawn, new PlayerBounds(map.Width, map.Height));
         Monsters = new MonsterSystem(Events, uids, rng, definitions, new SpawnArea(0, 0, map.Width, map.Height));
         Combat = new CombatSystem(Events, Player, Monsters);
@@ -37,7 +38,7 @@ public sealed class GameSession : IDisposable
         Bloodline = new BloodlineSystem(Events, definitions.SoulNatures, PlayerModifiers);
         Capabilities = new CapabilitySystem();
         Possession = new PossessionSystem(Events, definitions.SoulNatures, Souls, SoulBanners, Summons, PlayerModifiers, Capabilities);
-        World = new WorldInteractionSystem(Events, definitions.DefaultMap, Capabilities);
+        World = new WorldInteractionSystem(Events, map, Capabilities);
         Devouring = new DevourSystem(Events, definitions, Souls, SoulBanners, Summons, Essence, Bloodline, Progression.AddPlayerXp);
         Player.SetColliders(World.BlockingRects());
         _worldSubscription = Events.Subscribe<Simulation.Events.WorldObjectDestroyedEvent>(_ => Player.SetColliders(World.BlockingRects()));
@@ -45,6 +46,7 @@ public sealed class GameSession : IDisposable
 
     public GameSessionState State { get; } = new();
     public GameDefinitions Definitions { get; }
+    public WorldMapSystem WorldMap { get; }
     public EventBus Events { get; }
     public PlayerSystem Player { get; }
     public MonsterSystem Monsters { get; }
@@ -88,5 +90,22 @@ public sealed class GameSession : IDisposable
 
     public void SetInput(Vec2 move, bool attackPressed) { _moveInput = move; _attackPressed = attackPressed; }
     public MonsterState SpawnMonster(string definitionId, int? level = null, Vec2? position = null) => Monsters.Spawn(definitionId, new MonsterSpawnOptions(Level: level, Position: position));
+    public RegionTravelResult TravelToRegion(string regionId)
+    {
+        var previousRegionId = WorldMap.CurrentRegionId;
+        var result = WorldMap.TravelTo(regionId);
+        if (!result.Success || result.EntrySpawn is null) return result;
+        if (!string.Equals(previousRegionId, WorldMap.CurrentRegionId, StringComparison.Ordinal))
+        {
+            World.SetMap(WorldMap.CurrentMap);
+            Monsters.Clear();
+            Monsters.SetSpawnArea(new SpawnArea(0, 0, WorldMap.CurrentMap.Width, WorldMap.CurrentMap.Height));
+            Summons.ClearActiveForMapChange();
+            Player.SetBounds(new PlayerBounds(WorldMap.CurrentMap.Width, WorldMap.CurrentMap.Height));
+            Player.SetColliders(World.BlockingRects());
+        }
+        Player.SetPosition(result.EntrySpawn.Position);
+        return result;
+    }
     public void Dispose() { _worldSubscription.Dispose(); Summons.Dispose(); Progression.Dispose(); Souls.Dispose(); Combat.Dispose(); }
 }

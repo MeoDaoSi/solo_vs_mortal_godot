@@ -5,6 +5,10 @@ public readonly record struct Rect(double X, double Y, double Width, double Heig
     public bool Contains(double x, double y) =>
         x >= X && y >= Y && x <= X + Width && y <= Y + Height;
 
+    public bool Overlaps(Rect other) =>
+        X < other.X + other.Width && X + Width > other.X &&
+        Y < other.Y + other.Height && Y + Height > other.Y;
+
     public bool OverlapsCircle(double x, double y, double radius)
     {
         var closestX = System.Math.Max(X, System.Math.Min(x, X + Width));

@@ -237,6 +237,13 @@
                        "file":  "images/map/desert/PNG/lake.png"
                    },
                    {
+                       "id":  "map.desert.portal",
+                       "type":  "spritesheet",
+                       "file":  "third_party/cc0-portal/MagicMirror.png",
+                       "frameWidth":  30,
+                       "frameHeight":  30
+                   },
+                   {
                        "id":  "map.desert.building.01",
                        "type":  "image",
                        "file":  "images/map/desert/PNG/building_1.png"

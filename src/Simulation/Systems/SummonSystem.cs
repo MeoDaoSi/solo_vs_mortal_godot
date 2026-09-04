@@ -57,6 +57,11 @@ public sealed class SummonSystem : IDisposable
     }
 
     public int ActiveCount => _summonBySoul.Count;
+    public void ClearActiveForMapChange()
+    {
+        foreach (var uid in _soulBySummon.Keys.ToArray()) _allies.Remove(uid);
+        _summonBySoul.Clear(); _soulBySummon.Clear(); _bannerBySoul.Clear();
+    }
     public IReadOnlyList<DispersedSoulSaveData> DispersedSnapshot() => _recovery.Select(entry => new DispersedSoulSaveData(entry.Key, entry.Value, _recoveryDuration.GetValueOrDefault(entry.Key, _definitions.Soul.Summon.StabilityRecoverySeconds))).ToArray();
     public void RestoreDispersed(IEnumerable<DispersedSoulSaveData>? snapshot)
     {

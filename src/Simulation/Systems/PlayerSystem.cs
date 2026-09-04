@@ -14,7 +14,7 @@ public sealed class PlayerSystem
 {
     public const double BodyRadius = 12;
     private readonly EventBus _events;
-    private readonly PlayerBounds _bounds;
+    private PlayerBounds _bounds;
     private IReadOnlyList<Rect> _colliders;
 
     public PlayerSystem(EventBus events, UidGenerator uids, PlayerDefinition definition, Vec2 start, PlayerBounds bounds, IReadOnlyList<Rect>? colliders = null)
@@ -28,6 +28,13 @@ public sealed class PlayerSystem
 
     public PlayerState State { get; }
     public void SetColliders(IReadOnlyList<Rect> colliders) => _colliders = colliders ?? throw new ArgumentNullException(nameof(colliders));
+    public void SetBounds(PlayerBounds bounds)
+    {
+        if (bounds.Width <= 0 || bounds.Height <= 0) throw new ArgumentOutOfRangeException(nameof(bounds));
+        _bounds = bounds;
+        SetPosition(State.Position);
+    }
+    public void SetPosition(Vec2 position) => State.Position = new Vec2(Vec2.Clamp(position.X, 0, _bounds.Width), Vec2.Clamp(position.Y, 0, _bounds.Height));
 
     public void Update(double deltaSeconds, Vec2 input)
     {

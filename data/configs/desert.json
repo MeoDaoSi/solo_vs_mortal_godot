@@ -2,13 +2,27 @@
   "id": "desert",
   "displayName": "Sa Mạc Hoang Vu",
   "type": "outdoor",
-  "worldPosition": { "col": 0, "row": 1 },
-  "dimensions": { "width": 1536, "height": 768 },
+  "worldPosition": {
+    "col": 0,
+    "row": 1
+  },
+  "dimensions": {
+    "width": 1536,
+    "height": 768
+  },
   "tileSize": 256,
   "cameraSettings": {
-    "bounds": { "x": 0, "y": 0, "width": 1536, "height": 768 },
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1536,
+      "height": 768
+    },
     "defaultZoom": 1,
-    "followOffset": { "x": 0, "y": -16 }
+    "followOffset": {
+      "x": 0,
+      "y": -16
+    }
   },
   "assets": {
     "background": "map.desert.background",
@@ -81,6 +95,7 @@
       "map.desert.greenery.09",
       "map.desert.greenery.10",
       "map.desert.lake",
+      "map.desert.portal",
       "map.desert.road.01",
       "map.desert.road.02",
       "map.desert.road.03",
@@ -88,145 +103,2083 @@
       "map.desert.road.05",
       "map.desert.road.06",
       "map.desert.road.07",
-      "map.desert.road.08"
+      "map.desert.road.08",
+      "map.desert.road.09",
+      "map.desert.road.10",
+      "map.desert.road.11",
+      "map.desert.road.12",
+      "map.desert.road.13",
+      "map.desert.road.14",
+      "map.desert.road.15",
+      "map.desert.road.16",
+      "map.desert.road.17",
+      "map.desert.road.18",
+      "map.desert.road.19",
+      "map.desert.road.20",
+      "map.desert.road.21",
+      "map.desert.road.22",
+      "map.desert.road.23",
+      "map.desert.road.24",
+      "map.desert.road.25",
+      "map.desert.road.26"
     ]
   },
   "layers": [
-    { "id": "ground", "type": "tile", "zIndex": 0, "tiles": [
-      { "x": 0, "y": 0, "assetKey": "map.desert.terrain.land01" },
-      { "x": 256, "y": 0, "assetKey": "map.desert.terrain.land02" },
-      { "x": 512, "y": 0, "assetKey": "map.desert.terrain.land03" },
-      { "x": 768, "y": 0, "assetKey": "map.desert.terrain.land04" },
-      { "x": 1024, "y": 0, "assetKey": "map.desert.terrain.land05" },
-      { "x": 1280, "y": 0, "assetKey": "map.desert.terrain.land06" },
-      { "x": 0, "y": 256, "assetKey": "map.desert.terrain.land07" },
-      { "x": 256, "y": 256, "assetKey": "map.desert.terrain.land08" },
-      { "x": 512, "y": 256, "assetKey": "map.desert.terrain.land09" },
-      { "x": 768, "y": 256, "assetKey": "map.desert.terrain.land10" },
-      { "x": 1024, "y": 256, "assetKey": "map.desert.terrain.land11" },
-      { "x": 1280, "y": 256, "assetKey": "map.desert.terrain.land12" },
-      { "x": 0, "y": 512, "assetKey": "map.desert.terrain.land13" },
-      { "x": 256, "y": 512, "assetKey": "map.desert.terrain.land14" },
-      { "x": 512, "y": 512, "assetKey": "map.desert.terrain.land15" },
-      { "x": 768, "y": 512, "assetKey": "map.desert.terrain.land16" },
-      { "x": 1024, "y": 512, "assetKey": "map.desert.terrain.land17" },
-      { "x": 1280, "y": 512, "assetKey": "map.desert.terrain.land18" }
-    ] },
-    { "id": "objects", "type": "object", "zIndex": 1 },
-    { "id": "decor", "type": "object", "zIndex": 2 }
+    {
+      "id": "ground",
+      "type": "tile",
+      "zIndex": 0,
+      "tiles": [
+        {
+          "x": 0,
+          "y": 0,
+          "assetKey": "map.desert.terrain.land01"
+        },
+        {
+          "x": 256,
+          "y": 0,
+          "assetKey": "map.desert.terrain.land02"
+        },
+        {
+          "x": 512,
+          "y": 0,
+          "assetKey": "map.desert.terrain.land03"
+        },
+        {
+          "x": 768,
+          "y": 0,
+          "assetKey": "map.desert.terrain.land04"
+        },
+        {
+          "x": 1024,
+          "y": 0,
+          "assetKey": "map.desert.terrain.land05"
+        },
+        {
+          "x": 1280,
+          "y": 0,
+          "assetKey": "map.desert.terrain.land06"
+        },
+        {
+          "x": 0,
+          "y": 256,
+          "assetKey": "map.desert.terrain.land07"
+        },
+        {
+          "x": 256,
+          "y": 256,
+          "assetKey": "map.desert.terrain.land08"
+        },
+        {
+          "x": 512,
+          "y": 256,
+          "assetKey": "map.desert.terrain.land09"
+        },
+        {
+          "x": 768,
+          "y": 256,
+          "assetKey": "map.desert.terrain.land10"
+        },
+        {
+          "x": 1024,
+          "y": 256,
+          "assetKey": "map.desert.terrain.land11"
+        },
+        {
+          "x": 1280,
+          "y": 256,
+          "assetKey": "map.desert.terrain.land12"
+        },
+        {
+          "x": 0,
+          "y": 512,
+          "assetKey": "map.desert.terrain.land13"
+        },
+        {
+          "x": 256,
+          "y": 512,
+          "assetKey": "map.desert.terrain.land14"
+        },
+        {
+          "x": 512,
+          "y": 512,
+          "assetKey": "map.desert.terrain.land15"
+        },
+        {
+          "x": 768,
+          "y": 512,
+          "assetKey": "map.desert.terrain.land16"
+        },
+        {
+          "x": 1024,
+          "y": 512,
+          "assetKey": "map.desert.terrain.land17"
+        },
+        {
+          "x": 1280,
+          "y": 512,
+          "assetKey": "map.desert.terrain.land18"
+        }
+      ]
+    },
+    {
+      "id": "paths",
+      "type": "object",
+      "zIndex": 1
+    },
+    {
+      "id": "objects",
+      "type": "object",
+      "zIndex": 2
+    }
   ],
+  "zones": [
+    {
+      "id": "starting_area",
+      "type": "safe",
+      "bounds": {
+        "x": 620,
+        "y": 570,
+        "width": 300,
+        "height": 198
+      },
+      "placementRuleIds": [
+        "safe_clear"
+      ]
+    },
+    {
+      "id": "oasis",
+      "type": "safe",
+      "bounds": {
+        "x": 100,
+        "y": 190,
+        "width": 360,
+        "height": 240
+      },
+      "placementRuleIds": [
+        "safe_clear"
+      ]
+    },
+    {
+      "id": "northern_ruins",
+      "type": "landmark",
+      "bounds": {
+        "x": 330,
+        "y": 70,
+        "width": 390,
+        "height": 190
+      },
+      "placementRuleIds": [
+        "landmark_cluster"
+      ]
+    },
+    {
+      "id": "ancient_ruins",
+      "type": "landmark",
+      "bounds": {
+        "x": 150,
+        "y": 420,
+        "width": 360,
+        "height": 240
+      },
+      "placementRuleIds": [
+        "landmark_cluster"
+      ]
+    },
+    {
+      "id": "central_dunes",
+      "type": "combat",
+      "bounds": {
+        "x": 500,
+        "y": 250,
+        "width": 490,
+        "height": 310
+      },
+      "placementRuleIds": [
+        "combat_open"
+      ]
+    },
+    {
+      "id": "rocky_highland",
+      "type": "combat",
+      "bounds": {
+        "x": 900,
+        "y": 70,
+        "width": 420,
+        "height": 210
+      },
+      "placementRuleIds": [
+        "combat_open"
+      ]
+    },
+    {
+      "id": "bandit_camp",
+      "type": "combat",
+      "bounds": {
+        "x": 1040,
+        "y": 270,
+        "width": 390,
+        "height": 250
+      },
+      "placementRuleIds": [
+        "landmark_cluster"
+      ]
+    },
+    {
+      "id": "eastern_wastes",
+      "type": "combat",
+      "bounds": {
+        "x": 1010,
+        "y": 500,
+        "width": 420,
+        "height": 230
+      },
+      "placementRuleIds": [
+        "combat_open"
+      ]
+    },
+    {
+      "id": "sand_canyon",
+      "type": "boundary",
+      "bounds": {
+        "x": 0,
+        "y": 470,
+        "width": 290,
+        "height": 298
+      },
+      "placementRuleIds": [
+        "boundary_spacing"
+      ]
+    }
+  ],
+  "placementRules": [
+    {
+      "id": "safe_clear",
+      "category": "safe",
+      "minimumSpacing": 20,
+      "spawnClearance": 96
+    },
+    {
+      "id": "combat_open",
+      "category": "combat",
+      "minimumSpacing": 16,
+      "spawnClearance": 48
+    },
+    {
+      "id": "landmark_cluster",
+      "category": "landmark",
+      "minimumSpacing": 12,
+      "spawnClearance": 40
+    },
+    {
+      "id": "boundary_spacing",
+      "category": "boundary",
+      "minimumSpacing": 20,
+      "spawnClearance": 48
+    }
+  ],
+  "placementPolicy": {
+    "spawnSafetyRadius": 48
+  },
   "objects": [
-    { "id": "obj_building_1", "assetKey": "map.desert.building.01", "type": "building", "position": { "x": 130, "y": 262 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -100, "offsetY": -120, "width": 200, "height": 120 } },
-    { "id": "obj_building_2", "assetKey": "map.desert.building.02", "type": "building", "position": { "x": 1340, "y": 268 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -180, "offsetY": -100, "width": 360, "height": 100 } },
-    { "id": "obj_building_3", "assetKey": "map.desert.building.03", "type": "building", "position": { "x": 105, "y": 545 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -60, "offsetY": -80, "width": 120, "height": 80 } },
-    { "id": "obj_building_4", "assetKey": "map.desert.building.04", "type": "building", "position": { "x": 1400, "y": 610 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -80, "offsetY": -100, "width": 160, "height": 100 } },
-    { "id": "obj_building_5", "assetKey": "map.desert.building.05", "type": "building", "position": { "x": 1030, "y": 330 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -80, "offsetY": -100, "width": 160, "height": 100 } },
-    { "id": "obj_tree_1", "assetKey": "map.desert.tree.01", "type": "tree", "position": { "x": 395, "y": 190 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -30, "width": 48, "height": 30 } },
-    { "id": "obj_tree_2", "assetKey": "map.desert.tree.02", "type": "tree", "position": { "x": 705, "y": 205 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -30, "width": 48, "height": 30 } },
-    { "id": "obj_tree_3", "assetKey": "map.desert.tree.03", "type": "tree", "position": { "x": 465, "y": 520 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -30, "width": 48, "height": 30 } },
-    { "id": "obj_tree_4", "assetKey": "map.desert.tree.04", "type": "tree", "position": { "x": 1330, "y": 100 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -30, "width": 48, "height": 30 } },
-    { "id": "obj_tree_5", "assetKey": "map.desert.tree.05", "type": "tree", "position": { "x": 185, "y": 690 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -30, "width": 48, "height": 30 } },
-    { "id": "obj_tree_6", "assetKey": "map.desert.tree.06", "type": "tree", "position": { "x": 910, "y": 660 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -30, "width": 48, "height": 30 } },
-    { "id": "obj_tree_7", "assetKey": "map.desert.tree.07", "type": "tree", "position": { "x": 1185, "y": 650 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -30, "width": 48, "height": 30 } },
-    { "id": "obj_tree_8", "assetKey": "map.desert.tree.08", "type": "tree", "position": { "x": 640, "y": 95 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -30, "width": 48, "height": 30 } },
-    { "id": "obj_tree_9", "assetKey": "map.desert.tree.09", "type": "tree", "position": { "x": 860, "y": 110 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -30, "width": 48, "height": 30 } },
-    { "id": "obj_tree_10", "assetKey": "map.desert.tree.10", "type": "tree", "position": { "x": 540, "y": 135 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -30, "width": 48, "height": 30 } },
-    { "id": "obj_tree_11", "assetKey": "map.desert.tree.11", "type": "tree", "position": { "x": 1480, "y": 700 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -30, "width": 48, "height": 30 } },
-    { "id": "obj_tree_12", "assetKey": "map.desert.tree.12", "type": "tree", "position": { "x": 1095, "y": 540 }, "origin": { "x": 0.5, "y": 1 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -30, "width": 48, "height": 30 } },
-    { "id": "obj_stone_01", "assetKey": "map.desert.stones.01", "type": "stone", "position": { "x": 330, "y": 520 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -16, "width": 48, "height": 24 } },
-    { "id": "obj_stone_02", "assetKey": "map.desert.stones.02", "type": "stone", "position": { "x": 320, "y": 225 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -16, "width": 48, "height": 24 } },
-    { "id": "obj_stone_03", "assetKey": "map.desert.stones.03", "type": "stone", "position": { "x": 490, "y": 90 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -16, "width": 48, "height": 24 } },
-    { "id": "obj_stone_04", "assetKey": "map.desert.stones.04", "type": "stone", "position": { "x": 156, "y": 96 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -16, "width": 48, "height": 24 } },
-    { "id": "obj_stone_05", "assetKey": "map.desert.stones.05", "type": "stone", "position": { "x": 640, "y": 600 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -16, "width": 48, "height": 24 } },
-    { "id": "obj_stone_06", "assetKey": "map.desert.stones.06", "type": "stone", "position": { "x": 950, "y": 130 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -24, "offsetY": -16, "width": 48, "height": 24 } },
-    { "id": "obj_stone_07", "assetKey": "map.desert.stones.07", "type": "stone", "position": { "x": 1160, "y": 430 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -26, "offsetY": -20, "width": 52, "height": 28 } },
-    { "id": "obj_stone_08", "assetKey": "map.desert.stones.08", "type": "stone", "position": { "x": 1270, "y": 540 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -26, "offsetY": -20, "width": 52, "height": 28 } },
-    { "id": "obj_stone_09", "assetKey": "map.desert.stones.09", "type": "stone", "position": { "x": 1355, "y": 350 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -26, "offsetY": -20, "width": 52, "height": 28 } },
-    { "id": "obj_stone_10", "assetKey": "map.desert.stones.10", "type": "stone", "position": { "x": 600, "y": 520 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -70, "offsetY": -40, "width": 140, "height": 50 } },
-    { "id": "obj_stone_11", "assetKey": "map.desert.stones.11", "type": "stone", "position": { "x": 1120, "y": 120 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -100, "offsetY": -40, "width": 200, "height": 60 } },
-    { "id": "obj_stone_12", "assetKey": "map.desert.stones.12", "type": "stone", "position": { "x": 420, "y": 350 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -70, "offsetY": -40, "width": 140, "height": 50 } },
-    { "id": "obj_cracked_wall_01", "assetKey": "map.desert.stones.11", "type": "fragileWall", "position": { "x": 790, "y": 620 }, "origin": { "x": 0.5, "y": 0.5 }, "scale": 0.4, "layer": "objects", "blocking": true, "collision": { "shape": "rectangle", "offsetX": -70, "offsetY": -30, "width": 140, "height": 60 }, "interaction": { "id": "BREAK_CRACKED_WALL", "displayName": "Tường Đá Nứt", "requiredCapabilityId": "BREAK_FRAGILE_WALL", "interactionRadius": 100, "outcome": "DESTROY_OBJECT" } },
-    { "id": "obj_decor_1", "assetKey": "map.desert.decor.01", "type": "decor", "position": { "x": 600, "y": 300 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_decor_2", "assetKey": "map.desert.decor.02", "type": "decor", "position": { "x": 300, "y": 300 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_decor_3", "assetKey": "map.desert.decor.03", "type": "decor", "position": { "x": 680, "y": 460 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_decor_4", "assetKey": "map.desert.decor.04", "type": "decor", "position": { "x": 900, "y": 520 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_decor_5", "assetKey": "map.desert.decor.05", "type": "decor", "position": { "x": 1080, "y": 220 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_decor_6", "assetKey": "map.desert.decor.06", "type": "decor", "position": { "x": 1230, "y": 300 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_decor_7", "assetKey": "map.desert.decor.07", "type": "decor", "position": { "x": 820, "y": 200 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_decor_8", "assetKey": "map.desert.decor.08", "type": "decor", "position": { "x": 430, "y": 340 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_greenery_1", "assetKey": "map.desert.greenery.01", "type": "greenery", "position": { "x": 760, "y": 120 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_greenery_2", "assetKey": "map.desert.greenery.02", "type": "greenery", "position": { "x": 430, "y": 180 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_greenery_3", "assetKey": "map.desert.greenery.03", "type": "greenery", "position": { "x": 1180, "y": 150 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_greenery_4", "assetKey": "map.desert.greenery.04", "type": "greenery", "position": { "x": 1240, "y": 520 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_greenery_5", "assetKey": "map.desert.greenery.05", "type": "greenery", "position": { "x": 80, "y": 230 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_greenery_6", "assetKey": "map.desert.greenery.06", "type": "greenery", "position": { "x": 620, "y": 390 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_greenery_7", "assetKey": "map.desert.greenery.07", "type": "greenery", "position": { "x": 1250, "y": 420 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_greenery_8", "assetKey": "map.desert.greenery.08", "type": "greenery", "position": { "x": 960, "y": 120 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_greenery_9", "assetKey": "map.desert.greenery.09", "type": "greenery", "position": { "x": 1500, "y": 500 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_greenery_10", "assetKey": "map.desert.greenery.10", "type": "greenery", "position": { "x": 700, "y": 660 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_lake", "assetKey": "map.desert.lake", "type": "lake", "position": { "x": 1000, "y": 400 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "objects", "blocking": false },
-    { "id": "obj_road_1", "assetKey": "map.desert.road.01", "type": "road", "position": { "x": 500, "y": 236 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "decor", "blocking": false },
-    { "id": "obj_road_2", "assetKey": "map.desert.road.02", "type": "road", "position": { "x": 564, "y": 236 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "decor", "blocking": false },
-    { "id": "obj_road_3", "assetKey": "map.desert.road.03", "type": "road", "position": { "x": 628, "y": 236 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "decor", "blocking": false },
-    { "id": "obj_road_4", "assetKey": "map.desert.road.04", "type": "road", "position": { "x": 692, "y": 236 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "decor", "blocking": false },
-    { "id": "obj_road_5", "assetKey": "map.desert.road.05", "type": "road", "position": { "x": 500, "y": 300 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "decor", "blocking": false },
-    { "id": "obj_road_6", "assetKey": "map.desert.road.06", "type": "road", "position": { "x": 500, "y": 364 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "decor", "blocking": false },
-    { "id": "obj_road_7", "assetKey": "map.desert.road.07", "type": "road", "position": { "x": 628, "y": 300 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "decor", "blocking": false },
-    { "id": "obj_road_8", "assetKey": "map.desert.road.08", "type": "road", "position": { "x": 692, "y": 364 }, "origin": { "x": 0.5, "y": 0.5 }, "layer": "decor", "blocking": false }
+    {
+      "id": "path_north_01",
+      "assetKey": "map.desert.road.04",
+      "type": "road",
+      "position": {
+        "x": 768,
+        "y": 120
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_north_02",
+      "assetKey": "map.desert.road.05",
+      "type": "road",
+      "position": {
+        "x": 768,
+        "y": 190
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_north_03",
+      "assetKey": "map.desert.road.05",
+      "type": "road",
+      "position": {
+        "x": 768,
+        "y": 260
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_north_04",
+      "assetKey": "map.desert.road.05",
+      "type": "road",
+      "position": {
+        "x": 768,
+        "y": 330
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_north_05",
+      "assetKey": "map.desert.road.05",
+      "type": "road",
+      "position": {
+        "x": 768,
+        "y": 400
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_north_06",
+      "assetKey": "map.desert.road.05",
+      "type": "road",
+      "position": {
+        "x": 768,
+        "y": 470
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_north_07",
+      "assetKey": "map.desert.road.05",
+      "type": "road",
+      "position": {
+        "x": 768,
+        "y": 540
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_north_08",
+      "assetKey": "map.desert.road.05",
+      "type": "road",
+      "position": {
+        "x": 768,
+        "y": 610
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_oasis_01",
+      "assetKey": "map.desert.road.08",
+      "type": "road",
+      "position": {
+        "x": 700,
+        "y": 360
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_oasis_02",
+      "assetKey": "map.desert.road.08",
+      "type": "road",
+      "position": {
+        "x": 630,
+        "y": 360
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_oasis_03",
+      "assetKey": "map.desert.road.08",
+      "type": "road",
+      "position": {
+        "x": 560,
+        "y": 360
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_oasis_04",
+      "assetKey": "map.desert.road.08",
+      "type": "road",
+      "position": {
+        "x": 490,
+        "y": 360
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_oasis_05",
+      "assetKey": "map.desert.road.09",
+      "type": "road",
+      "position": {
+        "x": 420,
+        "y": 360
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_ruins_01",
+      "assetKey": "map.desert.road.12",
+      "type": "road",
+      "position": {
+        "x": 700,
+        "y": 285
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_ruins_02",
+      "assetKey": "map.desert.road.12",
+      "type": "road",
+      "position": {
+        "x": 640,
+        "y": 240
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_ruins_03",
+      "assetKey": "map.desert.road.12",
+      "type": "road",
+      "position": {
+        "x": 580,
+        "y": 220
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_ancient_01",
+      "assetKey": "map.desert.road.20",
+      "type": "road",
+      "position": {
+        "x": 700,
+        "y": 500
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_ancient_02",
+      "assetKey": "map.desert.road.20",
+      "type": "road",
+      "position": {
+        "x": 630,
+        "y": 530
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_ancient_03",
+      "assetKey": "map.desert.road.20",
+      "type": "road",
+      "position": {
+        "x": 560,
+        "y": 550
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_ancient_04",
+      "assetKey": "map.desert.road.21",
+      "type": "road",
+      "position": {
+        "x": 490,
+        "y": 555
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_camp_01",
+      "assetKey": "map.desert.road.02",
+      "type": "road",
+      "position": {
+        "x": 840,
+        "y": 395
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_camp_02",
+      "assetKey": "map.desert.road.02",
+      "type": "road",
+      "position": {
+        "x": 910,
+        "y": 395
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_camp_03",
+      "assetKey": "map.desert.road.02",
+      "type": "road",
+      "position": {
+        "x": 980,
+        "y": 395
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_camp_04",
+      "assetKey": "map.desert.road.02",
+      "type": "road",
+      "position": {
+        "x": 1050,
+        "y": 395
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_camp_05",
+      "assetKey": "map.desert.road.03",
+      "type": "road",
+      "position": {
+        "x": 1120,
+        "y": 395
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_east_01",
+      "assetKey": "map.desert.road.26",
+      "type": "road",
+      "position": {
+        "x": 850,
+        "y": 510
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_east_02",
+      "assetKey": "map.desert.road.26",
+      "type": "road",
+      "position": {
+        "x": 920,
+        "y": 545
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_east_03",
+      "assetKey": "map.desert.road.26",
+      "type": "road",
+      "position": {
+        "x": 990,
+        "y": 575
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "path_east_04",
+      "assetKey": "map.desert.road.17",
+      "type": "road",
+      "position": {
+        "x": 1060,
+        "y": 600
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 1.15
+    },
+    {
+      "id": "oasis_water",
+      "assetKey": "map.desert.portal",
+      "type": "lake",
+      "position": {
+        "x": 285,
+        "y": 315
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "paths",
+      "blocking": false,
+      "scale": 2.35,
+      "zoneId": "oasis"
+    },
+    {
+      "id": "start_portal",
+      "assetKey": "map.desert.portal",
+      "type": "portal",
+      "position": {
+        "x": 768,
+        "y": 665
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "scale": 0.62,
+      "zoneId": "starting_area"
+    },
+    {
+      "id": "start_portal_plinth",
+      "assetKey": "map.desert.decor.01",
+      "type": "portalPlinth",
+      "position": {
+        "x": 768,
+        "y": 700
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "scale": 0.8,
+      "zoneId": "starting_area"
+    },
+    {
+      "id": "north_portal",
+      "assetKey": "map.desert.lake",
+      "type": "portal",
+      "position": {
+        "x": 768,
+        "y": 70
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "scale": 0.58
+    },
+    {
+      "id": "oasis_palm_01",
+      "assetKey": "map.desert.tree.01",
+      "type": "tree",
+      "position": {
+        "x": 175,
+        "y": 265
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "oasis"
+    },
+    {
+      "id": "oasis_palm_02",
+      "assetKey": "map.desert.tree.02",
+      "type": "tree",
+      "position": {
+        "x": 220,
+        "y": 220
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "oasis"
+    },
+    {
+      "id": "oasis_palm_03",
+      "assetKey": "map.desert.tree.03",
+      "type": "tree",
+      "position": {
+        "x": 365,
+        "y": 250
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "oasis"
+    },
+    {
+      "id": "oasis_palm_04",
+      "assetKey": "map.desert.tree.04",
+      "type": "tree",
+      "position": {
+        "x": 405,
+        "y": 350
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "oasis"
+    },
+    {
+      "id": "oasis_palm_05",
+      "assetKey": "map.desert.tree.05",
+      "type": "tree",
+      "position": {
+        "x": 210,
+        "y": 405
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "oasis"
+    },
+    {
+      "id": "oasis_grass_01",
+      "assetKey": "map.desert.greenery.08",
+      "type": "greenery",
+      "position": {
+        "x": 150,
+        "y": 355
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "oasis"
+    },
+    {
+      "id": "oasis_grass_02",
+      "assetKey": "map.desert.greenery.10",
+      "type": "greenery",
+      "position": {
+        "x": 350,
+        "y": 405
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "oasis"
+    },
+    {
+      "id": "northern_ruin_cart",
+      "assetKey": "map.desert.decor.08",
+      "type": "brokenCart",
+      "position": {
+        "x": 520,
+        "y": 225
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "northern_ruins"
+    },
+    {
+      "id": "ancient_ruin_wall",
+      "assetKey": "map.desert.decor.01",
+      "type": "ruinWall",
+      "position": {
+        "x": 330,
+        "y": 620
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "ancient_ruins"
+    },
+    {
+      "id": "ancient_ruin_bones",
+      "assetKey": "map.desert.decor.06",
+      "type": "bones",
+      "position": {
+        "x": 205,
+        "y": 575
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "ancient_ruins"
+    },
+    {
+      "id": "dunes_bones",
+      "assetKey": "map.desert.decor.06",
+      "type": "bones",
+      "position": {
+        "x": 620,
+        "y": 330
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "central_dunes"
+    },
+    {
+      "id": "dunes_deadwood",
+      "assetKey": "map.desert.decor.04",
+      "type": "deadwood",
+      "position": {
+        "x": 895,
+        "y": 315
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "central_dunes"
+    },
+    {
+      "id": "dunes_cactus_01",
+      "assetKey": "map.desert.greenery.01",
+      "type": "greenery",
+      "position": {
+        "x": 590,
+        "y": 470
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "central_dunes"
+    },
+    {
+      "id": "dunes_cactus_02",
+      "assetKey": "map.desert.greenery.04",
+      "type": "greenery",
+      "position": {
+        "x": 915,
+        "y": 470
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "central_dunes"
+    },
+    {
+      "id": "highland_cactus_01",
+      "assetKey": "map.desert.greenery.01",
+      "type": "greenery",
+      "position": {
+        "x": 930,
+        "y": 220
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "rocky_highland"
+    },
+    {
+      "id": "highland_cactus_02",
+      "assetKey": "map.desert.greenery.03",
+      "type": "greenery",
+      "position": {
+        "x": 1090,
+        "y": 250
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "rocky_highland"
+    },
+    {
+      "id": "highland_cactus_03",
+      "assetKey": "map.desert.greenery.02",
+      "type": "greenery",
+      "position": {
+        "x": 1290,
+        "y": 240
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "rocky_highland"
+    },
+    {
+      "id": "camp_fire",
+      "assetKey": "map.desert.decor.07",
+      "type": "campfire",
+      "position": {
+        "x": 1215,
+        "y": 410
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "bandit_camp"
+    },
+    {
+      "id": "camp_cart",
+      "assetKey": "map.desert.decor.08",
+      "type": "brokenCart",
+      "position": {
+        "x": 1360,
+        "y": 470
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "bandit_camp"
+    },
+    {
+      "id": "camp_fence",
+      "assetKey": "map.desert.decor.04",
+      "type": "fence",
+      "position": {
+        "x": 1095,
+        "y": 455
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "bandit_camp"
+    },
+    {
+      "id": "camp_marker",
+      "assetKey": "map.desert.decor.03",
+      "type": "sign",
+      "position": {
+        "x": 1075,
+        "y": 330
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "bandit_camp"
+    },
+    {
+      "id": "wastes_bones_01",
+      "assetKey": "map.desert.decor.06",
+      "type": "bones",
+      "position": {
+        "x": 1120,
+        "y": 560
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "eastern_wastes"
+    },
+    {
+      "id": "wastes_bones_02",
+      "assetKey": "map.desert.decor.06",
+      "type": "bones",
+      "position": {
+        "x": 1325,
+        "y": 650
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "eastern_wastes"
+    },
+    {
+      "id": "wastes_deadwood",
+      "assetKey": "map.desert.decor.04",
+      "type": "deadwood",
+      "position": {
+        "x": 1235,
+        "y": 610
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "eastern_wastes"
+    },
+    {
+      "id": "wastes_cart",
+      "assetKey": "map.desert.decor.08",
+      "type": "brokenCart",
+      "position": {
+        "x": 1390,
+        "y": 550
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "eastern_wastes"
+    },
+    {
+      "id": "wastes_cactus_01",
+      "assetKey": "map.desert.greenery.01",
+      "type": "greenery",
+      "position": {
+        "x": 1050,
+        "y": 675
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "eastern_wastes"
+    },
+    {
+      "id": "wastes_cactus_02",
+      "assetKey": "map.desert.greenery.04",
+      "type": "greenery",
+      "position": {
+        "x": 1275,
+        "y": 530
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "eastern_wastes"
+    },
+    {
+      "id": "canyon_cactus_01",
+      "assetKey": "map.desert.greenery.01",
+      "type": "greenery",
+      "position": {
+        "x": 250,
+        "y": 500
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "sand_canyon"
+    },
+    {
+      "id": "canyon_cactus_02",
+      "assetKey": "map.desert.greenery.03",
+      "type": "greenery",
+      "position": {
+        "x": 80,
+        "y": 710
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false,
+      "zoneId": "sand_canyon"
+    },
+    {
+      "id": "ambient_cactus_01",
+      "assetKey": "map.desert.greenery.01",
+      "type": "greenery",
+      "position": {
+        "x": 740,
+        "y": 165
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false
+    },
+    {
+      "id": "ambient_cactus_02",
+      "assetKey": "map.desert.greenery.02",
+      "type": "greenery",
+      "position": {
+        "x": 850,
+        "y": 230
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false
+    },
+    {
+      "id": "ambient_cactus_03",
+      "assetKey": "map.desert.greenery.03",
+      "type": "greenery",
+      "position": {
+        "x": 520,
+        "y": 690
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false
+    },
+    {
+      "id": "ambient_cactus_04",
+      "assetKey": "map.desert.greenery.04",
+      "type": "greenery",
+      "position": {
+        "x": 960,
+        "y": 690
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false
+    },
+    {
+      "id": "ambient_bush_01",
+      "assetKey": "map.desert.greenery.09",
+      "type": "greenery",
+      "position": {
+        "x": 480,
+        "y": 300
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false
+    },
+    {
+      "id": "ambient_bush_02",
+      "assetKey": "map.desert.greenery.10",
+      "type": "greenery",
+      "position": {
+        "x": 1010,
+        "y": 350
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": false
+    },
+    {
+      "id": "northern_ruin_hall",
+      "assetKey": "map.desert.building.02",
+      "type": "building",
+      "position": {
+        "x": 445,
+        "y": 170
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 0.72,
+      "zoneId": "northern_ruins",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -55,
+        "offsetY": -27.5,
+        "width": 110,
+        "height": 55
+      }
+    },
+    {
+      "id": "northern_ruin_tower",
+      "assetKey": "map.desert.building.03",
+      "type": "building",
+      "position": {
+        "x": 570,
+        "y": 145
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 0.62,
+      "zoneId": "northern_ruins",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -28,
+        "offsetY": -25,
+        "width": 56,
+        "height": 50
+      }
+    },
+    {
+      "id": "northern_ruin_gate",
+      "assetKey": "map.desert.building.01",
+      "type": "building",
+      "position": {
+        "x": 655,
+        "y": 223
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 0.58,
+      "zoneId": "northern_ruins",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -50,
+        "offsetY": -24,
+        "width": 100,
+        "height": 48
+      }
+    },
+    {
+      "id": "ancient_ruin_gate",
+      "assetKey": "map.desert.building.01",
+      "type": "building",
+      "position": {
+        "x": 280,
+        "y": 520
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 0.6,
+      "zoneId": "ancient_ruins",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -50,
+        "offsetY": -24,
+        "width": 100,
+        "height": 48
+      }
+    },
+    {
+      "id": "ancient_ruin_tower",
+      "assetKey": "map.desert.building.03",
+      "type": "building",
+      "position": {
+        "x": 395,
+        "y": 585
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 0.62,
+      "zoneId": "ancient_ruins",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -28,
+        "offsetY": -25,
+        "width": 56,
+        "height": 50
+      }
+    },
+    {
+      "id": "highland_rock_01",
+      "assetKey": "map.desert.stones.11",
+      "type": "stone",
+      "position": {
+        "x": 1000,
+        "y": 145
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.55,
+      "zoneId": "rocky_highland",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -70,
+        "offsetY": -25,
+        "width": 140,
+        "height": 50
+      }
+    },
+    {
+      "id": "highland_rock_02",
+      "assetKey": "map.desert.stones.10",
+      "type": "stone",
+      "position": {
+        "x": 1150,
+        "y": 205
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.4,
+      "zoneId": "rocky_highland",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -60,
+        "offsetY": -24,
+        "width": 120,
+        "height": 48
+      }
+    },
+    {
+      "id": "highland_rock_03",
+      "assetKey": "map.desert.stones.12",
+      "type": "stone",
+      "position": {
+        "x": 1260,
+        "y": 125
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.35,
+      "zoneId": "rocky_highland",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -55,
+        "offsetY": -23,
+        "width": 110,
+        "height": 46
+      }
+    },
+    {
+      "id": "camp_tent_01",
+      "assetKey": "map.desert.decor.02",
+      "type": "building",
+      "position": {
+        "x": 1160,
+        "y": 355
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.15,
+      "zoneId": "bandit_camp",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -34,
+        "offsetY": -20,
+        "width": 68,
+        "height": 40
+      }
+    },
+    {
+      "id": "camp_tent_02",
+      "assetKey": "map.desert.decor.02",
+      "type": "building",
+      "position": {
+        "x": 1270,
+        "y": 455
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.15,
+      "zoneId": "bandit_camp",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -34,
+        "offsetY": -20,
+        "width": 68,
+        "height": 40
+      }
+    },
+    {
+      "id": "camp_watchtower",
+      "assetKey": "map.desert.building.03",
+      "type": "building",
+      "position": {
+        "x": 1350,
+        "y": 355
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 1
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 0.72,
+      "zoneId": "bandit_camp",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -28,
+        "offsetY": -25,
+        "width": 56,
+        "height": 50
+      }
+    },
+    {
+      "id": "canyon_rock_01",
+      "assetKey": "map.desert.stones.10",
+      "type": "stone",
+      "position": {
+        "x": 75,
+        "y": 540
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.35,
+      "zoneId": "sand_canyon",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -50,
+        "offsetY": -24,
+        "width": 100,
+        "height": 48
+      }
+    },
+    {
+      "id": "canyon_rock_02",
+      "assetKey": "map.desert.stones.12",
+      "type": "stone",
+      "position": {
+        "x": 175,
+        "y": 630
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.45,
+      "zoneId": "sand_canyon",
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -55,
+        "offsetY": -24,
+        "width": 110,
+        "height": 48
+      }
+    },
+    {
+      "id": "fragile_wall_shortcut",
+      "assetKey": "map.desert.stones.11",
+      "type": "fragileWall",
+      "position": {
+        "x": 930,
+        "y": 585
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 0.8,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -60,
+        "offsetY": -25,
+        "width": 120,
+        "height": 50
+      },
+      "interaction": {
+        "id": "BREAK_CRACKED_WALL",
+        "displayName": "Tường Đá Nứt",
+        "requiredCapabilityId": "BREAK_FRAGILE_WALL",
+        "interactionRadius": 100,
+        "outcome": "DESTROY_OBJECT"
+      }
+    },
+    {
+      "id": "cliff_nw_01",
+      "assetKey": "map.desert.stones.11",
+      "type": "stone",
+      "position": {
+        "x": 170,
+        "y": 55
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.4,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -60,
+        "offsetY": -22,
+        "width": 120,
+        "height": 44
+      }
+    },
+    {
+      "id": "cliff_nw_02",
+      "assetKey": "map.desert.stones.12",
+      "type": "stone",
+      "position": {
+        "x": 420,
+        "y": 50
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.35,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -60,
+        "offsetY": -22,
+        "width": 120,
+        "height": 44
+      }
+    },
+    {
+      "id": "cliff_ne_01",
+      "assetKey": "map.desert.stones.10",
+      "type": "stone",
+      "position": {
+        "x": 1120,
+        "y": 50
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.35,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -60,
+        "offsetY": -22,
+        "width": 120,
+        "height": 44
+      }
+    },
+    {
+      "id": "cliff_ne_02",
+      "assetKey": "map.desert.stones.11",
+      "type": "stone",
+      "position": {
+        "x": 1370,
+        "y": 60
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.4,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -60,
+        "offsetY": -22,
+        "width": 120,
+        "height": 44
+      }
+    },
+    {
+      "id": "cliff_west_01",
+      "assetKey": "map.desert.stones.10",
+      "type": "stone",
+      "position": {
+        "x": 55,
+        "y": 190
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.25,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -35,
+        "offsetY": -45,
+        "width": 70,
+        "height": 90
+      }
+    },
+    {
+      "id": "cliff_west_02",
+      "assetKey": "map.desert.stones.12",
+      "type": "stone",
+      "position": {
+        "x": 55,
+        "y": 400
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.25,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -35,
+        "offsetY": -45,
+        "width": 70,
+        "height": 90
+      }
+    },
+    {
+      "id": "cliff_east_01",
+      "assetKey": "map.desert.stones.12",
+      "type": "stone",
+      "position": {
+        "x": 1480,
+        "y": 185
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.25,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -35,
+        "offsetY": -45,
+        "width": 70,
+        "height": 90
+      }
+    },
+    {
+      "id": "cliff_east_02",
+      "assetKey": "map.desert.stones.10",
+      "type": "stone",
+      "position": {
+        "x": 1480,
+        "y": 575
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.25,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -35,
+        "offsetY": -45,
+        "width": 70,
+        "height": 90
+      }
+    },
+    {
+      "id": "cliff_south_01",
+      "assetKey": "map.desert.stones.11",
+      "type": "stone",
+      "position": {
+        "x": 360,
+        "y": 735
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.35,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -60,
+        "offsetY": -22,
+        "width": 120,
+        "height": 44
+      }
+    },
+    {
+      "id": "cliff_south_02",
+      "assetKey": "map.desert.stones.12",
+      "type": "stone",
+      "position": {
+        "x": 540,
+        "y": 735
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.35,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -60,
+        "offsetY": -22,
+        "width": 120,
+        "height": 44
+      }
+    },
+    {
+      "id": "cliff_south_03",
+      "assetKey": "map.desert.stones.10",
+      "type": "stone",
+      "position": {
+        "x": 1060,
+        "y": 735
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.35,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -60,
+        "offsetY": -22,
+        "width": 120,
+        "height": 44
+      }
+    },
+    {
+      "id": "cliff_south_04",
+      "assetKey": "map.desert.stones.11",
+      "type": "stone",
+      "position": {
+        "x": 1360,
+        "y": 725
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "objects",
+      "blocking": true,
+      "scale": 1.35,
+      "collision": {
+        "shape": "rectangle",
+        "offsetX": -60,
+        "offsetY": -22,
+        "width": 120,
+        "height": 44
+      }
+    }
   ],
   "collision": {
     "blockedTiles": [],
     "blockedObjects": [
-      "obj_building_1",
-      "obj_building_2",
-      "obj_building_3",
-      "obj_building_4",
-      "obj_building_5",
-      "obj_tree_1",
-      "obj_tree_2",
-      "obj_tree_3",
-      "obj_tree_4",
-      "obj_tree_5",
-      "obj_tree_6",
-      "obj_tree_7",
-      "obj_tree_8",
-      "obj_tree_9",
-      "obj_tree_10",
-      "obj_tree_11",
-      "obj_tree_12",
-      "obj_stone_01",
-      "obj_stone_02",
-      "obj_stone_03",
-      "obj_stone_04",
-      "obj_stone_05",
-      "obj_stone_06",
-      "obj_stone_07",
-      "obj_stone_08",
-      "obj_stone_09",
-      "obj_stone_10",
-      "obj_stone_11",
-      "obj_stone_12",
-      "obj_cracked_wall_01"
+      "northern_ruin_hall",
+      "northern_ruin_tower",
+      "northern_ruin_gate",
+      "ancient_ruin_gate",
+      "ancient_ruin_tower",
+      "highland_rock_01",
+      "highland_rock_02",
+      "highland_rock_03",
+      "camp_tent_01",
+      "camp_tent_02",
+      "camp_watchtower",
+      "canyon_rock_01",
+      "canyon_rock_02",
+      "fragile_wall_shortcut",
+      "cliff_nw_01",
+      "cliff_nw_02",
+      "cliff_ne_01",
+      "cliff_ne_02",
+      "cliff_west_01",
+      "cliff_west_02",
+      "cliff_east_01",
+      "cliff_east_02",
+      "cliff_south_01",
+      "cliff_south_02",
+      "cliff_south_03",
+      "cliff_south_04"
     ],
     "terrainCollision": {},
     "specialZones": []
   },
   "spawnPoints": [
-    { "id": "default", "x": 560, "y": 200, "facing": "front" },
-    { "id": "fromForest", "x": 100, "y": 60, "facing": "back" },
-    { "id": "fromVillage", "x": 1500, "y": 640, "facing": "front" }
+    {
+      "id": "default",
+      "x": 768,
+      "y": 665,
+      "facing": "front"
+    },
+    {
+      "id": "fromForest",
+      "x": 768,
+      "y": 112,
+      "facing": "front"
+    },
+    {
+      "id": "fromVillage",
+      "x": 1430,
+      "y": 400,
+      "facing": "left"
+    }
   ],
   "exits": [
-    { "id": "north_exit", "targetMap": "forest", "targetSpawn": "fromDesert", "triggerArea": { "x": 640, "y": 0, "width": 256, "height": 96 }, "transitionType": "walk" },
-    { "id": "east_exit", "targetMap": "village", "targetSpawn": "fromDesert", "triggerArea": { "x": 1440, "y": 300, "width": 96, "height": 168 }, "transitionType": "walk" }
+    {
+      "id": "north_exit",
+      "targetMap": "forest",
+      "targetSpawn": "fromDesert",
+      "triggerArea": {
+        "x": 704,
+        "y": 0,
+        "width": 128,
+        "height": 76
+      },
+      "transitionType": "portal"
+    },
+    {
+      "id": "east_exit",
+      "targetMap": "village",
+      "targetSpawn": "fromDesert",
+      "triggerArea": {
+        "x": 1470,
+        "y": 340,
+        "width": 66,
+        "height": 120
+      },
+      "transitionType": "walk"
+    }
   ],
   "objectScaleDefaults": {
-    "building": 0.5,
-    "tree": 0.7,
-    "stone": 0.45,
+    "building": 0.62,
+    "tree": 0.78,
+    "stone": 0.5,
     "decor": 0.85,
-    "greenery": 0.75,
+    "greenery": 0.8,
     "lake": 1,
-    "road": 1
+    "road": 1.15,
+    "bones": 0.9,
+    "deadwood": 0.9,
+    "brokenCart": 0.9,
+    "campfire": 0.8,
+    "portal": 0.6,
+    "portalPlinth": 0.8,
+    "ruinWall": 0.9,
+    "fence": 1
   }
 }

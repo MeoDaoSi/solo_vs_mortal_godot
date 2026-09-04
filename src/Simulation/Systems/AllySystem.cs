@@ -55,6 +55,7 @@ public sealed class AllySystem
         return ally;
     }
     public bool Remove(string uid) => _allies.Remove(uid);
+    public void Clear() => _allies.Clear();
     public AllyState? Get(string uid) => _allies.GetValueOrDefault(uid);
     public IReadOnlyList<AllyState> AliveAllies() => _allies.Values.Where(ally => ally.Alive).ToArray();
 }

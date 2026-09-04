@@ -11,13 +11,18 @@ namespace SoloVsMortal.Presentation;
 public partial class Arena : Node2D
 {
     private const string SavePath = "user://solo_vs_mortal_save_v6.json";
+    private static readonly bool ShowMapCollisionDebug = false;
+    private const string UiAssetRoot = "res://assets/third_party/kenney-ui-adventure/PNG/Default/";
     private GameApplication _application = null!;
     private Camera2D _camera = null!;
     private Label _status = null!;
+    private Label _currency = null!;
     private Label _toast = null!;
     private VBoxContainer _soulList = null!;
     private VBoxContainer _featureList = null!;
     private TabContainer _screens = null!;
+    private WorldMapUI _worldMap = null!;
+    private HudMinimap _minimap = null!;
     private double _autosaveRemaining = 10;
     private double _toastRemaining;
     private GameSnapshot? _snapshot;
@@ -38,10 +43,13 @@ public partial class Arena : Node2D
 
     public override void _Ready()
     {
-        _camera = GetNode<Camera2D>("Camera2D"); _status = GetNode<Label>("Hud/Panel/Status"); _toast = GetNode<Label>("Hud/Toast"); _soulList = GetNode<VBoxContainer>("Hud/SoulPanel/List"); _featureList = GetNode<VBoxContainer>("Hud/FeaturePanel/Content"); _screens = GetNode<TabContainer>("Hud/Screens");
+        _camera = GetNode<Camera2D>("Camera2D"); _status = GetNode<Label>("Hud/Panel/Status"); _currency = GetNode<Label>("Hud/CurrencyPanel/Currency"); _toast = GetNode<Label>("Hud/Toast"); _soulList = GetNode<VBoxContainer>("Hud/SoulPanel/List"); _featureList = GetNode<VBoxContainer>("Hud/FeaturePanel/Content"); _screens = GetNode<TabContainer>("Hud/Screens");
+        ApplyHudVisualDesign();
         _application = GameApplication.CreateFromDefinitionsDirectory(ProjectSettings.GlobalizePath("res://data/configs"));
         _application.Start();
-        _ground = LoadAssetTexture("tiles.arena.ground"); _soulTexture = LoadAssetTexture("soul.orb.no_boc"); foreach (var obj in _application.WorldObjects().Select(item => item.AssetId).Distinct(StringComparer.Ordinal)) { var texture = LoadAssetTexture(obj); if (texture is not null) _mapTextures[obj] = texture; }
+        _worldMap = new WorldMapUI(); AddChild(_worldMap); _worldMap.Initialize(_application, TravelToRegion);
+        _minimap = new HudMinimap { Position = new Vector2(1060, 24), Size = new Vector2(184, 164) }; GetNode<CanvasLayer>("Hud").AddChild(_minimap);
+        _ground = LoadAssetTexture(_application.CurrentMapBackgroundAssetId() ?? "tiles.arena.ground"); _soulTexture = LoadAssetTexture("soul.orb.no_boc"); RebuildMapTextures();
         GetNode<ConfirmationDialog>("Hud/DevourConfirm").Confirmed += ConfirmDevour;
         _visualRank = 1; _playerSprite = BuildPlayerSprite(_visualRank); AddChild(_playerSprite);
         TryLoad(showMessage: false);
@@ -51,6 +59,11 @@ public partial class Arena : Node2D
 
     public override void _PhysicsProcess(double delta)
     {
+        if (_worldMap.IsOpen)
+        {
+            _application.SetInput(SimVec2.Zero, false);
+            return;
+        }
         var move = Input.GetVector("move_left", "move_right", "move_up", "move_down");
         _application.SetInput(new SimVec2(move.X, move.Y), Input.IsActionPressed("attack"));
         _application.Tick(delta);
@@ -64,6 +77,15 @@ public partial class Arena : Node2D
         RefreshSnapshot();
     }
 
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        if (@event is InputEventKey key && key.Pressed && !key.Echo && key.Keycode == Key.M)
+        {
+            _worldMap.Toggle();
+            GetViewport().SetInputAsHandled();
+        }
+    }
+
     public override void _ExitTree() { if (_application is not null) Save(showMessage: false); }
 
     public override void _Draw()
@@ -71,11 +93,12 @@ public partial class Arena : Node2D
         var world = _snapshot?.World; var width = (float)(world?.Width ?? 1536); var height = (float)(world?.Height ?? 768);
         DrawRect(new Rect2(0, 0, width, height), new Color("#c99b5b")); if (_ground is not null) DrawTextureRect(_ground, new Rect2(0, 0, width, height), true, new Color(1, 1, 1, 0.45f));
         if (_snapshot is null) return;
-        foreach (var rect in _snapshot.World.BlockingRects) DrawRect(new Rect2((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height), new Color(0.25f, 0.16f, 0.08f, 0.32f), false, 2);
-        foreach (var obj in _application.WorldObjects().Where(item => !item.Destroyed))
+        foreach (var obj in _application.WorldObjects().Where(item => !item.Destroyed).OrderBy(item => item.ZIndex).ThenBy(item => item.Position.Y))
         {
-            var p = ToGodot(obj.Position); if (_mapTextures.TryGetValue(obj.AssetId, out var texture)) DrawTextureRect(texture, new Rect2(p.X - 42, p.Y - 42, 84, 84), false, new Color(1, 1, 1, 0.92f)); else { var color = obj.Type switch { "tree" => new Color("#166534"), "building" => new Color("#713f12"), "fragileWall" => new Color("#64748b"), _ => new Color("#854d0e") }; DrawCircle(p, obj.Type == "tree" ? 18 : 12, color); } DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, 52), obj.Type, HorizontalAlignment.Left, -1, 10, new Color(0.1f, 0.08f, 0.04f, 0.7f));
+            var p = ToGodot(obj.Position); var scale = (float)System.Math.Clamp(obj.PresentationScale, 0.1, 3); if (_mapTextures.TryGetValue(obj.AssetId, out var texture)) { var half = 42 * scale; DrawTextureRect(texture, new Rect2(p.X - half, p.Y - half, half * 2, half * 2), false, new Color(1, 1, 1, 0.92f)); } else { var color = obj.Type switch { "tree" => new Color("#166534"), "building" => new Color("#713f12"), "fragileWall" => new Color("#64748b"), "portal" => new Color("#38bdf8"), _ => new Color("#854d0e") }; DrawCircle(p, (obj.Type == "tree" ? 18 : 12) * scale, color); }
         }
+        if (ShowMapCollisionDebug)
+            foreach (var rect in _snapshot.World.BlockingRects) DrawRect(new Rect2((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height), new Color(0.25f, 0.16f, 0.08f, 0.32f), false, 2);
         foreach (var soul in _snapshot.WorldSouls) { var p = ToGodot(soul.Position); if (_soulTexture is not null) DrawTextureRect(_soulTexture, new Rect2(p.X - 16, p.Y - 16, 32, 32), false); else DrawCircle(p, 10, new Color("#67e8f9")); }
         foreach (var monster in _snapshot.Monsters)
         {
@@ -96,7 +119,10 @@ public partial class Arena : Node2D
         _snapshot = _application.Snapshot(); var player = _snapshot.Player; _camera.Position = ToGodot(player.Position);
         _playerSprite.Position = ToGodot(player.Position); SyncMonsters(_snapshot.Monsters); SyncAllies(_snapshot.Allies);
         if (player.Rank != _visualRank) { var old = _playerSprite; _visualRank = player.Rank; _playerSprite = BuildPlayerSprite(_visualRank); AddChild(_playerSprite); _playerSprite.Position = old.Position; old.QueueFree(); }
-        _status.Text = $"Sinh lực: {System.Math.Ceiling(player.CurrentHp)}/{player.MaximumHp}\nCấp: {player.Level}  •  Cảnh giới: {player.Rank}  •  Công: {player.Attack}  •  Thủ: {player.Defense}\nQuái: {_snapshot.Monsters.Count}  •  Hồn gần bản đồ: {_snapshot.WorldSouls.Count}  •  Hồn sở hữu: {_snapshot.OwnedSouls.Count}";
+        var regionName = _application.RegionDetails(_snapshot.CurrentRegionId)?.DisplayName ?? _snapshot.CurrentRegionId;
+        _status.Text = $"Khu vực: {regionName}\nSinh lực: {System.Math.Ceiling(player.CurrentHp)}/{player.MaximumHp}\nCấp: {player.Level}  •  Cảnh giới: {player.Rank}  •  Công: {player.Attack}  •  Thủ: {player.Defense}\nQuái: {_snapshot.Monsters.Count}  •  Hồn gần bản đồ: {_snapshot.WorldSouls.Count}  •  Hồn sở hữu: {_snapshot.OwnedSouls.Count}";
+        _currency.Text = $"✦ {_snapshot.Inventory.Sum(item => item.Count)}     ◆ {player.Xp}     ◈ {_snapshot.OwnedSouls.Count}";
+        _minimap.Refresh(_snapshot, _application.WorldObjects());
         var signature = string.Join('|', _snapshot.OwnedSouls.Select(soul => $"{soul.Id}:{soul.Level}:{soul.Xp}")); if (signature != _lastSoulSignature) { RebuildSoulPanel(_snapshot); _lastSoulSignature = signature; }
         var featureSignature = $"{_snapshot.OwnedSouls.Count}:{_snapshot.SoulBanners.Sum(item => item.BoundSoulIds.Count)}:{_application.Inventory().Count}:{_application.SoulRuntime(_snapshot.OwnedSouls.FirstOrDefault()?.Id ?? "").Status}:{_application.PossessionRemainingSeconds()}"; if (featureSignature != _lastFeatureSignature) { RebuildFeaturePanel(_snapshot); _lastFeatureSignature = featureSignature; }
         var banner = _snapshot.SoulBanners.FirstOrDefault(); var screenSignature = $"{player.Level}:{player.Xp}:{inventorySignature(_application.Inventory())}:{banner?.Level}:{banner?.BoundSoulIds.Count}"; if (screenSignature != _lastScreenSignature) { RebuildScreens(_snapshot); _lastScreenSignature = screenSignature; }
@@ -126,8 +152,9 @@ public partial class Arena : Node2D
             var banner = snapshot.SoulBanners.FirstOrDefault(); var bound = banner?.BoundSoulIds.Contains(soul.Id) == true;
             var link = _application.SoulLinks().FirstOrDefault(item => item.SoulId == soul.Id); var runtime = _application.SoulRuntime(soul.Id);
             var bind = new Button { Text = bound ? "Gỡ Hồn Liên" : "Thiết lập Hồn Liên", Disabled = banner is null || (bound && !string.IsNullOrEmpty(link?.BannerId) && runtime.Status is SoulRuntimeStatus.Summoned or SoulRuntimeStatus.Possessed) };
+            StyleActionButton(bind);
             bind.Pressed += () => { if (banner is null) return; var ok = bound ? _application.UnbindSoul(soul.Id, banner.Id).Success : _application.BindSoul(soul.Id, banner.Id).Success; if (ok) { Toast(bound ? "Đã gỡ bind Soul." : "Đã bind Soul."); RefreshSnapshot(); } }; row.AddChild(bind);
-            foreach (var preview in _application.DevourPreviews(soul.Id)) { var devour = new Button { Text = $"Devour {preview.DisplayName} (+{preview.Reward:0})", Disabled = bound }; devour.Pressed += () => ShowDevourConfirmation(soul.Id, preview.Mode); row.AddChild(devour); }
+            foreach (var preview in _application.DevourPreviews(soul.Id)) { var devour = new Button { Text = $"Devour {preview.DisplayName} (+{preview.Reward:0})", Disabled = bound }; StyleActionButton(devour, destructive: true); devour.Pressed += () => ShowDevourConfirmation(soul.Id, preview.Mode); row.AddChild(devour); }
             _soulList.AddChild(row);
         }
         if (snapshot.OwnedSouls.Count == 0) _soulList.AddChild(new Label { Text = "Chưa sở hữu Soul. Nhấn E gần orb." });
@@ -144,11 +171,26 @@ public partial class Arena : Node2D
     {
         var inventory = GetNode<VBoxContainer>("Hud/Screens/Inventory"); var progression = GetNode<VBoxContainer>("Hud/Screens/Progression"); var bannerPage = GetNode<VBoxContainer>("Hud/Screens/Banner");
         foreach (var page in new[] { inventory, progression, bannerPage }) foreach (var child in page.GetChildren()) child.QueueFree();
-        inventory.AddChild(new Label { Text = "Túi vật phẩm", ThemeTypeVariation = "HeaderMedium" }); var items = _application.Inventory(); if (items.Count == 0) inventory.AddChild(new Label { Text = "Chưa có vật phẩm." }); else foreach (var item in items) inventory.AddChild(new Label { Text = $"{item.StableId}: {item.Count}" });
-        var craft = new Button { Text = "Chế Cường Công Đan" }; craft.Pressed += () => { Toast(_application.Craft(PillId.Power) ? "Đã chế Cường Công Đan." : "Thiếu Tinh Thạch/Beast Core."); RefreshSnapshot(); }; inventory.AddChild(craft);
-        progression.AddChild(new Label { Text = $"Tiến trình Player\nCấp {snapshot.Player.Level} • XP {snapshot.Player.Xp}\nCông {snapshot.Player.Attack} • Thủ {snapshot.Player.Defense}", ThemeTypeVariation = "HeaderMedium" }); var gain = new Button { Text = "Nhận 20 XP" }; gain.Pressed += () => { _application.AddPlayerXp(20); RefreshSnapshot(); }; progression.AddChild(gain);
-        var breakthrough = new Button { Text = "Thử phá cảnh" }; breakthrough.Pressed += () => { Toast(_application.AttemptPlayerBreakthrough() ? "Phá cảnh thành công." : "Phá cảnh thất bại hoặc chưa đủ điều kiện."); RefreshSnapshot(); }; progression.AddChild(breakthrough);
-        var banner = snapshot.SoulBanners.FirstOrDefault(); bannerPage.AddChild(new Label { Text = banner is null ? "Chưa có Hồn Phiên" : $"{banner.Tier}\nCấp {banner.Level}\nÔ: {banner.BoundSoulIds.Count}/{banner.SlotLimit}\nDung lượng: {banner.UsedCapacity}/{banner.CapacityLimit}", ThemeTypeVariation = "HeaderMedium" }); if (banner is not null) foreach (var soul in snapshot.OwnedSouls.Where(item => banner.BoundSoulIds.Contains(item.Id))) bannerPage.AddChild(new Label { Text = $"• {soul.DisplayName} — Lv.{soul.Level}" });
+
+        inventory.AddChild(new Label { Text = "Túi Đồ", ThemeTypeVariation = "HeaderMedium" });
+        var items = _application.Inventory(); var grid = new GridContainer { Columns = 7, SizeFlagsVertical = Control.SizeFlags.ExpandFill }; inventory.AddChild(grid);
+        for (var index = 0; index < Math.Max(14, items.Count); index++)
+        {
+            InventoryItem? item = index < items.Count ? items[index] : null;
+            var slot = new Button { Text = item is null ? "" : $"{item.Value.StableId}\n×{item.Value.Count}", TooltipText = item is null ? "Ô trống" : item.Value.StableId, CustomMinimumSize = new Vector2(94, 48) };
+            StyleActionButton(slot); grid.AddChild(slot);
+        }
+        var inventoryFooter = new HBoxContainer(); inventoryFooter.AddChild(new Label { Text = $"Số ô: {items.Count}/100", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
+        var craft = new Button { Text = "Chế Cường Công Đan", CustomMinimumSize = new Vector2(180, 30) }; StyleActionButton(craft); craft.Pressed += () => { Toast(_application.Craft(PillId.Power) ? "Đã chế Cường Công Đan." : "Thiếu Tinh Thạch/Beast Core."); RefreshSnapshot(); }; inventoryFooter.AddChild(craft); inventory.AddChild(inventoryFooter);
+
+        progression.AddChild(new Label { Text = "Tiến Hóa Nhân Vật", ThemeTypeVariation = "HeaderMedium" });
+        progression.AddChild(new Label { Text = $"Cấp {snapshot.Player.Level}  •  XP {snapshot.Player.Xp}\nCảnh giới {snapshot.Player.Rank}\nCông {snapshot.Player.Attack}  •  Thủ {snapshot.Player.Defense}", SizeFlagsVertical = Control.SizeFlags.ExpandFill });
+        var progressionActions = new HBoxContainer(); var gain = new Button { Text = "+20 XP", CustomMinimumSize = new Vector2(150, 32) }; StyleActionButton(gain); gain.Pressed += () => { _application.AddPlayerXp(20); RefreshSnapshot(); }; progressionActions.AddChild(gain);
+        var breakthrough = new Button { Text = "Thử phá cảnh", CustomMinimumSize = new Vector2(180, 32) }; StyleActionButton(breakthrough); breakthrough.Pressed += () => { Toast(_application.AttemptPlayerBreakthrough() ? "Phá cảnh thành công." : "Phá cảnh thất bại hoặc chưa đủ điều kiện."); RefreshSnapshot(); }; progressionActions.AddChild(breakthrough); progression.AddChild(progressionActions);
+
+        var banner = snapshot.SoulBanners.FirstOrDefault(); bannerPage.AddChild(new Label { Text = banner is null ? "Chưa có Hồn Phiên" : $"Hồn Phiên {banner.Tier}\nCấp {banner.Level}  •  Ô {banner.BoundSoulIds.Count}/{banner.SlotLimit}\nDung lượng {banner.UsedCapacity}/{banner.CapacityLimit}", ThemeTypeVariation = "HeaderMedium" });
+        var boundSouls = banner is null ? Array.Empty<OwnedSoulSnapshot>() : snapshot.OwnedSouls.Where(item => banner.BoundSoulIds.Contains(item.Id)).ToArray();
+        bannerPage.AddChild(new Label { Text = boundSouls.Length == 0 ? "Chưa có linh hồn liên kết." : string.Join('\n', boundSouls.Select(soul => $"• {soul.DisplayName} — Lv.{soul.Level}")), SizeFlagsVertical = Control.SizeFlags.ExpandFill });
     }
 
     private static string inventorySignature(IReadOnlyList<InventoryItem> items) => string.Join(';', items.Select(item => $"{item.StableId}:{item.Count}"));
@@ -159,21 +201,106 @@ public partial class Arena : Node2D
         var banner = snapshot.SoulBanners.FirstOrDefault();
         _featureList.AddChild(new Label { Text = banner is null ? "Hồn Phiên: chưa tạo" : $"Hồn Phiên {banner.Tier}  Lv.{banner.Level}\nÔ: {banner.UsedCapacity}/{banner.CapacityLimit}  •  Ô: {banner.BoundSoulIds.Count}/{banner.SlotLimit}" });
         var inventory = _application.Inventory(); _featureList.AddChild(new Label { Text = inventory.Count == 0 ? "Vật phẩm: trống" : "Vật phẩm: " + string.Join(", ", inventory.Select(item => $"{item.StableId}×{item.Count}")) });
-        var progression = new HBoxContainer(); progression.AddChild(new Label { Text = "Tiến độ", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }); var xp = new Button { Text = "+20 XP" }; xp.Pressed += () => { _application.AddPlayerXp(20); Toast("Đã nhận 20 XP."); RefreshSnapshot(); }; progression.AddChild(xp); var craft = new Button { Text = "Chế Power" }; craft.Pressed += () => { Toast(_application.Craft(PillId.Power) ? "Đã chế Power Pill." : "Thiếu nguyên liệu."); RefreshSnapshot(); }; progression.AddChild(craft); _featureList.AddChild(progression);
+        var progression = new HBoxContainer(); progression.AddChild(new Label { Text = "Tiến độ", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }); var xp = new Button { Text = "+20 XP" }; StyleActionButton(xp); xp.Pressed += () => { _application.AddPlayerXp(20); Toast("Đã nhận 20 XP."); RefreshSnapshot(); }; progression.AddChild(xp); var craft = new Button { Text = "Chế Power" }; StyleActionButton(craft); craft.Pressed += () => { Toast(_application.Craft(PillId.Power) ? "Đã chế Power Pill." : "Thiếu nguyên liệu."); RefreshSnapshot(); }; progression.AddChild(craft); _featureList.AddChild(progression);
         var possession = new Label { Text = _application.ActivePossessionSoulId is { } active ? $"Đảo chiều Hồn Liên: {active} ({Math.Ceiling(_application.PossessionRemainingSeconds())}s)" : "Đảo chiều Hồn Liên: không hoạt động" }; _featureList.AddChild(possession);
         foreach (var soul in snapshot.OwnedSouls.Where(soul => banner?.BoundSoulIds.Contains(soul.Id) == true))
         {
             var link = _application.SoulLinks().First(item => item.SoulId == soul.Id); var runtime = _application.SoulRuntime(soul.Id); var row = new HBoxContainer(); row.AddChild(new Label { Text = $"{soul.DisplayName}: {link.State} · Tải {link.SoulCost} · Ổn định {link.Stability:P0}", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
             var summon = new Button { Text = runtime.Status == SoulRuntimeStatus.Summoned ? "Thu hồi" : "Triệu hồi", Disabled = runtime.Status is SoulRuntimeStatus.Dispersed or SoulRuntimeStatus.Possessed };
+            StyleActionButton(summon);
             summon.Pressed += () => { if (runtime.Status == SoulRuntimeStatus.Summoned) _application.UnsummonSoul(soul.Id); else _application.SummonSoul(soul.Id, banner!.Id, new SimVec2(_snapshot!.Player.Position.X + 36, _snapshot.Player.Position.Y)); RefreshSnapshot(); }; row.AddChild(summon);
-            var possess = new Button { Text = "Phụ hồn", Disabled = runtime.Status != SoulRuntimeStatus.Ready || _application.ActivePossessionSoulId is not null }; possess.Pressed += () => { var result = _application.StartPossession(soul.Id); Toast(result.Success ? "Đã bắt đầu phụ hồn." : "Không thể phụ hồn Soul này."); RefreshSnapshot(); }; row.AddChild(possess); _featureList.AddChild(row);
+            var possess = new Button { Text = "Phụ hồn", Disabled = runtime.Status != SoulRuntimeStatus.Ready || _application.ActivePossessionSoulId is not null }; StyleActionButton(possess); possess.Pressed += () => { var result = _application.StartPossession(soul.Id); Toast(result.Success ? "Đã bắt đầu phụ hồn." : "Không thể phụ hồn Soul này."); RefreshSnapshot(); }; row.AddChild(possess); _featureList.AddChild(row);
         }
     }
+    private void ApplyHudVisualDesign()
+    {
+        foreach (var panelPath in new[] { "Hud/Panel", "Hud/CurrencyPanel", "Hud/SoulPanel", "Hud/FeaturePanel" })
+            GetNode<Panel>(panelPath).AddThemeStyleboxOverride("panel", UiBox("panel_brown_dark.png", 14));
+
+        _screens.AddThemeStyleboxOverride("panel", UiBox("panel_brown_dark.png", 14));
+        _screens.AddThemeStyleboxOverride("tab_selected", UiBox("button_brown.png", 10));
+        _screens.AddThemeStyleboxOverride("tab_unselected", UiBox("button_grey.png", 10));
+        _screens.AddThemeColorOverride("font_selected_color", new Color("#fff0ba"));
+        _screens.AddThemeColorOverride("font_unselected_color", new Color("#e5c981"));
+        _screens.SetTabTitle(0, "Túi Đồ");
+        _screens.SetTabTitle(1, "Tiến Hóa");
+        _screens.SetTabTitle(2, "Hồn Phiên");
+
+        foreach (var labelPath in new[] { "Hud/Panel/Status", "Hud/CurrencyPanel/Currency", "Hud/MapCaption", "Hud/SoulPanel/Title", "Hud/Help", "Hud/Toast" })
+            GetNode<Label>(labelPath).AddThemeColorOverride("font_color", new Color("#f9e7b0"));
+        GetNode<Label>("Hud/SoulPanel/Title").AddThemeFontSizeOverride("font_size", 18);
+        GetNode<Label>("Hud/CurrencyPanel/Currency").AddThemeFontSizeOverride("font_size", 17);
+    }
+
+    private static StyleBoxTexture UiBox(string fileName, float margin)
+    {
+        var style = new StyleBoxTexture { Texture = GD.Load<Texture2D>(UiAssetRoot + fileName), DrawCenter = true };
+        foreach (var side in new[] { Side.Left, Side.Top, Side.Right, Side.Bottom })
+        {
+            style.SetTextureMargin(side, margin);
+            style.SetContentMargin(side, margin);
+        }
+        return style;
+    }
+
+    private static void StyleActionButton(Button button, bool destructive = false)
+    {
+        button.AddThemeStyleboxOverride("normal", UiBox(destructive ? "button_red.png" : "button_brown.png", 10));
+        button.AddThemeStyleboxOverride("hover", UiBox(destructive ? "button_red_close.png" : "button_grey.png", 10));
+        button.AddThemeStyleboxOverride("pressed", UiBox(destructive ? "button_red_close.png" : "button_brown_close.png", 10));
+        button.AddThemeColorOverride("font_color", new Color("#fff0ba"));
+        button.AddThemeFontSizeOverride("font_size", 13);
+    }
+
     private static Vector2 ToGodot(SimVec2 value) => new((float)value.X, (float)value.Y);
 
     private Texture2D? LoadAssetTexture(string logicalId)
     {
         var asset = _application.Asset(logicalId); return LoadTextureFile(asset.File);
+    }
+
+    private void RebuildMapTextures()
+    {
+        _mapTextures.Clear();
+        foreach (var assetId in _application.WorldObjects().Select(item => item.AssetId).Distinct(StringComparer.Ordinal))
+        {
+            var texture = LoadMapTexture(_application.Asset(assetId));
+            if (texture is not null) _mapTextures[assetId] = texture;
+        }
+    }
+
+    private static Texture2D? LoadMapTexture(AssetSnapshot asset)
+    {
+        var texture = LoadTextureFile(asset.File);
+        return texture is null || asset.FrameWidth is not { } frameWidth || asset.FrameHeight is not { } frameHeight
+            ? texture
+            : new AtlasTexture { Atlas = texture, Region = new Rect2(0, 0, frameWidth, frameHeight) };
+    }
+
+    private RegionTravelResult TravelToRegion(string regionId)
+    {
+        var result = _application.TravelToRegion(regionId);
+        if (!result.Success)
+        {
+            Toast(result.Failure switch
+            {
+                RegionTravelFailure.RegionUnavailable => "Chưa thể đến khu vực này.",
+                RegionTravelFailure.MapContentUnavailable => "Khu vực chưa có map content.",
+                RegionTravelFailure.TravelConditionFailed => $"Chưa đủ điều kiện: {result.FailedConditionId}",
+                _ => "Không tìm thấy khu vực."
+            });
+            return result;
+        }
+
+        foreach (var sprite in _monsterSprites.Values) sprite.QueueFree();
+        foreach (var sprite in _allySprites.Values) sprite.QueueFree();
+        _monsterSprites.Clear(); _allySprites.Clear(); _dyingMonsters.Clear();
+        RebuildMapTextures();
+        _ground = LoadAssetTexture(_application.CurrentMapBackgroundAssetId() ?? "tiles.arena.ground");
+        _lastSoulSignature = ""; _lastFeatureSignature = ""; _lastScreenSignature = "";
+        Toast($"Đã đến { _application.RegionDetails(regionId)?.DisplayName ?? regionId }.");
+        RefreshSnapshot();
+        return result;
     }
 
     private static Texture2D? LoadTextureFile(string relativeFile)
