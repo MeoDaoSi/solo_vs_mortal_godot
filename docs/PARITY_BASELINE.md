@@ -31,3 +31,5 @@ The source manifest and JSON descriptors remain the logical-ID authority during 
 ## Foundation golden fixture
 
 `tests/Fixtures/foundation-golden.json` records Mulberry32 and Combat Power outputs generated from this source revision. `tests/Parity` is a dependency-free C# executable that checks those values plus rank boundaries, sprite stages, progression caps, and successful loading of every canonical Definition registry. It is intentionally separate from the Godot runtime project.
+
+The harness passed on 2026-09-04 using `dotnet run --project tests/Parity/SoloVsMortal.ParityChecks.csproj`. Full physical asset-file existence verification was excluded from the Phase 1 completion gate by explicit project direction; logical asset references are still validated.
