@@ -25,6 +25,8 @@ public sealed class GameSession : IDisposable
         Player = new PlayerSystem(Events, uids, definitions.Player, new Vec2(480, 280), new PlayerBounds(960, 540));
         Monsters = new MonsterSystem(Events, uids, rng, definitions, new SpawnArea(0, 0, 960, 540));
         Combat = new CombatSystem(Events, Player, Monsters);
+        PlayerModifiers = new PlayerModifierSystem(Player);
+        Progression = new ProgressionSystem(Events, rng, Player, PlayerModifiers);
     }
 
     public GameSessionState State { get; } = new();
@@ -33,6 +35,8 @@ public sealed class GameSession : IDisposable
     public PlayerSystem Player { get; }
     public MonsterSystem Monsters { get; }
     public CombatSystem Combat { get; }
+    public PlayerModifierSystem PlayerModifiers { get; }
+    public ProgressionSystem Progression { get; }
 
     public double ElapsedSeconds => _clock.Time;
 
@@ -49,11 +53,12 @@ public sealed class GameSession : IDisposable
             Player.Update(deltaSeconds, _moveInput);
             Monsters.Update(deltaSeconds, Player.State);
             Combat.Update(deltaSeconds, _attackPressed);
+            Progression.Update(deltaSeconds);
             _clock.Tick(deltaSeconds);
         }
     }
 
     public void SetInput(Vec2 move, bool attackPressed) { _moveInput = move; _attackPressed = attackPressed; }
     public MonsterState SpawnMonster(string definitionId, int? level = null, Vec2? position = null) => Monsters.Spawn(definitionId, new MonsterSpawnOptions(Level: level, Position: position));
-    public void Dispose() => Combat.Dispose();
+    public void Dispose() { Progression.Dispose(); Combat.Dispose(); }
 }

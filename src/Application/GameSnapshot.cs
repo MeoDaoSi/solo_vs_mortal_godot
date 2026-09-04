@@ -11,7 +11,9 @@ public sealed record GameSnapshot(
     int SoulNatureDefinitionCount,
     int CapabilityDefinitionCount,
     PlayerSnapshot Player,
-    IReadOnlyList<MonsterSnapshot> Monsters);
+    IReadOnlyList<MonsterSnapshot> Monsters,
+    IReadOnlyList<InventoryItemSnapshot> Inventory);
 
-public sealed record PlayerSnapshot(string Uid, Vec2 Position, double CurrentHp, double MaximumHp, bool Alive, int Level, int Rank);
+public sealed record PlayerSnapshot(string Uid, Vec2 Position, double CurrentHp, double MaximumHp, bool Alive, int Level, int Xp, int Rank, int Attack, int Defense, int Speed);
 public sealed record MonsterSnapshot(string Uid, string DefinitionId, string SpeciesId, Vec2 Position, double CurrentHp, double MaximumHp, bool Alive, MonsterAiState AiState, int Level, int Rank);
+public sealed record InventoryItemSnapshot(string StableId, int Count);

@@ -7,8 +7,8 @@ This is the acceptance matrix for Phaser-to-Godot behavior. A feature is complet
 | Player movement/collision | Player/map definitions | Player system | Character body adapter | Position is currently not persisted | SIMULATION IN PROGRESS |
 | Combat and damage | Balance definitions | Combat and actor systems | Animation/VFX adapter | HP | SIMULATION IN PROGRESS |
 | Monster spawn/AI/death | Monster definitions | Monster system | Monster view nodes | None currently | SIMULATION IN PROGRESS |
-| Player rank/progression | Balance definitions | Progression system | HUD/actions | Save v2+ | NOT STARTED |
-| Drops, materials, pills | Item/balance definitions | Progression system | Inventory/crafting UI | Save v2+ | NOT STARTED |
+| Player rank/progression | Balance definitions | Progression system | HUD/actions | Save v2+ | SIMULATION IN PROGRESS |
+| Drops, materials, pills | Item/balance definitions | Progression system | Inventory/crafting UI | Save v2+ | SIMULATION IN PROGRESS |
 | Soul acquisition/progression | Soul Nature definitions | Soul system | Orb/inventory views | Save v1+ | NOT STARTED |
 | Soul Banner/loadout | Banner definitions | Soul Banner system | Banner panel | Save v1+, legacy aliases | NOT STARTED |
 | Summon/recovery | Soul/monster definitions | Summon system | Ally view nodes | Save v3+ | NOT STARTED |

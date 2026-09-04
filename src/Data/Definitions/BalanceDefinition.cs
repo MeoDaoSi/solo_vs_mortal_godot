@@ -5,6 +5,8 @@ namespace SoloVsMortal.Data.Definitions;
 public enum EntityType { Player, Monster, Soul }
 public enum TierId { Tier1, Tier2, Tier3 }
 public enum StatArchetypeId { Balanced, Offensive, Defensive }
+public enum MaterialId { SpiritCrystal, BeastCore }
+public enum PillId { BreakthroughMinor, BreakthroughMajor, Vitality, Power, Guard, Swift }
 
 public sealed record StatRatios(double Hp, double Atk, double Def, double Speed);
 public sealed record CpGrowth(double BaseCp, double RankMultiplier, double LevelGrowthRate, double LevelGrowthRate2);
@@ -26,6 +28,14 @@ public sealed record ProgressionDefinition(
     double BreakthroughBaseChance,
     double CrystalDropChance,
     double BeastCoreDropChance);
+public sealed record PillDefinition(
+    PillId Id,
+    string StableId,
+    string DisplayName,
+    IReadOnlyDictionary<MaterialId, int> Recipe,
+    double? BreakthroughChance = null,
+    double? DurationSeconds = null,
+    SoloVsMortal.Simulation.Rules.StatModifiers? Modifiers = null);
 
 public static class BalanceDefinition
 {
@@ -35,6 +45,16 @@ public static class BalanceDefinition
 
     public static readonly StatRatios BaseStatRatio = new(1, 0.3, 0.1, 0.3);
     public static readonly ProgressionDefinition Progression = new(100, 25, 5, 25, 10, 0.2, 0.65, 0.2);
+
+    public static readonly IReadOnlyDictionary<PillId, PillDefinition> Pills = ReadOnly(new Dictionary<PillId, PillDefinition>
+    {
+        [PillId.BreakthroughMinor] = new(PillId.BreakthroughMinor, "BREAKTHROUGH_MINOR", "Tiểu Phá Cảnh Đan", Recipe(3, 1), BreakthroughChance: 0.15),
+        [PillId.BreakthroughMajor] = new(PillId.BreakthroughMajor, "BREAKTHROUGH_MAJOR", "Đại Phá Cảnh Đan", Recipe(7, 3), BreakthroughChance: 0.35),
+        [PillId.Vitality] = new(PillId.Vitality, "VITALITY_PILL", "Sinh Mệnh Đan", Recipe(2, 1), DurationSeconds: 60, Modifiers: new(HpPercent: 0.2)),
+        [PillId.Power] = new(PillId.Power, "POWER_PILL", "Cường Công Đan", Recipe(2, 1), DurationSeconds: 60, Modifiers: new(AtkPercent: 0.2)),
+        [PillId.Guard] = new(PillId.Guard, "GUARD_PILL", "Hộ Thể Đan", Recipe(2, 1), DurationSeconds: 60, Modifiers: new(DefPercent: 0.2)),
+        [PillId.Swift] = new(PillId.Swift, "SWIFT_PILL", "Tật Hành Đan", Recipe(2, 1), DurationSeconds: 60, Modifiers: new(SpeedPercent: 0.2)),
+    });
 
     public static readonly IReadOnlyDictionary<EntityType, CpGrowth> Types = ReadOnly(new Dictionary<EntityType, CpGrowth>
     {
@@ -102,6 +122,9 @@ public static class BalanceDefinition
 
     private static SpeciesDefinition SpeciesOf(string id, string displayName, TierId tier, StatArchetypeId archetype) =>
         new(id, displayName, tier, archetype, new StatRatios(1, 1, 1, 1));
+
+    private static IReadOnlyDictionary<MaterialId, int> Recipe(int crystals, int cores) =>
+        ReadOnly(new Dictionary<MaterialId, int> { [MaterialId.SpiritCrystal] = crystals, [MaterialId.BeastCore] = cores });
 
     private static ReadOnlyDictionary<TKey, TValue> ReadOnly<TKey, TValue>(Dictionary<TKey, TValue> values)
         where TKey : notnull => new(values);
