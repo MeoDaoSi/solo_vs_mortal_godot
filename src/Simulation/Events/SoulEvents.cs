@@ -17,3 +17,4 @@ public sealed record SoulSummonedEvent(string SoulId, string SummonUid, string S
 public sealed record SoulUnsummonedEvent(string SoulId, string SummonUid);
 public sealed record SoulDispersedEvent(string SoulId, double DurationSeconds);
 public sealed record SoulRecoveredEvent(string SoulId);
+public sealed record SoulDevouredEvent(string SoulId, string Mode, string ProfileId, double Reward);

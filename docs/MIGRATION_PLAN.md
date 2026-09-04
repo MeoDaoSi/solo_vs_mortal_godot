@@ -80,10 +80,10 @@ Exit: launch, move, fight, acquire a Soul, save, reload, and reproduce the same 
 ### 4. Full feature parity
 
 - Add progression, pills/material drops, Soul Banner loadout, summon lifecycle, reinforcement, devouring, Essence, Bloodline, Possession, and the fragile-wall capability slice.
-- Rebuild animation resolution from `characterAnimations.json`; validate every referenced frame source.
+- Rebuild animation resolution from `characterAnimations.json`; when a source frame/audio asset is absent, use a deterministic placeholder/fallback and keep the logical ID path intact. Asset fidelity is not a migration blocker.
 - Recreate UI flows with Vietnamese `displayName` values rather than internal IDs.
 
-Exit: every implemented Phaser roadmap item has a Godot parity check.
+Exit: every implemented Phaser roadmap item has a Godot behavior/flow parity check and runs through the Application/Simulation boundary. Missing source assets may use placeholders; they do not block migration completion.
 
 ### 5. Godot-native hardening
 

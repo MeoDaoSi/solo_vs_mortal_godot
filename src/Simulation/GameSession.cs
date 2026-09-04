@@ -22,8 +22,9 @@ public sealed class GameSession : IDisposable
         Events = new EventBus();
         var uids = new UidGenerator();
         var rng = new SeededRng(seed);
-        Player = new PlayerSystem(Events, uids, definitions.Player, new Vec2(480, 280), new PlayerBounds(960, 540));
-        Monsters = new MonsterSystem(Events, uids, rng, definitions, new SpawnArea(0, 0, 960, 540));
+        var map = definitions.DefaultMap; var playerSpawn = new Vec2(480, 280);
+        Player = new PlayerSystem(Events, uids, definitions.Player, playerSpawn, new PlayerBounds(map.Width, map.Height));
+        Monsters = new MonsterSystem(Events, uids, rng, definitions, new SpawnArea(0, 0, map.Width, map.Height));
         Combat = new CombatSystem(Events, Player, Monsters);
         Souls = new SoulSystem(Events, uids, rng, definitions);
         SoulBanners = new SoulBannerSystem(Events, uids, definitions, Souls);
@@ -37,6 +38,7 @@ public sealed class GameSession : IDisposable
         Capabilities = new CapabilitySystem();
         Possession = new PossessionSystem(Events, definitions.SoulNatures, Souls, SoulBanners, Summons, PlayerModifiers, Capabilities);
         World = new WorldInteractionSystem(Events, definitions.DefaultMap, Capabilities);
+        Devouring = new DevourSystem(Events, definitions, Souls, SoulBanners, Summons, Essence, Bloodline, Progression.AddPlayerXp);
         Player.SetColliders(World.BlockingRects());
         _worldSubscription = Events.Subscribe<Simulation.Events.WorldObjectDestroyedEvent>(_ => Player.SetColliders(World.BlockingRects()));
     }
@@ -58,6 +60,7 @@ public sealed class GameSession : IDisposable
     public CapabilitySystem Capabilities { get; }
     public PossessionSystem Possession { get; }
     public WorldInteractionSystem World { get; }
+    public DevourSystem Devouring { get; }
     private readonly IDisposable _worldSubscription;
 
     public double ElapsedSeconds => _clock.Time;

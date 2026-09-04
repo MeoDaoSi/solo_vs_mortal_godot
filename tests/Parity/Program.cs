@@ -61,6 +61,7 @@ CheckProgressionAndModifierParity();
 CheckSoulAndBannerParity();
 CheckAdvancedSoulAndWorldParity();
 CheckSaveMigrationAndReplayParity();
+CheckDevourParity();
 
 if (args.Length > 0)
 {
@@ -343,4 +344,18 @@ void CheckSaveMigrationAndReplayParity()
         session.Essence.Add("STONE_ESSENCE", 3); session.Bloodline.Add("STONE_SPIRIT_BLOODLINE", 3);
         return new GameApplication(session).CaptureSaveJson();
     }
+}
+
+void CheckDevourParity()
+{
+    using var session = new GameSession(definitions, 17); session.Start();
+    WorldSoulState? worldSoul = null;
+    for (var attempt = 0; attempt < 250 && worldSoul is null; attempt++) { var monster = session.SpawnMonster("mon_golem", 31, new Vec2(200, 200)); session.Monsters.TakeDamage(monster.Uid, 10_000_000); worldSoul = session.Souls.WorldSouls().FirstOrDefault(); }
+    if (worldSoul is null) { failures.Add("Devour fixture did not generate a Soul."); return; }
+    var soul = session.Souls.Acquire(worldSoul.Id); if (soul is null) { failures.Add("Devour fixture could not acquire Soul."); return; }
+    var preview = session.Devouring.Previews(soul.Id).FirstOrDefault(item => item.Mode == DevourMode.Essence); if (preview is null) { failures.Add("Devour Essence preview missing."); return; }
+    Equal(session.Devouring.Execute(soul.Id, DevourMode.Essence).Success, true, "Devour Essence transaction");
+    Equal(session.Souls.OwnedSoul(soul.Id), null, "Devour removes Soul after reward resolution");
+    Equal(session.Essence.Count("STONE_ESSENCE"), 1, "Devour grants Essence contribution");
+    Equal(session.Devouring.Execute(soul.Id, DevourMode.Essence).Failure, DevourFailure.SoulNotFound, "Devour rejects missing Soul");
 }
