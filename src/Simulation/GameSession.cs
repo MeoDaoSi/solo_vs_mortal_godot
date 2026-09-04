@@ -1,4 +1,5 @@
 using SoloVsMortal.Core.Loop;
+using SoloVsMortal.Data.Definitions;
 using SoloVsMortal.Simulation.State;
 
 namespace SoloVsMortal.Simulation;
@@ -8,7 +9,13 @@ public sealed class GameSession
 {
     private readonly SimulationClock _clock = new();
 
+    public GameSession(GameDefinitions definitions)
+    {
+        Definitions = definitions ?? throw new ArgumentNullException(nameof(definitions));
+    }
+
     public GameSessionState State { get; } = new();
+    public GameDefinitions Definitions { get; }
 
     public double ElapsedSeconds => _clock.Time;
 

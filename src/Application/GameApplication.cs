@@ -1,4 +1,5 @@
 using SoloVsMortal.Simulation;
+using SoloVsMortal.Data.Definitions;
 
 namespace SoloVsMortal.Application;
 
@@ -12,9 +13,16 @@ public sealed class GameApplication
         _session = session ?? throw new ArgumentNullException(nameof(session));
     }
 
+    public static GameApplication CreateFromDefinitionsDirectory(string directory) =>
+        new(new GameSession(GameDefinitionLoader.LoadFromDirectory(directory)));
+
     public void Start() => _session.Start();
 
     public void Tick(double deltaSeconds) => _session.Tick(deltaSeconds);
 
-    public GameSnapshot Snapshot() => new(_session.State.Stage, _session.ElapsedSeconds);
+    public GameSnapshot Snapshot() => new(
+        _session.State.Stage,
+        _session.ElapsedSeconds,
+        _session.Definitions.Monsters.Count(),
+        _session.Definitions.SoulBanners.Count());
 }

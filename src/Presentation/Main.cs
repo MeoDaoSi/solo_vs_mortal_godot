@@ -6,12 +6,15 @@ namespace SoloVsMortal.Presentation;
 
 public partial class Main : Node2D
 {
-    private readonly GameApplication _application = new(new GameSession());
+    private GameApplication _application = null!;
 
     public override void _Ready()
     {
+        var definitionsDirectory = ProjectSettings.GlobalizePath("res://data/configs");
+        _application = GameApplication.CreateFromDefinitionsDirectory(definitionsDirectory);
         _application.Start();
-        GD.Print("SOLO VS MORTAL Godot C# project initialized.");
+        var snapshot = _application.Snapshot();
+        GD.Print($"SOLO VS MORTAL initialized with {snapshot.MonsterDefinitionCount} monsters and {snapshot.SoulBannerDefinitionCount} Soul Banners.");
     }
 
     public override void _PhysicsProcess(double delta)

@@ -8,7 +8,7 @@ The architecture is designed to keep gameplay deterministic, headless-testable, 
 
 ```text
 Presentation -> Application -> Simulation -> Data / Core
-                              -> Core
+							  -> Core
 ```
 
 - `Core` contains game-agnostic primitives and infrastructure contracts: IDs, math, deterministic RNG, clock abstractions, and the domain event mechanism.
