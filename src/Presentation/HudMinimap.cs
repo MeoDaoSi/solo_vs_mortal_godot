@@ -8,6 +8,7 @@ public partial class HudMinimap : Control
 {
     private const string UiRoot = "res://assets/third_party/kenney-ui-adventure/PNG/Default/";
     private readonly Texture2D _ring = GD.Load<Texture2D>(UiRoot + "minimap_ring_brown_detail.png");
+    private Func<SoloVsMortal.Core.Math.Vec2, bool>? _visited;
     private GameSnapshot? _snapshot;
     private IReadOnlyList<WorldObjectSnapshot> _objects = Array.Empty<WorldObjectSnapshot>();
 
@@ -16,8 +17,9 @@ public partial class HudMinimap : Control
         MouseFilter = MouseFilterEnum.Ignore;
     }
 
-    public void Refresh(GameSnapshot snapshot, IReadOnlyList<WorldObjectSnapshot> objects)
+    public void Refresh(GameSnapshot snapshot, IReadOnlyList<WorldObjectSnapshot> objects, Func<SoloVsMortal.Core.Math.Vec2, bool>? visited = null)
     {
+        _visited = visited;
         _snapshot = snapshot;
         _objects = objects;
         QueueRedraw();
@@ -30,7 +32,7 @@ public partial class HudMinimap : Control
         var radius = Mathf.Min(Size.X, Size.Y) * 0.42f;
         DrawCircle(center, radius, new Color("#24170d"));
 
-        foreach (var item in _objects.Where(item => !item.Destroyed))
+        foreach (var item in _objects.Where(item => !item.Destroyed && (_visited?.Invoke(item.Position) ?? true)))
         {
             var p = Project(item.Position, center, radius);
             if (p.DistanceTo(center) > radius - 4) continue;
@@ -45,7 +47,7 @@ public partial class HudMinimap : Control
             DrawCircle(p, item.Type == "road" ? 1.5f : 2.5f, color);
         }
 
-        foreach (var soul in _snapshot.WorldSouls)
+        foreach (var soul in _snapshot.WorldSouls.Where(s => _visited?.Invoke(s.Position) ?? true))
         {
             var p = Project(soul.Position, center, radius);
             if (p.DistanceTo(center) <= radius - 4) DrawCircle(p, 2.5f, new Color("#73e7ff"));

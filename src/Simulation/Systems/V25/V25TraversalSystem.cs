@@ -246,13 +246,17 @@ public sealed class V25TraversalSystem
 
     public bool RescueFromHazard()
     {
-        if (TryReturnToSafeAnchor()) return true;
+        if (TryReturnToSafeAnchor())
+        {
+            _player.ApplyCanonicalDamage(0, Math.Min(_player.State.MaxHp * 0.10, Math.Max(0, _player.State.CurrentHp - 1)));
+            return true;
+        }
         if (_safeAnchor is null) return false;
         if (_activeGateStateId is not null && !string.Equals(_activeGateStateId, _safeAnchor.GateStateId, StringComparison.Ordinal)) return false;
         var anchor = new Vec2(_safeAnchor.PositionX, _safeAnchor.PositionY);
         if (!_player.IsPositionFree(anchor, PlayerSystem.CanonicalBodyRadius)) return false;
         _player.SetPosition(anchor);
-        var loss = Math.Min(_player.State.MaxHp * 0.10, Math.Max(0, _player.State.MaxHp - 1));
+        var loss = Math.Min(_player.State.MaxHp * 0.10, Math.Max(0, _player.State.CurrentHp - 1));
         _player.ApplyCanonicalDamage(0, loss);
         _activeTerrain = null;
         _crumblingTicks = 0;

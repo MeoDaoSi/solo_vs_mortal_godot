@@ -11,7 +11,7 @@ public enum V25EquipmentSlot { MainHand, OffHand, Head, Chest, Hands, Feet, Acce
 public enum V25InventoryFailure { UnknownItem, InvalidAmount, InventoryFull, InsufficientCoins, RankTooLow, InCombat, HazardActive, Transition, AccessoryFamilyConflict, Equipped, NotFound, ResourceFull, Cooldown, InvalidState }
 public sealed record V25ItemInstance(string InstanceUid, string DefinitionId, int Count = 1);
 public sealed record V25EquippedItem(V25EquipmentSlot Slot, string InstanceUid, string DefinitionId);
-public sealed record V25InventorySnapshot(long Coins, IReadOnlyList<V25ItemInstance> Items, IReadOnlyList<V25ItemInstance> Overflow, IReadOnlyList<V25EquippedItem> Equipped, int SharedPotionCooldownTicks);
+public sealed record V25InventorySnapshot(long Coins, IReadOnlyList<V25ItemInstance> Items, IReadOnlyList<V25ItemInstance> Overflow, IReadOnlyList<V25EquippedItem> Equipped, int SharedPotionCooldownTicks, int NextInstance = 0);
 public sealed record V25InventoryResult(bool Success, V25InventoryFailure? Failure = null, string? InstanceUid = null);
 
 /// <summary>Canonical 60-slot inventory and eight-slot loadout owner.</summary>
@@ -165,7 +165,7 @@ public sealed class V25InventorySystem
         if (potion is null) return new(false, V25InventoryFailure.UnknownItem);
         if (potion.Resource == "HP" && _player.State.CurrentHp >= _player.State.MaxHp) return new(false, V25InventoryFailure.ResourceFull);
         if (potion.Resource == "Spirit" && _player.State.CurrentSpirit >= _player.State.MaxSpirit) return new(false, V25InventoryFailure.ResourceFull);
-        var carried = _items.Values.Concat(_overflow.Values).FirstOrDefault(item => item.DefinitionId == definitionId && item.Count > 0);
+        var carried = _items.Values.FirstOrDefault(item => item.DefinitionId == definitionId && item.Count > 0);
         if (carried is null) return new(false, V25InventoryFailure.NotFound);
         if (!ConsumeCarried(carried.InstanceUid, 1)) return new(false, V25InventoryFailure.NotFound);
         if (potion.Resource == "HP") _player.State.CurrentHp = V25FixedPoint.QuantizeMilli(Math.Min(_player.State.MaxHp, _player.State.CurrentHp + _player.State.MaxHp * potion.MaxFraction));
@@ -173,14 +173,22 @@ public sealed class V25InventorySystem
         _potionCooldownTicks = 600; return new(true, InstanceUid: carried.InstanceUid);
     }
 
-    public V25InventorySnapshot Snapshot() => new(_coins, Items, Overflow, Equipped, _potionCooldownTicks);
+    public V25InventoryResult WithdrawOverflow(string instanceUid)
+    {
+        if (!_overflow.TryGetValue(instanceUid, out var item)) return new(false, V25InventoryFailure.NotFound);
+        if (_items.Count >= InventorySlotCapacity) return new(false, V25InventoryFailure.InventoryFull);
+        _items.Add(instanceUid, item); _overflow.Remove(instanceUid);
+        return new(true, InstanceUid: instanceUid);
+    }
+
+    public V25InventorySnapshot Snapshot() => new(_coins, Items, Overflow, Equipped, _potionCooldownTicks, _nextInstance);
 
     public void Restore(V25InventorySnapshot snapshot)
     {
         ArgumentNullException.ThrowIfNull(snapshot);
         var itemIds = new HashSet<string>(StringComparer.Ordinal); var instanceIds = new HashSet<string>(StringComparer.Ordinal);
         var items = ValidateItems(snapshot.Items, itemIds, instanceIds); var overflow = ValidateItems(snapshot.Overflow, itemIds, instanceIds, carried: false);
-        if (snapshot.Coins < 0 || snapshot.SharedPotionCooldownTicks is < 0 or > 600) throw new InvalidDataException("Canonical inventory coins/cooldown are invalid.");
+        if (snapshot.NextInstance < 0 || snapshot.Coins < 0 || snapshot.SharedPotionCooldownTicks is < 0 or > 600) throw new InvalidDataException("Canonical inventory coins/cooldown are invalid.");
         var slots = new Dictionary<V25EquipmentSlot, V25EquippedItem>();
         foreach (var item in snapshot.Equipped)
         {
@@ -193,7 +201,7 @@ public sealed class V25InventorySystem
         _items.Clear(); foreach (var item in items) _items.Add(item.InstanceUid, item);
         _overflow.Clear(); foreach (var item in overflow) _overflow.Add(item.InstanceUid, item);
         _equipped.Clear(); foreach (var item in slots) _equipped.Add(item.Key, item.Value);
-        _coins = snapshot.Coins; _potionCooldownTicks = snapshot.SharedPotionCooldownTicks; _nextInstance = Math.Max(_nextInstance, instanceIds.Count + 1); ApplyEquipmentModifiers();
+        _coins = snapshot.Coins; _potionCooldownTicks = snapshot.SharedPotionCooldownTicks; _nextInstance = Math.Max(snapshot.NextInstance, instanceIds.Select(id => id.StartsWith("item.", StringComparison.Ordinal) && int.TryParse(id[5..], out var number) ? number : 0).DefaultIfEmpty().Max()); ApplyEquipmentModifiers();
     }
 
     public IReadOnlyList<StatModifiers> EquipmentModifiers() => _equipped.Values.Select(item => _canonical.Content.Equipment.First(definition => definition.Id == item.DefinitionId)).Select(ToModifiers).ToArray();
@@ -227,7 +235,7 @@ public sealed class V25InventorySystem
     private bool KnownItem(string definitionId) => KnownEquipment(definitionId) || _canonical.Content.Consumables.Any(item => item.Id == definitionId);
     private bool KnownEquipment(string definitionId) => _canonical.Content.Equipment.Any(item => item.Id == definitionId);
     private V25ItemInstance NewInstance(string definitionId, string? forced = null, int count = 1) => new(forced ?? $"item.{++_nextInstance}", definitionId, count);
-    private V25ItemInstance? FindCarried(string uid) => _items.GetValueOrDefault(uid) ?? _overflow.GetValueOrDefault(uid);
+    private V25ItemInstance? FindCarried(string uid) => _items.GetValueOrDefault(uid);
     private bool RemoveCarried(string uid) => _items.Remove(uid) || _overflow.Remove(uid);
     private bool ConsumeCarried(string uid, int amount)
     {

@@ -44,7 +44,7 @@ public sealed class GameApplication
         var canonicalDirectory = Path.GetFullPath(Path.Combine(directory, "..", "v2.5"));
         var canonical = CanonicalV25Loader.LoadFromDirectory(canonicalDirectory, profileId, "2026-09-08.closed-1");
         canonical.ActiveProfileId = profileId;
-        return new(new GameSession(GameDefinitionLoader.LoadFromDirectory(directory), canonical: canonical), canonical);
+        return new(new GameSession(GameDefinitionLoader.LoadFromDirectory(directory).WithCanonicalRoster(canonical), canonical: canonical), canonical);
     }
 
     /// <summary>Validated, hash-pinned V2.5 content exposed to the application boundary for staged systems.</summary>
@@ -102,8 +102,11 @@ public sealed class GameApplication
     public bool ReturnToCanonicalSafeAnchor() => _session.Traversal?.TryReturnToSafeAnchor() ?? false;
     public bool SetAllyMode(AllyAiMode mode, string? soulId = null) => _session.Allies.SetCanonicalMode(mode, soulId);
     public bool FocusAlly(string allyUid, string targetUid) => _session.Allies.FocusCanonical(allyUid, targetUid, _session.Monsters, _session.SimulationTick);
+    public bool WasCanonicalTileVisited(Vec2 position) => CanonicalContent is null || _session.WasVisited(position);
     public IReadOnlyList<V25TerrainArea> CanonicalTerrain() => _session.CanonicalTerrain;
     public IReadOnlyList<V25RoadSegment> CanonicalRoads() => CanonicalContent is null ? Array.Empty<V25RoadSegment>() : V25WorldLayout.Roads(CanonicalContent.Content.LayoutBlueprint);
+    public bool HasSpeciesAnimation(string speciesId) => _session.Definitions.CharacterAnimations.MonstersBySpecies.Keys.Any(id => id.Equals(speciesId, StringComparison.OrdinalIgnoreCase));
+    public string SpeciesDisplayName(string speciesId) => CanonicalContent?.Content.Species.FirstOrDefault(s => s.Id == speciesId)?.Name ?? speciesId;
     public bool HasAsset(string id) => _session.Definitions.Assets.Assets.ContainsKey(id);
     public bool UpgradeCanonicalProfile()
     {
@@ -145,6 +148,9 @@ public sealed class GameApplication
     public V25InventoryResult AddCanonicalItem(string definitionId, int amount = 1) => MarkIfSuccessful(_session.InventoryV25?.AddItem(definitionId, amount) ?? new(false, V25InventoryFailure.InvalidState));
     public V25InventoryResult BuyCanonicalItem(string definitionId, int amount = 1) => !_session.CanUseCanonicalNpc("kha") ? new(false, V25InventoryFailure.InvalidState) : MarkIfSuccessful(_session.InventoryV25?.Buy(definitionId, amount) ?? new(false, V25InventoryFailure.InvalidState));
     public V25InventoryResult SellCanonicalItem(string instanceUid) => !_session.CanUseCanonicalNpc("kha") ? new(false, V25InventoryFailure.InvalidState) : MarkIfSuccessful(_session.InventoryV25?.Sell(instanceUid) ?? new(false, V25InventoryFailure.InvalidState));
+    public V25InventoryResult WithdrawCanonicalOverflow(string instanceUid) => !_session.IsAtCanonicalShrine() || _session.IsCanonicalCombatActive()
+        ? new(false, V25InventoryFailure.InvalidState) : MarkIfSuccessful(_session.InventoryV25?.WithdrawOverflow(instanceUid) ?? new(false, V25InventoryFailure.InvalidState));
+    public bool ClearCanonicalSkillSlot(int slot, bool passive) => MarkIfTrue(_session.SkillGrantsV25?.ClearSlot(slot, passive) == true);
     public V25InventoryResult EquipCanonicalItem(string instanceUid) => MarkIfSuccessful(_session.InventoryV25?.Equip(instanceUid) ?? new(false, V25InventoryFailure.InvalidState));
     public V25InventoryResult UnequipCanonicalItem(V25EquipmentSlot slot) => MarkIfSuccessful(_session.InventoryV25?.Unequip(slot) ?? new(false, V25InventoryFailure.InvalidState));
     public V25InventoryResult UseCanonicalPotion(string definitionId) => MarkIfSuccessful(_session.InventoryV25?.UsePotion(definitionId) ?? new(false, V25InventoryFailure.InvalidState));
@@ -357,7 +363,7 @@ public sealed class GameApplication
                 inventory.Items.Select(item => new V25ItemInstanceSaveState(item.InstanceUid, item.DefinitionId, item.Count)).ToArray(),
                 inventory.Overflow.Select(item => new V25ItemInstanceSaveState(item.InstanceUid, item.DefinitionId, item.Count)).ToArray(),
                 inventory.Equipped.Select(item => new V25EquippedItemSaveState(item.Slot.ToString(), item.InstanceUid, item.DefinitionId)).ToArray(),
-                inventory.SharedPotionCooldownTicks) : null,
+                inventory.SharedPotionCooldownTicks, inventory.NextInstance) : null,
             _session.SkillGrantsV25?.Snapshot() is { } skills ? new V25SkillGrantSaveState(
                 skills.LearnedSkillIds.ToArray(), skills.ActiveSkillIds.ToArray(), skills.PassiveSkillIds.ToArray(),
                 skills.PromotedRanks.ToDictionary(item => item.Key, item => item.Value, StringComparer.Ordinal)) : null,
@@ -371,7 +377,7 @@ public sealed class GameApplication
                 quests.ObjectiveEventIds.ToArray(), quests.RewardReceipts.ToArray(), quests.HintedNpcIds.ToArray()) : null,
             _session.LootV25?.Snapshot() is { } loot ? new V25LootSaveData(loot.Awards.Select(award => new V25LootAwardSaveState(award.AwardId, award.TargetLifeUid, award.EncounterId, award.EncounterType, award.Rank, award.Coins, award.ItemDefinitionId, award.ItemRank, award.SourceVersion)).ToArray()) : null,
             _session.UniquePowersV25?.Snapshot() is { } uniques ? new V25UniquePowerSaveData(uniques.Powers.Select(power => new V25UniquePowerSaveState(power.PowerId, power.ReceiptId, power.UnlockedTick, power.HostBossId, power.PowerRank)).ToArray()) : null,
-            _session.WorldLifecycleV25?.Snapshot() is { } world ? new V25WorldLifecycleSaveData(world.WorldCycleId, world.DefeatedEncounterIds, world.ClearedGroupIds, world.DiscoveredLandmarkIds, world.OpenedChestIds, _session.HazardTicks) : null);
+            _session.WorldLifecycleV25?.Snapshot() is { } world ? new V25WorldLifecycleSaveData(world.WorldCycleId, world.DefeatedEncounterIds, world.ClearedGroupIds, world.DiscoveredLandmarkIds, world.OpenedChestIds, _session.HazardTicks, _session.Monsters.DormantRegions, _session.Souls.PickupRegions, _session.VisitedTiles) : null);
         return V25SaveCodec.Normalize(new V25SaveEnvelope(V25SaveFormat.FormatId, V25SaveFormat.SchemaVersion, V25SaveFormat.SpecRevision, V25SaveFormat.ContentVersion, V25SaveFormat.BalanceVersion, sequence,
             $"tx_{saveId}_{sequence}_{_session.UidNext}", payload, "", saveId, runtime.SimulationTick, runtime.RngStreams));
     }
@@ -442,6 +448,7 @@ public sealed class GameApplication
         _session.Combat.ClearCanonicalRuntime();
         _session.Summons.ClearActiveForMapChange();
         _session.Monsters.Clear(); _session.Allies.Clear();
+        _session.Monsters.RestoreDormantRegions(save.Payload.WorldLifecycle?.DormantRegions, save.Payload.CurrentRegionId, runtime.SimulationTick);
         _session.Player.RestoreCanonicalRuntime(player.Uid, save.Payload.Player.Level, player.Rank, save.Payload.Player.Xp,
             V25FixedPoint.FromMilli(player.CurrentHpMilli), V25FixedPoint.FromMilli(player.MaxHpMilli), V25FixedPoint.FromMilli(player.CurrentSpiritMilli), V25FixedPoint.FromMilli(player.MaxSpiritMilli), player.CombatStyleId,
             V25FixedPoint.FromMilli(player.AttackCooldownMilli), player.BreakthroughReady, player.DodgeCooldownTicks, player.DodgeRemainingTicks, player.DodgeInvulnerabilityTicks,
@@ -535,7 +542,7 @@ public sealed class GameApplication
                 savedInventory.Items.Select(item => new V25ItemInstance(item.InstanceUid, item.DefinitionId, item.Count)).ToArray(),
                 savedInventory.Overflow.Select(item => new V25ItemInstance(item.InstanceUid, item.DefinitionId, item.Count)).ToArray(),
                 savedInventory.Equipped.Select(item => new V25EquippedItem(Enum.Parse<V25EquipmentSlot>(item.Slot, ignoreCase: false), item.InstanceUid, item.DefinitionId)).ToArray(),
-                savedInventory.SharedPotionCooldownTicks));
+                savedInventory.SharedPotionCooldownTicks, savedInventory.NextInstance));
         }
         if (_session.SkillGrantsV25 is { } skillSystem)
         {
@@ -578,6 +585,8 @@ public sealed class GameApplication
             var savedWorld = save.Payload.WorldLifecycle ?? throw new InvalidDataException("V2.5 save lacks canonical world lifecycle state; original preserved rather than respawning encounters.");
             worldSystem.Restore(new V25WorldLifecycleSnapshot(savedWorld.WorldCycleId, savedWorld.DefeatedEncounterIds, savedWorld.ClearedGroupIds, savedWorld.DiscoveredLandmarkIds, savedWorld.OpenedChestIds));
         }
+        _session.Souls.RestorePickupRegions(save.Payload.WorldLifecycle?.PickupRegions);
+        _session.RestoreVisitedTiles(save.Payload.WorldLifecycle?.VisitedTiles);
         _session.RestoreHazardTicks(save.Payload.WorldLifecycle?.HazardTicks);
         _session.Player.RecomputeStats();
         // Keep absolute resource amounts; intermediate modifier application may temporarily clamp them.
@@ -696,7 +705,7 @@ public sealed class GameApplication
             ThinkTicks: ally.ThinkTicks, FocusTargetUid: ally.FocusTargetUid, FocusRemainingTicks: ally.FocusRemainingTicks,
             PathFailTicks: ally.PathFailTicks, RecentAttackerUid: ally.RecentAttackerUid,
             RecentAttackerAgeTicks: ally.RecentAttackerTick < 0 ? 0 : checked((int)Math.Max(0, _session.SimulationTick - ally.RecentAttackerTick)))));
-        return new(_session.SimulationTick, _session.Combat.ActiveCasts, _session.Combat.ActiveProjectiles, _session.RandomStreams.Snapshot(), actors, _session.Combat.Cooldowns, _session.Combat.HitKeys, _session.Combat.Knockbacks);
+        return new(_session.SimulationTick, _session.Combat.ActiveCasts, _session.Combat.ActiveProjectiles, _session.RandomStreams.Snapshot(), actors, _session.Combat.Cooldowns.Where(cd => actors.Any(a => a.Uid == cd.SourceUid) || _session.Monsters.HasDormantActor(cd.SourceUid)).ToArray(), _session.Combat.HitKeys, _session.Combat.Knockbacks);
     }
 
     private V25RuntimeSaveState ToV25RuntimeSave(V25RuntimeSnapshot runtime) => new(
@@ -786,7 +795,7 @@ public sealed class GameApplication
             if (!actors.TryGetValue(projectile.CasterUid, out var source)) continue;
             var expectedSource = V25CombatRules.ComputeStats(source.Kind, source.PowerTier, source.Archetype, source.Rank, source.Level, source.EncounterType, CanonicalContent.Balance);
             var expectedEncounterFactor = source.Kind == V25EntityKind.Monster ? V25EncounterFactors.For(source.EncounterType).Attack : 1;
-            if (source.Kind != projectile.SourceKind || source.Rank != projectile.SourceRank || source.CombatStyleId != projectile.SourceCombatStyleId || Math.Abs(expectedSource.Attack - projectile.SourceAttack) > 0.001 || Math.Abs(expectedSource.Defense - projectile.SourceDefense) > 0.001 || Math.Abs(expectedEncounterFactor - projectile.SourceEncounterAttackFactor) > 0.001)
+            if (source.Kind != projectile.SourceKind || source.Rank != projectile.SourceRank || source.CombatStyleId != projectile.SourceCombatStyleId || source.Kind != V25EntityKind.Player && (Math.Abs(expectedSource.Attack - projectile.SourceAttack) > 0.001 || Math.Abs(expectedSource.Defense - projectile.SourceDefense) > 0.001) || Math.Abs(expectedEncounterFactor - projectile.SourceEncounterAttackFactor) > 0.001)
                 throw new InvalidDataException($"Canonical projectile '{projectile.CastId}' offense snapshot disagrees with its live source.");
         }
         foreach (var knockback in runtime.Knockbacks ?? Array.Empty<V25KnockbackSaveState>())
@@ -841,7 +850,7 @@ public sealed class GameApplication
 
     private WorldMapRegionSnapshot BuildRegionSnapshot(RegionDefinition region)
     {
-        var preview = _session.WorldMap.PreviewTravel(region.Id);
+        var preview = CanonicalContent is null ? _session.WorldMap.PreviewTravel(region.Id) : _session.PreviewCanonicalRegion(region.Id);
         return new WorldMapRegionSnapshot(
             region.Id,
             region.DisplayName,
@@ -855,7 +864,7 @@ public sealed class GameApplication
             region.StarterCandidate,
             string.Equals(region.Id, _session.WorldMap.CurrentRegionId, StringComparison.Ordinal),
             region.Available,
-            preview.Success,
+            CanonicalContent is not null || preview.Success,
             preview.Success,
             region.RecommendedLevelRange?.Minimum,
             region.RecommendedLevelRange?.Maximum,

@@ -83,6 +83,13 @@ public sealed class V25SkillGrantSystem
         _passive[slot] = skillId; LoadoutChanged?.Invoke(); return true;
     }
 
+    public bool ClearSlot(int slot, bool passive)
+    {
+        var list = passive ? _passive : _active; var capacity = passive ? PassiveSlotCapacity : ActiveSlotCapacity;
+        if (!_canChangeLoadout() || slot < 0 || slot >= capacity || list[slot] is null) return false;
+        list[slot] = null; LoadoutChanged?.Invoke(); return true;
+    }
+
     public bool Promote(string skillId, int rank)
     {
         var skill = Find(skillId);
@@ -98,7 +105,7 @@ public sealed class V25SkillGrantSystem
         if (_uniqueGrant(skillId)) return true;
         if (_inventory.EquipmentSkillRanks.ContainsKey(skillId)) return CompatibleWeapon(skill);
         if (skill.DefaultSourceKind != "PermanentLearned" || !_learned.Contains(skillId)) return false;
-        return _active.Take(ActiveSlotCapacity).Contains(skillId, StringComparer.Ordinal);
+        return _active.Take(ActiveSlotCapacity).Contains(skillId, StringComparer.Ordinal) && CompatibleWeapon(skill);
     }
 
     public int EffectivePlayerRank(string skillId)

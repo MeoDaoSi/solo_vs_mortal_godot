@@ -22,7 +22,7 @@ public sealed class V25SpiritSystem
     private readonly Func<bool> _atShrine;
     private readonly Func<bool> _combatOrHazard;
     private long _remainderMicro;
-    // Remainder of the per-minute rate division by 3600 (60 seconds × 60 ticks). Keeping this separate from the
+    // Remainder of the per-minute rate division by 3600 (60 seconds x 60 ticks). Keeping this separate from the
     // resource's sub-milli remainder avoids silently losing fraction of a point every tick.
     private long _rateRemainderMicro;
     private long _lastTick = -1;
@@ -91,7 +91,7 @@ public sealed class V25SpiritSystem
         var net = NetPerMinute;
         var currentMicro = checked(CurrentMilli * MicroPerMilli + _remainderMicro);
         var deltaMicro = RateToTickMicro(net);
-        if (net < 0 && currentMicro > 0 && currentMicro + deltaMicro <= 0)
+        if (net < 0 && currentMicro >= 0 && currentMicro + deltaMicro <= 0)
         {
             // Integrate precisely to zero before recalling. The remaining fraction of this
             // fixed tick is integrated using the post-recall rates, so a summon cannot get

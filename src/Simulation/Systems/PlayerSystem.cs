@@ -43,6 +43,21 @@ public sealed class PlayerSystem
 
     public PlayerState State { get; }
     public bool CanonicalMode => _canonical is not null;
+    public Func<IReadOnlyList<Rect>>? NonPlayerTerrainBarriers { get; set; }
+    public Func<bool>? TerrainCombatAllowed { get; set; }
+    private IReadOnlyList<Rect> NonPlayerColliders => _colliders.Concat(NonPlayerTerrainBarriers?.Invoke() ?? Array.Empty<Rect>()).ToArray();
+    public Vec2 NonPlayerSweptPosition(Vec2 start, Vec2 direction, double distance)
+    {
+        var result = start; var unit = direction.Normalized(); var steps = Math.Max(1, (int)Math.Ceiling(distance / 4));
+        var colliders = NonPlayerColliders;
+        for (var i = 1; i <= steps; i++)
+        {
+            var point = new Vec2(start.X + unit.X * distance * i / steps, start.Y + unit.Y * distance * i / steps);
+            if (!V25Navigation.IsFree(point, new V25WorldBounds(_bounds.Width, _bounds.Height), colliders, 18)) break;
+            result = point;
+        }
+        return result;
+    }
     public Func<Vec2, bool>? TerrainEntryAllowed { get; set; }
     public double EnvironmentMoveMultiplier { get; set; } = 1;
     public double MovementSpeed => CanonicalMode
@@ -74,8 +89,8 @@ public sealed class PlayerSystem
     }
 
     public bool IsSegmentFree(Vec2 start, Vec2 end, double radius, double stepUnits = 4) => V25Navigation.SegmentFree(start, end, new V25WorldBounds(_bounds.Width, _bounds.Height), _colliders, radius, stepUnits);
-    public Vec2? FindNearestFree(Vec2 origin, double radius, double maxRadius = 48) => V25Navigation.FindNearestFree(origin, new V25WorldBounds(_bounds.Width, _bounds.Height), _colliders, radius, Math.Min(maxRadius, 48));
-    public Vec2 FindReachableNextStep(Vec2 start, Vec2 goal, double radius, double distance) => V25Navigation.NextStep(start, goal, distance, new V25WorldBounds(_bounds.Width, _bounds.Height), _colliders, radius);
+    public Vec2? FindNearestFree(Vec2 origin, double radius, double maxRadius = 48) => V25Navigation.FindNearestFree(origin, new V25WorldBounds(_bounds.Width, _bounds.Height), NonPlayerColliders, radius, Math.Min(maxRadius, 48));
+    public Vec2 FindReachableNextStep(Vec2 start, Vec2 goal, double radius, double distance) => V25Navigation.NextStep(start, goal, distance, new V25WorldBounds(_bounds.Width, _bounds.Height), NonPlayerColliders, radius);
 
     public void Update(double deltaSeconds, Vec2 input)
     {
@@ -183,7 +198,7 @@ public sealed class PlayerSystem
 
     public bool TryStartDodge(Vec2 moveInput, Vec2 aim, int cooldownTicks, int durationTicks, int invulnerabilityTicks, double distance)
     {
-        if (!CanonicalMode || !State.Alive || State.Statuses.Has(State.Uid, "stun") || State.DodgeCooldownTicks > 0 || State.DodgeRemainingTicks > 0 || durationTicks <= 0 || !double.IsFinite(distance) || distance <= 0) return false;
+        if (TerrainCombatAllowed?.Invoke() == false || !CanonicalMode || !State.Alive || State.Statuses.Has(State.Uid, "stun") || State.DodgeCooldownTicks > 0 || State.DodgeRemainingTicks > 0 || durationTicks <= 0 || !double.IsFinite(distance) || distance <= 0) return false;
         var direction = moveInput != Vec2.Zero ? moveInput.Normalized() : new Vec2(aim.X - State.Position.X, aim.Y - State.Position.Y).Normalized();
         if (direction == Vec2.Zero) direction = State.Facing;
         State.Facing = direction;

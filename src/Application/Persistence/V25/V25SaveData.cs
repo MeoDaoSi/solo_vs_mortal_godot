@@ -136,7 +136,7 @@ public sealed record V25InventorySaveState(
     IReadOnlyList<V25ItemInstanceSaveState> Items,
     IReadOnlyList<V25ItemInstanceSaveState> Overflow,
     IReadOnlyList<V25EquippedItemSaveState> Equipped,
-    int SharedPotionCooldownTicks);
+    int SharedPotionCooldownTicks, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] int NextInstance = 0);
 
 /// <summary>Canonical learned/grant loadout. Nullable slot entries preserve deliberate empty slots.</summary>
 public sealed record V25SkillGrantSaveState(
@@ -206,7 +206,10 @@ public sealed record V25LootSaveData(IReadOnlyList<V25LootAwardSaveState> Awards
 public sealed record V25UniquePowerSaveState(string PowerId, string ReceiptId, long UnlockedTick, string HostBossId, int PowerRank);
 public sealed record V25UniquePowerSaveData(IReadOnlyList<V25UniquePowerSaveState> Powers);
 public sealed record V25WorldLifecycleSaveData(long WorldCycleId, IReadOnlyList<string> DefeatedEncounterIds,
-    IReadOnlyList<string> ClearedGroupIds, IReadOnlyList<string> DiscoveredLandmarkIds, IReadOnlyList<string> OpenedChestIds, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyDictionary<string, int>? HazardTicks = null);
+    IReadOnlyList<string> ClearedGroupIds, IReadOnlyList<string> DiscoveredLandmarkIds, IReadOnlyList<string> OpenedChestIds, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyDictionary<string, int>? HazardTicks = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyDictionary<string, IReadOnlyList<V25RegionMonster>>? DormantRegions = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyDictionary<string, string>? PickupRegions = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyDictionary<string, IReadOnlyList<int>>? VisitedTiles = null);
 
 public sealed record V25DensityAwardSaveRecord(
     string AwardId,
@@ -834,7 +837,7 @@ public static class V25SaveCodec
                     throw new InvalidDataException($"Runtime projectile '{projectile.CastId}' has no complete released offense snapshot for its despawned source.");
             }
             foreach (var cooldown in runtime.Cooldowns)
-                if (!actors.ContainsKey(cooldown.SourceUid) || !registry.Content.Skills.Any(skill => skill.Id == cooldown.SkillId)) throw new InvalidDataException("Runtime cooldown references an unknown actor or skill.");
+                if ((!actors.ContainsKey(cooldown.SourceUid) && !(normalized.Payload.WorldLifecycle?.DormantRegions?.Values.Any(rows => rows.Any(row => row.Uid == cooldown.SourceUid)) ?? false)) || !registry.Content.Skills.Any(skill => skill.Id == cooldown.SkillId)) throw new InvalidDataException("Runtime cooldown references an unknown actor or skill.");
             foreach (var hitKey in runtime.HitKeys)
                 if (!actors.ContainsKey(hitKey.TargetLifeUid)) throw new InvalidDataException($"Runtime hit key target '{hitKey.TargetLifeUid}' is missing.");
             foreach (var knockback in runtime.Knockbacks ?? Array.Empty<V25KnockbackSaveState>())

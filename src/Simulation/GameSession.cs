@@ -40,6 +40,7 @@ public sealed partial class GameSession : IDisposable
         Player = new PlayerSystem(Events, uids, definitions.Player, playerSpawn, new PlayerBounds(map.Width, map.Height), canonical: canonical);
         Monsters = new MonsterSystem(Events, uids, rng, definitions, new SpawnArea(0, 0, map.Width, map.Height), canonical);
         Souls = new SoulSystem(Events, uids, rng, definitions, canonical, RandomStreams.SoulDrop);
+        if (canonical is not null) Souls.ConfigureRegion(() => CanonicalRegionId);
         SoulBanners = new SoulBannerSystem(Events, uids, definitions, Souls);
         SoulBanners.CreateStarter();
         Allies = new AllySystem(Events, uids, definitions, canonical);
@@ -60,7 +61,7 @@ public sealed partial class GameSession : IDisposable
             (origin, radius, maxRadius) => Player.FindNearestFree(origin, radius, maxRadius), IsCanonicalCombatActive);
         World = new WorldInteractionSystem(Events, map, Capabilities);
         Devouring = new DevourSystem(Events, definitions, Souls, SoulBanners, Summons, Essence, Bloodline, Progression.AddPlayerXp);
-        Sync = canonical is null ? null : new V25SyncSystem(Events, canonical, Souls, () => SimulationTick, IsAtCanonicalShrine, Capabilities.Has, soulId => Possession.ActiveSoulId == soulId);
+        Sync = canonical is null ? null : new V25SyncSystem(Events, canonical, Souls, () => SimulationTick, IsAtCanonicalShrine, Capabilities.Has, speciesId => Possession.CanonicalSnapshot?.SpeciesId == speciesId);
         if (canonical is not null) Possession.ConfigureCanonical(canonical,
             speciesId => Sync?.TotalMicro(speciesId) ?? 0,
             speciesId => Sync?.Milestones(speciesId) ?? new HashSet<string>(StringComparer.Ordinal),
@@ -90,7 +91,7 @@ public sealed partial class GameSession : IDisposable
         {
             SkillGrantsV25.LoadoutChanged += () => PlayerModifiers.SetSource(PlayerModifierSource.PassiveSkills, SkillGrantsV25.PassiveModifiers);
             PlayerModifiers.SetSource(PlayerModifierSource.PassiveSkills, SkillGrantsV25.PassiveModifiers);
-            Combat.ConfigureCanonicalPlayerSkillGrant(SkillGrantsV25.IsExposed);
+            Combat.ConfigureCanonicalPlayerSkillGrant(skillId => Player.TerrainCombatAllowed?.Invoke() != false && SkillGrantsV25.IsExposed(skillId));
             Combat.ConfigureCanonicalPlayerSkillRank(SkillGrantsV25.EffectivePlayerRank);
         }
         MasteryV25 = canonical is null || SkillGrantsV25 is null
@@ -119,6 +120,8 @@ public sealed partial class GameSession : IDisposable
         if (canonical is not null)
         {
             Player.TerrainEntryAllowed = CanEnterCanonicalTerrain;
+            Player.NonPlayerTerrainBarriers = () => CanonicalTerrain.Where(a => a.Terrain is V25TerrainTag.Gap or V25TerrainTag.ShallowWater or V25TerrainTag.PhasePassable).Select(a => a.Bounds).ToArray();
+            Player.TerrainCombatAllowed = () => !CanonicalTerrain.Any(a => a.Terrain == V25TerrainTag.ShallowWater && V25WorldLayout.Contains(a.Bounds, Player.State.Position));
             // NewGame starts full after equipment/passives. Restore later overwrites these constructor values.
             Player.State.CurrentHp = Player.State.MaxHp;
             Player.State.CurrentSpirit = Player.State.MaxSpirit;
@@ -181,7 +184,7 @@ public sealed partial class GameSession : IDisposable
     public void CompleteCanonicalDurableCommit() => _canonicalDurableCommitRequired = false;
     public string CanonicalRegionId => WorldMap.CurrentRegionId;
 
-    public RegionTravelResult TravelToCanonicalRegion(string regionId)
+    public RegionTravelResult PreviewCanonicalRegion(string regionId)
     {
         if (CanonicalContent is null) return new(false, Failure: RegionTravelFailure.RegionNotFound);
         var region = CanonicalContent.RegionsForProfile(CanonicalContent.ActiveProfileId).FirstOrDefault(item => item.Id == regionId);
@@ -198,10 +201,21 @@ public sealed partial class GameSession : IDisposable
             ? Player.State.Rank < int.Parse(requirement["player.rank.".Length..], System.Globalization.CultureInfo.InvariantCulture)
             : !Progression.HasCanonicalFact(requirement));
         if (failed is not null) return new(false, RegionId: regionId, Failure: RegionTravelFailure.TravelConditionFailed, FailedConditionId: failed);
-        // Canonical region transition ends possession using its normal full cooldown.
+        return WorldMap.PreviewTravel(regionId);
+    }
+
+    public RegionTravelResult TravelToCanonicalRegion(string regionId)
+    {
+        var preview = PreviewCanonicalRegion(regionId);
+        if (!preview.Success) return preview;
+        var backwards = CanonicalContent!.Content.Regions.First(r => r.Id == regionId).NextRegionId == CanonicalRegionId;
         Possession.End();
         var result = TravelToRegion(regionId);
-        if (result.Success) RequireCanonicalDurableCommit();
+        if (result.Success)
+        {
+            Player.SetPosition(WorldMap.CurrentMap.Spawn(backwards ? "portal" : "entry").Position);
+            RequireCanonicalDurableCommit();
+        }
         return result;
     }
 
@@ -329,6 +343,7 @@ public sealed partial class GameSession : IDisposable
         if (!result.Success || result.EntrySpawn is null) return result;
         if (!string.Equals(previousRegionId, WorldMap.CurrentRegionId, StringComparison.Ordinal))
         {
+            if (CanonicalContent is not null) Monsters.ParkRegion(previousRegionId);
             World.SetMap(WorldMap.CurrentMap);
             Monsters.Clear();
             Monsters.SetSpawnArea(new SpawnArea(0, 0, WorldMap.CurrentMap.Width, WorldMap.CurrentMap.Height));
@@ -337,7 +352,7 @@ public sealed partial class GameSession : IDisposable
             Player.SetColliders(World.BlockingRects());
             Traversal?.ResetForRegion();
             _hazardTicks.Clear();
-            if (CanonicalContent is not null) SpawnCanonicalRegionEncounters();
+            if (CanonicalContent is not null && !Monsters.ResumeRegion(WorldMap.CurrentRegionId, SimulationTick)) SpawnCanonicalRegionEncounters();
         }
         Player.SetPosition(result.EntrySpawn.Position);
         return result;

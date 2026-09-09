@@ -20,7 +20,7 @@ public sealed record MonsterSpawnOptions(
     bool RewardEligible = true,
     string? EncounterId = null);
 
-public sealed class MonsterSystem
+public sealed partial class MonsterSystem
 {
     private const double CanonicalAggroRadius = 192;
     private readonly Dictionary<string, MonsterState> _monsters = new(StringComparer.Ordinal);
@@ -150,7 +150,7 @@ public sealed class MonsterSystem
             if (monster.Position.DistanceTo(target.Position) <= style.RangeUnits + 10 || actionLocked?.Invoke(monster.Uid) == true) { monster.AiState = MonsterAiState.Attack; continue; }
             monster.AiState = MonsterAiState.Chase;
             var direction = new Vec2(target.Position.X - monster.Position.X, target.Position.Y - monster.Position.Y).Normalized();
-            monster.Position = movement?.SweptPosition(monster.Position, direction, speed * deltaSeconds) ?? monster.Position.MoveTowards(target.Position, speed * deltaSeconds);
+            monster.Position = movement?.NonPlayerSweptPosition(monster.Position, direction, speed * deltaSeconds) ?? monster.Position.MoveTowards(target.Position, speed * deltaSeconds);
         }
     }
 

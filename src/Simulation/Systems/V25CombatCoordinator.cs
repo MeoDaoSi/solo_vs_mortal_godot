@@ -129,7 +129,7 @@ public sealed class V25CombatCoordinator
         {
             RequireRuntimeId(cooldown.SourceUid, "cooldown.sourceUid"); RequireRuntimeId(cooldown.SkillId, "cooldown.skillId");
             if (cooldown.RemainingTicks <= 0 || !stagedCooldowns.TryAdd((cooldown.SourceUid, cooldown.SkillId), cooldown.RemainingTicks)) throw new InvalidDataException("Runtime cooldown is invalid or duplicated.");
-            if (!TryGetActor(cooldown.SourceUid, out _) || FindSkill(cooldown.SkillId) is null) throw new InvalidDataException("Runtime cooldown references an unknown actor or skill.");
+            if ((!TryGetActor(cooldown.SourceUid, out _) && !_monsters.HasDormantActor(cooldown.SourceUid)) || FindSkill(cooldown.SkillId) is null) throw new InvalidDataException("Runtime cooldown references an unknown actor or skill.");
         }
         var stagedHitKeys = new HashSet<V25HitKey>();
         foreach (var key in hitKeys)
@@ -719,8 +719,8 @@ public sealed class V25CombatCoordinator
         switch (source.Kind)
         {
             case V25EntityKind.Player: _player.TryMoveSwept(direction, distance); break;
-            case V25EntityKind.Monster when _monsters.Get(source.Uid) is { } monster: monster.Position = _player.SweptPosition(monster.Position, direction, distance); break;
-            case V25EntityKind.Ally when _allies.Get(source.Uid) is { } ally: ally.Position = _player.SweptPosition(ally.Position, direction, distance); break;
+            case V25EntityKind.Monster when _monsters.Get(source.Uid) is { } monster: monster.Position = _player.NonPlayerSweptPosition(monster.Position, direction, distance); break;
+            case V25EntityKind.Ally when _allies.Get(source.Uid) is { } ally: ally.Position = _player.NonPlayerSweptPosition(ally.Position, direction, distance); break;
         }
     }
 

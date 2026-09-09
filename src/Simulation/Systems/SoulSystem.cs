@@ -26,7 +26,23 @@ public sealed class SoulSystem : IDisposable
     private int _canonicalBannerRank = 1;
     public SoulSystem(EventBus events, UidGenerator uids, SeededRng rng, GameDefinitions definitions, CanonicalContentRegistry? canonical = null, Pcg32? canonicalDropRng = null) { _events = events; _uids = uids; _rng = rng; _definitions = definitions; _canonical = canonical; _canonicalDropRng = canonicalDropRng; if (canonical is not null) _density = new V25DensityEngine(canonical); _defeatSubscription = events.Subscribe<MonsterDefeatedEvent>(OnMonsterDefeated); }
 
-    public IReadOnlyList<WorldSoulState> WorldSouls() => _worldSouls.Values.ToArray();
+    private Func<string>? _currentRegion;
+    private readonly Dictionary<string, string> _pickupRegions = new(StringComparer.Ordinal);
+    public IReadOnlyDictionary<string, string> PickupRegions => _pickupRegions;
+    public void ConfigureRegion(Func<string> region) => _currentRegion = region;
+    private bool PickupInCurrentRegion(string id) => _currentRegion is null || _pickupRegions.GetValueOrDefault(id, _currentRegion()) == _currentRegion();
+    public void RestorePickupRegions(IReadOnlyDictionary<string, string>? regions)
+    {
+        _pickupRegions.Clear();
+        foreach (var pickup in _canonicalPickups.Values)
+        {
+            var region = regions?.GetValueOrDefault(pickup.PickupId) ?? _currentRegion!();
+            if (!_canonical!.RegionsForProfile(_canonical.ActiveProfileId).Any(r => r.Id == region)) throw new InvalidDataException("Unknown pickup region.");
+            _pickupRegions.Add(pickup.PickupId, region);
+        }
+        if (regions is not null && regions.Keys.Any(id => !_canonicalPickups.ContainsKey(id))) throw new InvalidDataException("Pickup region references absent pickup.");
+    }
+    public IReadOnlyList<WorldSoulState> WorldSouls() => _worldSouls.Values.Where(soul => PickupInCurrentRegion(soul.Id)).ToArray();
     public IReadOnlyList<OwnedSoulState> OwnedSouls() => _owned.Values.ToArray();
     public WorldSoulState? WorldSoul(string id) => _worldSouls.GetValueOrDefault(id);
     public OwnedSoulState? OwnedSoul(string id) => _owned.GetValueOrDefault(id);
@@ -90,6 +106,7 @@ public sealed class SoulSystem : IDisposable
             rank, CombatPowerRules.RankKey(rank), CombatPowerRules.RankDisplayName(rank), level, rank, position, monster.SoulNatureId, true);
         _canonicalTutorialReceipts.Add(questReceiptId);
         _canonicalPickups.Add(pickup.PickupId, pickup);
+        if (_currentRegion is not null) _pickupRegions[pickup.PickupId] = _currentRegion();
         var world = new WorldSoulState(pickup.PickupId, pickup.SoulNatureId,
             new SoulOrigin(pickup.MonsterUid, pickup.MonsterDefinitionId, pickup.SpeciesId, pickup.DisplayName, pickup.Rank, pickup.RankKey, pickup.RankDisplayName), pickup.Position);
         _worldSouls.Add(pickup.PickupId, world);
@@ -129,11 +146,12 @@ public sealed class SoulSystem : IDisposable
 
         // No live maps are touched until density, pickup, pity, and identity validation above succeeds.
         _density = restoredDensity; _canonicalBannerRank = bannerRank;
-        _worldSouls.Clear(); _canonicalPickups.Clear(); _canonicalPity.Clear(); _canonicalConsumedPickupIds.Clear(); _canonicalTutorialReceipts.Clear(); _owned.Clear();
+        _worldSouls.Clear(); _canonicalPickups.Clear(); _pickupRegions.Clear(); _canonicalPity.Clear(); _canonicalConsumedPickupIds.Clear(); _canonicalTutorialReceipts.Clear(); _owned.Clear();
         _canonicalAcquisitionEventsPendingCommit.Clear();
         foreach (var pickup in restoredPickups)
         {
             _canonicalPickups.Add(pickup.PickupId, pickup);
+        if (_currentRegion is not null) _pickupRegions[pickup.PickupId] = _currentRegion();
             _worldSouls.Add(pickup.PickupId, new WorldSoulState(pickup.PickupId, pickup.SoulNatureId,
                 new SoulOrigin(pickup.MonsterUid, pickup.MonsterDefinitionId, pickup.SpeciesId, pickup.DisplayName, pickup.Rank, pickup.RankKey, pickup.RankDisplayName), pickup.Position));
         }
@@ -165,7 +183,7 @@ public sealed class SoulSystem : IDisposable
         {
             var allowedRadius = Math.Min(48, Math.Max(0, radius));
             return _canonicalPickups.Values
-                .Where(pickup => pickup.RewardEligible && pickup.Position.DistanceTo(position) <= allowedRadius)
+                .Where(pickup => PickupInCurrentRegion(pickup.PickupId) && pickup.RewardEligible && pickup.Position.DistanceTo(position) <= allowedRadius)
                 .OrderBy(pickup => pickup.Position.DistanceTo(position)).ThenBy(pickup => pickup.PickupId, StringComparer.Ordinal)
                 .Select(pickup => AcquireCanonical(pickup.PickupId))
                 .Where(soul => soul is not null).Cast<OwnedSoulState>().ToArray();
@@ -183,7 +201,7 @@ public sealed class SoulSystem : IDisposable
 
     private OwnedSoulState? AcquireCanonical(string pickupId)
     {
-        if (_canonical is null || _density is null || !_canonicalPickups.TryGetValue(pickupId, out var pickup) || _canonicalConsumedPickupIds.Contains(pickupId) || !pickup.RewardEligible)
+        if (_canonical is null || _density is null || !_canonicalPickups.TryGetValue(pickupId, out var pickup) || _canonicalConsumedPickupIds.Contains(pickupId) || !pickup.RewardEligible || !PickupInCurrentRegion(pickupId))
             return null;
         if (_owned.ContainsKey(pickupId)) return _owned[pickupId];
         var ownership = _density.GetOwnership(pickup.SpeciesId);
@@ -217,7 +235,7 @@ public sealed class SoulSystem : IDisposable
             owned.Xp = 0;
         }
         _worldSouls.Remove(pickup.PickupId);
-        _canonicalPickups.Remove(pickup.PickupId);
+        _canonicalPickups.Remove(pickup.PickupId); _pickupRegions.Remove(pickup.PickupId);
         _canonicalConsumedPickupIds.Add(pickup.PickupId);
         // Capture mutates the in-memory transaction so the save payload contains ownership,
         // Density, pickup consumption and receipts together. The public reward event is held
@@ -313,6 +331,7 @@ public sealed class SoulSystem : IDisposable
             defeated.Rank, defeated.RankKey, defeated.RankDisplayName, defeated.Level,
             V25DensityMath.SourceRankFromLevel(defeated.Level), defeated.Position, monster.SoulNatureId, true);
         _canonicalPickups.Add(pickup.PickupId, pickup);
+        if (_currentRegion is not null) _pickupRegions[pickup.PickupId] = _currentRegion();
         _worldSouls.Add(pickup.PickupId, new WorldSoulState(pickup.PickupId, pickup.SoulNatureId,
             new SoulOrigin(pickup.MonsterUid, pickup.MonsterDefinitionId, pickup.SpeciesId, pickup.DisplayName, pickup.Rank, pickup.RankKey, pickup.RankDisplayName), pickup.Position));
         _events.Publish(new SoulGeneratedEvent(defeated.Uid, pickup.PickupId, defeated.RankKey, defeated.Position));

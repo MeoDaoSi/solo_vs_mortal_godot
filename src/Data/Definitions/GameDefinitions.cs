@@ -87,6 +87,24 @@ public sealed class GameDefinitions
     public IEnumerable<MonsterDefinition> Monsters => _monsters.Values;
     public IEnumerable<SoulBannerDefinition> SoulBanners => _bannersById.Values;
 
+    /// <summary>Compatibility metadata for every canonical species. Combat stats, drops and skills remain owned by V2.5.</summary>
+    public GameDefinitions WithCanonicalRoster(V25.CanonicalContentRegistry canonical)
+    {
+        var roster = _monsters.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+        var template = roster.Values.First();
+        foreach (var species in canonical.Content.Species)
+        {
+            if (roster.Values.Any(m => m.SpeciesId.Equals(species.Id, StringComparison.OrdinalIgnoreCase))) continue;
+            var style = canonical.Content.CombatStyles.First(s => s.Id == species.CombatStyleId);
+            roster.Add($"mon_{species.Id}", template with {
+                Id = $"mon_{species.Id}", SpeciesId = species.Id, DisplayName = species.Name,
+                DefaultRank = 1, LevelRange = new(1, canonical.Balance.MaxLevel), Ai = new(192, style.RangeUnits),
+                Assets = new("", new Dictionary<string, string>(), null), Audio = new("", "", "", "")
+            });
+        }
+        return new GameDefinitions(Player, Soul, roster, _bannersById, SoulNatures, Assets, CharacterAnimations, Maps, WorldMap);
+    }
+
     public MonsterDefinition Monster(string id) => Lookup(_monsters, id, "monster");
     public SoulBannerDefinition SoulBanner(string id) => Lookup(_bannersById, id, "Soul Banner");
     public SoulBannerDefinition SoulBanner(SoulBannerTier tier) => Lookup(_bannersByTier, tier, "Soul Banner tier");

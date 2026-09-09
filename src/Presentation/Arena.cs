@@ -158,12 +158,14 @@ public partial class Arena : Node2D
         foreach (var monster in _snapshot.Monsters)
         {
             var p = ToGodot(monster.Position);
+            if (!_application.HasSpeciesAnimation(monster.SpeciesId)) { DrawCircle(p, 18, new Color("#b77c70")); DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(monster.SpeciesId), fontSize: 12); }
             DrawRect(new Rect2(p.X - 22, p.Y - 31, 44, 5), new Color("#3f0d0d"));
             DrawRect(new Rect2(p.X - 22, p.Y - 31, (float)(44 * monster.CurrentHp / monster.MaximumHp), 5), new Color("#22c55e"));
         }
         foreach (var ally in _snapshot.Allies)
         {
             var p = ToGodot(ally.Position);
+            if (!_application.HasSpeciesAnimation(ally.SpeciesId)) { DrawCircle(p, 18, new Color("#6daca0")); DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(ally.SpeciesId), fontSize: 12); }
             DrawRect(new Rect2(p.X - 22, p.Y - 31, 44, 5), new Color("#123b25"));
             DrawRect(new Rect2(p.X - 22, p.Y - 31, (float)(44 * ally.CurrentHp / ally.MaximumHp), 5), new Color("#86efac"));
         }
@@ -179,7 +181,7 @@ public partial class Arena : Node2D
         _currency.Text = _application.CanonicalInventory() is { } canonicalInventory
             ? $"Coin {canonicalInventory.Coins}     ◆ XP {player.Xp}     ◈ Soul {_snapshot.OwnedSouls.Count}"
             : $"✦ {_snapshot.Inventory.Sum(item => item.Count)}     ◆ {player.Xp}     ◈ {_snapshot.OwnedSouls.Count}";
-        _minimap.Refresh(_snapshot, _application.WorldObjects());
+        _minimap.Refresh(_snapshot, _application.WorldObjects(), _application.WasCanonicalTileVisited);
         var runtime = _application.CanonicalRuntimeSnapshot();
         _bossTelegraphs.Refresh(runtime.Casts, runtime.Actors ?? Array.Empty<V25ActorRuntimeSnapshot>());
         var signature = string.Join('|', _snapshot.OwnedSouls.Select(soul => $"{soul.Id}:{soul.Level}:{soul.Xp}")); if (signature != _lastSoulSignature) { RebuildSoulPanel(_snapshot); _lastSoulSignature = signature; }
@@ -418,6 +420,8 @@ public partial class Arena : Node2D
                 };
             }
             list.AddChild(new Label { Text = $"Coin {inventory.Coins} · Túi {inventory.Items.Count}/60 · Kho {inventory.Overflow.Count}" });
+            foreach (var item in inventory.Overflow)
+                ActionButton($"Nhận từ kho tại shrine: {item.DefinitionId} ×{item.Count}", () => _application.WithdrawCanonicalOverflow(item.InstanceUid).Success);
             foreach (var equipped in inventory.Equipped)
                 ActionButton($"Tháo {equipped.Slot}: {equipped.DefinitionId}", () => _application.UnequipCanonicalItem(equipped.Slot).Success);
             foreach (var item in inventory.Items)
@@ -435,6 +439,16 @@ public partial class Arena : Node2D
             var grants = _application.CanonicalSkillGrants();
             if (grants is null) return;
             list.AddChild(new Label { Text = "Kỹ năng — đến gần Linh để học; đổi slot khi an toàn" });
+            for (var i = 0; i < grants.ActiveSkillIds.Count; i++)
+            {
+                var slot = i; if (grants.ActiveSkillIds[i] is not { } id) continue;
+                ActionButton($"Gỡ active {i+1}: {id}", () => _application.ClearCanonicalSkillSlot(slot, false));
+            }
+            for (var i = 0; i < grants.PassiveSkillIds.Count; i++)
+            {
+                var slot = i; if (grants.PassiveSkillIds[i] is not { } id) continue;
+                ActionButton($"Gỡ passive {i+1}: {id}", () => _application.ClearCanonicalSkillSlot(slot, true));
+            }
             foreach (var skill in canonical.LearnedSkillsForProfile(canonical.ActiveProfileId))
             {
                 if (!grants.LearnedSkillIds.Contains(skill.Id)) { ActionButton("Học " + skill.Id, () => _application.LearnCanonicalSkill(skill.Id)); continue; }

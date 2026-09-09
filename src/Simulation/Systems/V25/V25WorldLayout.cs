@@ -51,7 +51,7 @@ public static class V25WorldLayout
     {
         var l = c.Content.LayoutBlueprint; var objects = new Dictionary<string, MapObjectDefinition>(StringComparer.Ordinal);
         var layers = new Dictionary<string, MapLayerDefinition>(StringComparer.Ordinal) { ["objects"] = new("objects", "objects", 1, Array.Empty<MapTileDefinition>(), null) };
-        void Add(string id, string type, Vec2 p, CollisionFootprintDefinition? collision = null) => objects.Add(id, new(id, $"world.{r.Id}.prop.{type}", type, p, "objects", collision is not null, collision, null));
+        void Add(string id, string type, Vec2 p, CollisionFootprintDefinition? collision = null) => objects.Add(id, new(id, $"world.{r.Id}.{type}", type, p, "objects", collision is not null, collision, null));
         Add($"shrine.{r.Id}", "shrine", At(l, l.ShrineTile));
         foreach (var npc in l.NpcTiles) Add($"npc.{npc.Key}", "npc", At(l, npc.Value));
         Add($"landmark.{r.Id}", "landmark", At(l, l.LandmarkTile, "Field"), new(-16, -16, 32, 32));

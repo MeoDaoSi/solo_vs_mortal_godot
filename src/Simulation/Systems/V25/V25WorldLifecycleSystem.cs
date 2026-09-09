@@ -70,7 +70,9 @@ public sealed class V25WorldLifecycleSystem : IDisposable
         var groupIds = _canonical.Content.Encounters.Select(item => item.GroupId).ToHashSet(StringComparer.Ordinal);
         Validate(snapshot.DefeatedEncounterIds, authored, "defeated encounter");
         Validate(snapshot.ClearedGroupIds, groupIds, "cleared group");
-        ValidateFree(snapshot.DiscoveredLandmarkIds, "landmark"); ValidateFree(snapshot.OpenedChestIds, "chest");
+        var regions = _canonical.RegionsForProfile(_canonical.ActiveProfileId);
+        Validate(snapshot.DiscoveredLandmarkIds, regions.Select(r => $"landmark.{r.Id}").ToHashSet(StringComparer.Ordinal), "landmark");
+        Validate(snapshot.OpenedChestIds, regions.SelectMany(r => new[] { "camp", "field", "ruins" }.Select(chunk => $"chest.{r.Id}.{chunk}")).ToHashSet(StringComparer.Ordinal), "chest");
         _worldCycleId = snapshot.WorldCycleId;
         Replace(_defeated, snapshot.DefeatedEncounterIds); Replace(_groups, snapshot.ClearedGroupIds);
         Replace(_landmarks, snapshot.DiscoveredLandmarkIds); Replace(_chests, snapshot.OpenedChestIds);
