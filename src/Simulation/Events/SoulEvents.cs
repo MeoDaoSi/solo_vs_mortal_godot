@@ -12,9 +12,10 @@ public sealed record SoulBannerCreatedEvent(string SoulBannerId, SoulBannerTier 
 public sealed record SoulBoundEvent(string SoulId, string SoulBannerId, SoulBannerTier Tier, int Level, int SlotIndex);
 public sealed record SoulUnboundEvent(string SoulId, string SoulBannerId);
 public sealed record AllySpawnedEvent(string Uid, string DefinitionId, string SpeciesId, int Rank, int Level, Vec2 Position);
-public sealed record AllyDefeatedEvent(string Uid, string DefinitionId, string SpeciesId, Vec2 Position);
+public sealed record AllyDefeatedEvent(string Uid, string DefinitionId, string SpeciesId, Vec2 Position, int? RecoveryMs = null);
 public sealed record SoulSummonedEvent(string SoulId, string SummonUid, string SoulBannerId, Vec2 Position);
 public sealed record SoulUnsummonedEvent(string SoulId, string SummonUid);
 public sealed record SoulDispersedEvent(string SoulId, double DurationSeconds);
 public sealed record SoulRecoveredEvent(string SoulId);
+public sealed record AllyUnreachableEvent(string AllyUid, string SoulId, Vec2 Position);
 public sealed record SoulDevouredEvent(string SoulId, string Mode, string ProfileId, double Reward);

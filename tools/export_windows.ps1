@@ -24,7 +24,12 @@ $required = @(
     (Join-Path $dataDir 'solo_vs_mortal_godot.dll'),
     (Join-Path $dataDir 'GodotSharp.dll'),
     (Join-Path $buildDir 'data\configs\player.json'),
-    (Join-Path $buildDir 'data\asset-manifest.json')
+    (Join-Path $buildDir 'data\asset-manifest.json'),
+    (Join-Path $buildDir 'data\v2.5\spec-lock.json'),
+    (Join-Path $buildDir 'data\v2.5\content.v2.5.json'),
+    (Join-Path $buildDir 'data\v2.5\balance.v2.5.json'),
+    (Join-Path $buildDir 'data\v2.5\asset-requirements.v2.5.json'),
+    (Join-Path $buildDir 'data\v2.5\style-lock.json')
 )
 foreach ($path in $required) { if (-not (Test-Path $path)) { throw "Missing export runtime file: $path" } }
 Write-Output "WINDOWS_EXPORT_MANAGED_ASSEMBLIES_PASS $dataDir"

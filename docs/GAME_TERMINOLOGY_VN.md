@@ -1,5 +1,7 @@
 # Solo vs Mortal — Thuật ngữ gameplay
 
+> Từ điển prototype lịch sử. Gameplay hiện tại theo authority V2.5 tại `docs/README.md`.
+
 Tài liệu này giải thích các thuật ngữ gameplay bằng tiếng Việt và ánh xạ chúng tới type, property, ID thật trong codebase Godot C#. Tên type/property/ID giữ nguyên tiếng Anh để có thể tìm trực tiếp trong mã nguồn.
 
 ## Thực thể và tiến trình

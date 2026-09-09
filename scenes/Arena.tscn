@@ -108,8 +108,4 @@ offset_left = 16.0
 offset_top = 686.0
 offset_right = 1120.0
 offset_bottom = 714.0
-text = "W A S D  Di chuyển     Space  Tấn công     E  Thu Hồn     M  Bản đồ     F5  Lưu     F9  Tải"
-
-[node name="DevourConfirm" type="ConfirmationDialog" parent="Hud"]
-title = "Xác nhận hấp thụ"
-size = Vector2(460, 220)
+text = "W A S D Di chuyển   Space Tấn công   E Thu Hồn   M Bản đồ   7/8/9 Chọn ô   F5 Lưu an toàn   F6 Tạm dừng   F9 Tải"

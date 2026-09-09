@@ -1,0 +1,151 @@
+{
+  "balanceVersion": "svm-balance-2.5.1",
+  "status": "BaselineLocked",
+  "simulationHz": 60,
+  "worldUnitsPerMeter": 32,
+  "fixedPoint": {
+    "hpSpiritDamage": 1000,
+    "densitySync": 1000000
+  },
+  "maxLevel": 90,
+  "maxRank": 9,
+  "cp": {
+    "base": 100,
+    "playerFactor": 1,
+    "monsterFactor": 0.75,
+    "allyFactor": 0.6,
+    "tierBase": 1.22,
+    "rankBase": 1.38,
+    "levelSlope": 0.025,
+    "levelExponent": 1.1
+  },
+  "hpPerCP": 6,
+  "atkPerCP": 0.8,
+  "defPerSqrtCP": 20,
+  "armorDenominator": 600,
+  "critChance": 0.05,
+  "critMultiplier": 1.5,
+  "xp": {
+    "base": 80,
+    "exponent": 1.55,
+    "killDivisor": 8
+  },
+  "density": {
+    "gainBase": 0.5,
+    "rankExponent": 1.2,
+    "sourceLevelDivisor": 45,
+    "gates": [
+      100,
+      200,
+      300,
+      400,
+      500,
+      600,
+      700,
+      800
+    ],
+    "maxPending": 25,
+    "effectiveCombatCap": 800,
+    "projectionKnots": [
+      [
+        0,
+        1
+      ],
+      [
+        30,
+        18
+      ],
+      [
+        200,
+        45
+      ],
+      [
+        500,
+        87
+      ],
+      [
+        800,
+        90
+      ]
+    ],
+    "relevance": [
+      1,
+      0.5,
+      0.2,
+      0.05
+    ]
+  },
+  "sync": {
+    "milestones": [
+      20,
+      40,
+      60,
+      80,
+      100
+    ],
+    "sourceGains": [
+      10,
+      10,
+      10,
+      10,
+      15,
+      15,
+      15,
+      15
+    ]
+  },
+  "summon": {
+    "capacityBase": 120,
+    "capacityPerLevel": 12,
+    "rankCapacityBonus": 0.08,
+    "regenCapacityFractionPerMinute": 0.1,
+    "regenPerRankPerMinute": 2,
+    "drainBasePerMinute": 3.5,
+    "drainTierExponent": 1.2,
+    "drainDensityLogFactor": 0.35,
+    "recoveryMs": 20000,
+    "recoveredVitality": 0.25,
+    "restVitalityPerSecond": 0.05
+  },
+  "possession": {
+    "burdenPT": 0.1,
+    "burdenRank": 0.06,
+    "durationBaseSeconds": 36,
+    "durationSync": 0.003,
+    "durationRange": [
+      8,
+      45
+    ],
+    "cooldownBaseSeconds": 24,
+    "cooldownSync": 0.002,
+    "cooldownRange": [
+      18,
+      90
+    ],
+    "transferBase": 0.1,
+    "transferSync": 0.003,
+    "transferCapPermanentStat": 0.6
+  },
+  "equipment": {
+    "rankScaleSlope": 0.18,
+    "priceBase": 50,
+    "priceRankExponent": 2,
+    "sellFraction": 0.25
+  },
+  "combat": {
+    "dodgeMs": 300,
+    "dodgeInvulnerableMs": 200,
+    "dodgeCooldownMs": 1200,
+    "dodgeDistanceUnits": 72,
+    "projectileSpeed": 320,
+    "projectileRadius": 4,
+    "combatExitMs": 5000
+  },
+  "save": {
+    "schemaVersion": 1,
+    "offlineTimers": false,
+    "deathDelayMs": 2000,
+    "respawnHPFraction": 0.5,
+    "respawnSpiritFraction": 0.5
+  }
+}

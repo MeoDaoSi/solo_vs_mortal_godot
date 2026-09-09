@@ -1,0 +1,13 @@
+{
+  "revision": "2026-09-08.closed-1",
+  "contentVersion": "svm-content-2.5.1",
+  "balanceVersion": "svm-balance-2.5.1",
+  "sha256": {
+    "Solo_vs_Mortal_Gameplay_System_V2.5.md": "402c93eff6879ec25076aeea10c3d3ff4ec75580a518d00d89ac8b74f93d1b53",
+    "game_spec/content.v2.5.json": "79e4b1b4ecbad8aeb63ea65a31c84ad0ab3d5cc46e41105102df8b85aa8a9702",
+    "game_spec/balance.v2.5.json": "3aa0e7b498b8d42355c16f92783d29815a7ffa828347f09bb919cf1c47da5d93",
+    "game_spec/asset-requirements.v2.5.json": "62c1fe73ab9ccd63f0585f9c2b9292dd6d6048e2933b9683ccca95d5004b4304",
+    "game_spec/style-lock.json": "63167cfa52f3e09649b9477d726fca7ece03f863de4a8dae0f80dc316656c08a",
+    "game_spec/acceptance-cases.v2.5.json": "7b68a3eef16cb30c3d309e04c32c63383785b7c272d0634ef6fa435411dd0ff2"
+  }
+}

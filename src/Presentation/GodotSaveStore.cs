@@ -1,10 +1,22 @@
 using Godot;
-using GodotFileAccess = Godot.FileAccess;
+using SoloVsMortal.Application.Persistence.V25;
 
 namespace SoloVsMortal.Presentation;
 
 public static class GodotSaveStore
 {
-    public static void Write(string path, string json) { using var file = GodotFileAccess.Open(path, GodotFileAccess.ModeFlags.Write) ?? throw new IOException($"Cannot open save path: {path}"); file.StoreString(json); }
-    public static string? Read(string path) { if (!GodotFileAccess.FileExists(path)) return null; using var file = GodotFileAccess.Open(path, GodotFileAccess.ModeFlags.Read) ?? throw new IOException($"Cannot open save path: {path}"); return file.GetAsText(); }
+    public static void Write(string path, string json)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
+        ArgumentNullException.ThrowIfNull(json);
+        var physicalPath = ProjectSettings.GlobalizePath(path);
+        DurableSaveFiles.CommitText(physicalPath, json);
+    }
+
+    public static string? Read(string path)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
+        var physicalPath = ProjectSettings.GlobalizePath(path);
+        return File.Exists(physicalPath) ? File.ReadAllText(physicalPath) : null;
+    }
 }

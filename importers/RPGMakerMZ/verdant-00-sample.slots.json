@@ -1,0 +1,540 @@
+{
+  "engine": "RPG Maker MZ",
+  "sheets": [
+    {
+      "kind": "B",
+      "file": "verdant-00-sample_B.png",
+      "tiles": 64
+    }
+  ],
+  "dimensions": "768x768",
+  "tilePx": 48,
+  "columns": 16,
+  "rows": 16,
+  "slotsPerSheet": 256,
+  "upscaledFrom": "16px (nearest-neighbour x3)",
+  "geometrySource": "MEASURED from Kernel/engines/RPGMakerMZ/BlankProject/img/tilesets on 2026-08-18",
+  "omitted": [],
+  "tiles": [
+    {
+      "id": "grass_1",
+      "role": "terrain-fill",
+      "sheetKind": "B",
+      "slot": 0,
+      "col": 0,
+      "row": 0
+    },
+    {
+      "id": "grass_2",
+      "role": "terrain-fill",
+      "sheetKind": "B",
+      "slot": 1,
+      "col": 1,
+      "row": 0
+    },
+    {
+      "id": "grass_3",
+      "role": "terrain-fill",
+      "sheetKind": "B",
+      "slot": 2,
+      "col": 2,
+      "row": 0
+    },
+    {
+      "id": "grass_4",
+      "role": "terrain-fill",
+      "sheetKind": "B",
+      "slot": 3,
+      "col": 3,
+      "row": 0
+    },
+    {
+      "id": "dirt_1",
+      "role": "terrain-fill",
+      "sheetKind": "B",
+      "slot": 4,
+      "col": 4,
+      "row": 0
+    },
+    {
+      "id": "dirt_2",
+      "role": "terrain-fill",
+      "sheetKind": "B",
+      "slot": 5,
+      "col": 5,
+      "row": 0
+    },
+    {
+      "id": "dirt_3",
+      "role": "terrain-fill",
+      "sheetKind": "B",
+      "slot": 6,
+      "col": 6,
+      "row": 0
+    },
+    {
+      "id": "dirt_4",
+      "role": "terrain-fill",
+      "sheetKind": "B",
+      "slot": 7,
+      "col": 7,
+      "row": 0
+    },
+    {
+      "id": "dirt_on_grass_single",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 8,
+      "col": 8,
+      "row": 0
+    },
+    {
+      "id": "dirt_on_grass_n",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 9,
+      "col": 9,
+      "row": 0
+    },
+    {
+      "id": "dirt_on_grass_e",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 10,
+      "col": 10,
+      "row": 0
+    },
+    {
+      "id": "dirt_on_grass_ne",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 11,
+      "col": 11,
+      "row": 0
+    },
+    {
+      "id": "dirt_on_grass_ne_ne",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 12,
+      "col": 12,
+      "row": 0
+    },
+    {
+      "id": "dirt_on_grass_s",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 13,
+      "col": 13,
+      "row": 0
+    },
+    {
+      "id": "dirt_on_grass_ns",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 14,
+      "col": 14,
+      "row": 0
+    },
+    {
+      "id": "dirt_on_grass_es",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 15,
+      "col": 15,
+      "row": 0
+    },
+    {
+      "id": "dirt_on_grass_nes",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 16,
+      "col": 0,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_nes_ne",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 17,
+      "col": 1,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_es_se",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 18,
+      "col": 2,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_nes_se",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 19,
+      "col": 3,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_nes_nese",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 20,
+      "col": 4,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_w",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 21,
+      "col": 5,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_nw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 22,
+      "col": 6,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_ew",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 23,
+      "col": 7,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_new",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 24,
+      "col": 8,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_new_ne",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 25,
+      "col": 9,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_sw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 26,
+      "col": 10,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_nsw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 27,
+      "col": 11,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_esw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 28,
+      "col": 12,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_nesw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 29,
+      "col": 13,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_nesw_ne",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 30,
+      "col": 14,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_esw_se",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 31,
+      "col": 15,
+      "row": 1
+    },
+    {
+      "id": "dirt_on_grass_nesw_se",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 32,
+      "col": 0,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_nesw_nese",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 33,
+      "col": 1,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_sw_sw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 34,
+      "col": 2,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_nsw_sw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 35,
+      "col": 3,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_esw_sw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 36,
+      "col": 4,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_nesw_sw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 37,
+      "col": 5,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_nesw_nesw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 38,
+      "col": 6,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_esw_sesw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 39,
+      "col": 7,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_nesw_sesw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 40,
+      "col": 8,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_nesw_nesesw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 41,
+      "col": 9,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_nw_nw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 42,
+      "col": 10,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_new_nw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 43,
+      "col": 11,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_new_nenw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 44,
+      "col": 12,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_nsw_nw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 45,
+      "col": 13,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_nesw_nw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 46,
+      "col": 14,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_nesw_nenw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 47,
+      "col": 15,
+      "row": 2
+    },
+    {
+      "id": "dirt_on_grass_nesw_senw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 48,
+      "col": 0,
+      "row": 3
+    },
+    {
+      "id": "dirt_on_grass_nesw_nesenw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 49,
+      "col": 1,
+      "row": 3
+    },
+    {
+      "id": "dirt_on_grass_nsw_swnw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 50,
+      "col": 2,
+      "row": 3
+    },
+    {
+      "id": "dirt_on_grass_nesw_swnw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 51,
+      "col": 3,
+      "row": 3
+    },
+    {
+      "id": "dirt_on_grass_nesw_neswnw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 52,
+      "col": 4,
+      "row": 3
+    },
+    {
+      "id": "dirt_on_grass_nesw_seswnw",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 53,
+      "col": 5,
+      "row": 3
+    },
+    {
+      "id": "dirt_on_grass_fill",
+      "role": "terrain-autotile",
+      "sheetKind": "B",
+      "slot": 54,
+      "col": 6,
+      "row": 3
+    },
+    {
+      "id": "tree_1",
+      "role": "prop",
+      "sheetKind": "B",
+      "slot": 55,
+      "col": 7,
+      "row": 3,
+      "spanCells": [
+        2,
+        2
+      ]
+    },
+    {
+      "id": "bush_1",
+      "role": "prop",
+      "sheetKind": "B",
+      "slot": 57,
+      "col": 9,
+      "row": 3
+    },
+    {
+      "id": "rock_1",
+      "role": "prop",
+      "sheetKind": "B",
+      "slot": 58,
+      "col": 10,
+      "row": 3
+    },
+    {
+      "id": "stump",
+      "role": "prop",
+      "sheetKind": "B",
+      "slot": 59,
+      "col": 11,
+      "row": 3
+    },
+    {
+      "id": "flowers_red_1",
+      "role": "prop",
+      "sheetKind": "B",
+      "slot": 60,
+      "col": 12,
+      "row": 3
+    },
+    {
+      "id": "tree_1_grounded",
+      "role": "prop",
+      "sheetKind": "B",
+      "slot": 61,
+      "col": 13,
+      "row": 3,
+      "spanCells": [
+        2,
+        2
+      ]
+    },
+    {
+      "id": "bush_1_grounded",
+      "role": "prop",
+      "sheetKind": "B",
+      "slot": 63,
+      "col": 15,
+      "row": 3
+    },
+    {
+      "id": "rock_1_grounded",
+      "role": "prop",
+      "sheetKind": "B",
+      "slot": 64,
+      "col": 0,
+      "row": 4
+    },
+    {
+      "id": "stump_grounded",
+      "role": "prop",
+      "sheetKind": "B",
+      "slot": 65,
+      "col": 1,
+      "row": 4
+    }
+  ]
+}

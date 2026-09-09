@@ -1,0 +1,829 @@
+{
+  "schemaVersion": 1,
+  "document": "svm-v2.5-source-audit",
+  "auditDate": "2026-09-08",
+  "sourceProject": "C:/ws/solo_vs_mortal_godot",
+  "authority": {
+    "root": "C:/ws/asset-production_system/game_spec",
+    "revision": "2026-09-08.closed-1",
+    "contentVersion": "svm-content-2.5.1",
+    "balanceVersion": "svm-balance-2.5.1",
+    "saveSchemaVersion": 1,
+    "specLock": "game_spec/spec-lock.json",
+    "acceptanceCases": 18
+  },
+  "engineDecision": {
+    "target": "reuse-existing-csharp",
+    "projectSdk": "Godot.NET.Sdk/4.7.2",
+    "projectFeature": "Godot 4.7 C# Forward Plus",
+    "canonicalBaseline": "Godot 4.5.2 Compatibility",
+    "baselineVerified": false,
+    "decision": "Keep the existing typed C# Core/Data/Simulation/Application/Presentation boundary. Isolate Godot calls in Presentation, avoid 4.7-only APIs, and verify/export on 4.5.2 Compatibility before declaring the canonical baseline verified. Do not rewrite the project to GDScript blindly."
+  },
+  "auditMetrics": {
+    "sourceCsFiles": 59,
+    "sourceLinesApprox": 4029,
+    "simulationSystems": 16,
+    "ruleFiles": 5,
+    "stateFiles": 7,
+    "oldAssetManifestSchema": 1,
+    "oldAssetManifestEntries": 121,
+    "oldAssetManifestMissingFiles": 0,
+    "assetsFilesApprox": 5018,
+    "spritesheetsFilesApprox": 2562,
+    "spriteframesFilesApprox": 1275,
+    "buildFilesApprox": 208,
+    "automatedTestsRun": false,
+    "postPart2SourceCsFiles": 62,
+    "postPart2SourceLinesApprox": 5128,
+    "postPart3SourceCsFiles": 65,
+    "postPart3SourceLinesApprox": 6804
+  },
+  "items": [
+    {
+      "id": "V25-001",
+      "part": 1,
+      "area": "authority-and-definition-loader",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec sections 2, 16, 31",
+        "content.v2.5.json",
+        "balance.v2.5.json"
+      ],
+      "sourcePaths": [
+        "src/Data/Definitions/GameDefinitions.cs",
+        "src/Data/Definitions/BalanceDefinition.cs",
+        "src/Data/Definitions/SoulNatureDefinitions.cs",
+        "src/Data/Definitions/V25/CanonicalV25Definitions.cs",
+        "data/configs/*.json",
+        "data/v2.5/*.json"
+      ],
+      "change": "Add typed V2.5 records/loaders for profiles, species, regions, equipment, skills, quests, sync, encounters, unique powers and balance. Validate lowercase DefinitionId/AssetId and reject unknown IDs without a default Skeleton.",
+      "dependsOn": [],
+      "acceptanceCases": [
+        1,
+        2,
+        3,
+        16,
+        17
+      ],
+      "deletionRisk": "Do not delete old config files until all GameDefinitions call sites migrate.",
+      "implementation": "CanonicalV25Loader and typed registry now load the pinned physical bundle with strict nested-field/hash/cross-reference validation; profile skill projection is rank-filtered."
+    },
+    {
+      "id": "V25-002",
+      "part": 1,
+      "area": "numeric-and-id-invariants",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec sections 3, 4, 5, 6",
+        "balance.v2.5.json"
+      ],
+      "sourcePaths": [
+        "src/Core/Ids/UidGenerator.cs",
+        "src/Core/Rng/SeededRng.cs",
+        "src/Simulation/Rules/CombatPowerRules.cs",
+        "src/Simulation/Rules/ProgressionRules.cs"
+      ],
+      "change": "Implement explicit int64 overflow checks, decimal UID persistence, fixed-point units, round-half-up, RankFromLevel rejection for fractional/NaN/Infinity input, canonical CP and XP formulas, and deterministic RNG ownership.",
+      "dependsOn": [
+        "V25-001"
+      ],
+      "acceptanceCases": [
+        1,
+        2,
+        3,
+        16,
+        17
+      ],
+      "deletionRisk": "Old floor/clamp behavior is embedded in PlayerSystem and progression; migrate callers before removal.",
+      "implementation": "V25FixedPoint, canonical CP/stat/rank/XP formulas, PCG32 streams, decimal UID allocator persistence and typed live runtime serialization are implemented; Density/Sync/Soul ownership and command-wide transaction IDs remain later work."
+    },
+    {
+      "id": "V25-003",
+      "part": 1,
+      "area": "simulation-coordinator",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec sections 7, 16"
+      ],
+      "sourcePaths": [
+        "src/Simulation/GameSession.cs",
+        "src/Core/Loop/SimulationClock.cs",
+        "src/Core/Events/EventBus.cs"
+      ],
+      "change": "Keep Godot Arena._PhysicsProcess as the normally-60-Hz outer callback, then add a domain fixed-step coordinator that owns tick sequencing, phase order, RNG and cross-system transactions; keep menu pause from clearing InCombat.",
+      "dependsOn": [
+        "V25-001",
+        "V25-002"
+      ],
+      "acceptanceCases": [
+        10,
+        14,
+        15
+      ],
+      "deletionRisk": "Existing frame-delta Update paths and direct system mutations can double-apply events.",
+      "implementation": "SimulationClock owns whole 60 Hz steps; GameSession and V25CombatCoordinator prepare expiry/DoT before movement, then process intent, cast release and projectiles. Global command transaction/sequence ownership remains later."
+    },
+    {
+      "id": "V25-004",
+      "part": 2,
+      "area": "player-input-movement-dodge",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec sections 8, 9, 10",
+        "style-lock.json"
+      ],
+      "sourcePaths": [
+        "src/Simulation/State/PlayerState.cs",
+        "src/Simulation/Systems/PlayerSystem.cs",
+        "src/Presentation/Arena.cs",
+        "project.godot",
+        "scenes/Arena.tscn"
+      ],
+      "change": "Implement canonical WASD/Mouse/LMB/Space and modifier inputs, normalized movement, 300 ms/72 u swept dodge with 200 ms invulnerability and 1200 ms cooldown, action locks, and 640x360 pixel-snapped camera settings.",
+      "dependsOn": [
+        "V25-003"
+      ],
+      "acceptanceCases": [
+        15
+      ],
+      "deletionRisk": "Current attack action maps both Space and LMB; old save/load/devour shortcuts are presentation dependencies.",
+      "implementation": "Canonical Player state carries Spirit/dodge; Arena maps WASD/Mouse/LMB/Space; swept 72-unit dodge, 200 ms invulnerability and 1200 ms cooldown are live. Menus and full action map remain later."
+    },
+    {
+      "id": "V25-005",
+      "part": 2,
+      "area": "combat-cast-release",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec sections 11, 12, 13, 14"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Systems/CombatSystem.cs",
+        "src/Simulation/Systems/MonsterSystem.cs",
+        "src/Simulation/Rules/CombatRules.cs",
+        "src/Simulation/State/MonsterState.cs"
+      ],
+      "change": "Replace nearest-target immediate attacks with cast accept followed by telegraph/windup and release, Mouse aim, direct-hit release, projectile swept collision, hit keys, target life UID, duplicate-hit rejection, crit and encounter factors.",
+      "dependsOn": [
+        "V25-001",
+        "V25-002",
+        "V25-003",
+        "V25-004"
+      ],
+      "acceptanceCases": [
+        7,
+        8,
+        9,
+        15,
+        16
+      ],
+      "deletionRisk": "AllySystem currently calls old CombatRules and MonsterSystem.TakeDamage directly.",
+      "implementation": "V25CombatCoordinator implements acceptance, 100 ms request buffer, windup/active/recovery, release-only hits, target revalidation, ground-point/direction, projectile sweep and hit identity."
+    },
+    {
+      "id": "V25-006",
+      "part": 2,
+      "area": "damage-status-shield",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec sections 12, 13, 14"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Rules/CombatRules.cs",
+        "src/Simulation/State/PlayerState.cs",
+        "src/Simulation/State/MonsterState.cs"
+      ],
+      "change": "Add Physical/Fire/Frost/Toxic/Arcane mitigation, armor cap, resistance and defense reduction, minimum shield absorption, immunity, wards and status effects with deterministic ticking.",
+      "dependsOn": [
+        "V25-005"
+      ],
+      "acceptanceCases": [
+        7,
+        8,
+        9
+      ],
+      "deletionRisk": "TakeDamage currently mutates HP directly and cannot preserve shield or invulnerability semantics.",
+      "implementation": "V25DamageResolver, V25StatusStore and source-keyed V25ShieldStore implement mitigation, HP/shield absorption, status expiry/DoT, cleanse targeting, boss stun-to-stagger, timed swept knockback and boss immunity; hazard/mastery attribution remains later."
+    },
+    {
+      "id": "V25-007",
+      "part": 2,
+      "area": "encounter-life-rewards-boundary",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec sections 15, 25, 26"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Systems/MonsterSystem.cs",
+        "src/Simulation/State/MonsterState.cs",
+        "src/Simulation/Systems/ProgressionSystem.cs",
+        "src/Simulation/Events/ProgressionEvents.cs"
+      ],
+      "change": "Add encounter identity, normal/elite/boss factors, add budgets, life UID/death state, player/ally kill credit, reward eligibility, and one receipt per encounter.",
+      "dependsOn": [
+        "V25-005",
+        "V25-006"
+      ],
+      "acceptanceCases": [
+        16,
+        17,
+        18
+      ],
+      "deletionRisk": "Current XP/material events and direct monster defeat paths can pay rewards more than once.",
+      "implementation": "Monster life/encounter metadata, reward eligibility and defeat identity event fields are live; progression uses an in-memory duplicate guard. Persistent reward receipts and coin/item/Soul awards remain later."
+    },
+    {
+      "id": "V25-008",
+      "part": 3,
+      "area": "soul-drop-pickup",
+      "status": "obsolete",
+      "canonicalRefs": [
+        "spec sections 27, 28"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Systems/SoulSystem.cs",
+        "src/Simulation/State/SoulState.cs",
+        "data/configs/soul.json"
+      ],
+      "change": "Replace individual old OwnedSoul acquisition with persistent world pickup, beta tutorial receipt, rank/party/encounter drop chance, pity counters and source relevance. Keep pickup and ownership updates in one transaction.",
+      "dependsOn": [
+        "V25-001",
+        "V25-003",
+        "V25-007"
+      ],
+      "acceptanceCases": [
+        4,
+        5,
+        6
+      ],
+      "deletionRisk": "SoulSystem.RemoveOwned and direct world-soul removal are not replay-safe."
+    },
+    {
+      "id": "V25-009",
+      "part": 3,
+      "area": "density-award-ledger",
+      "status": "missing",
+      "canonicalRefs": [
+        "spec sections 29, 30",
+        "acceptance cases 4–6"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Systems/SoulSystem.cs",
+        "src/Simulation/State/SoulState.cs",
+        "src/Application/Persistence/GameSaveData.cs"
+      ],
+      "change": "Add committed/pending micro-density, piecewise projection, gates/proofs, discard accounting and replay-safe award records with AwardId, SourceId, SourceVersion, GrantedMicro, AppliedCommitted, AddedPending, Discarded and ProofKeys.",
+      "dependsOn": [
+        "V25-001",
+        "V25-002",
+        "V25-003",
+        "V25-008"
+      ],
+      "acceptanceCases": [
+        3,
+        4,
+        5,
+        6,
+        14
+      ],
+      "deletionRisk": "No current state can reconstruct pending/proof history; do not infer it from current level."
+    },
+    {
+      "id": "V25-010",
+      "part": 3,
+      "area": "summon-spirit-vitality",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec sections 31, 32, 33"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Systems/SummonSystem.cs",
+        "src/Simulation/State/AllyState.cs",
+        "src/Simulation/State/SoulState.cs",
+        "data/configs/soul.json"
+      ],
+      "change": "Implement one living ally per species, Spirit drain/regen and net-zero crossing, vitality/modes, deterministic walkmesh placement, shrine recovery and atomic recall/summon.",
+      "dependsOn": [
+        "V25-003",
+        "V25-009"
+      ],
+      "acceptanceCases": [
+        10,
+        15
+      ],
+      "deletionRisk": "Current stability recovery is 10 seconds and map travel clears summons; canonical recovery is 20 seconds and saveable."
+    },
+    {
+      "id": "V25-011",
+      "part": 3,
+      "area": "banner-rank",
+      "status": "obsolete",
+      "canonicalRefs": [
+        "spec section 34"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Systems/SoulBannerSystem.cs",
+        "src/Simulation/State/SoulBannerState.cs",
+        "src/Simulation/Rules/SoulBannerRules.cs",
+        "data/configs/soulBanner.json"
+      ],
+      "change": "Replace tier/bind capacity with beta rank 1–2 banner state, boss/player-rank/shrine gates, PT/density eligibility, upgrade receipts and no-consume upgrades.",
+      "dependsOn": [
+        "V25-001",
+        "V25-009"
+      ],
+      "acceptanceCases": [
+        18
+      ],
+      "deletionRisk": "Old bind/unbind and starter banner assumptions are used by possession, devour and snapshots."
+    },
+    {
+      "id": "V25-012",
+      "part": 3,
+      "area": "possession",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec section 35"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Systems/PossessionSystem.cs",
+        "src/Simulation/State/SoulState.cs",
+        "src/Simulation/Systems/CapabilitySystem.cs"
+      ],
+      "change": "Implement one active possession with immutable Soul level/sync/milestone/base-stat snapshot, burden duration/cooldown caps, transfer cap and canonical capability snapshot.",
+      "dependsOn": [
+        "V25-009",
+        "V25-011",
+        "V25-015"
+      ],
+      "acceptanceCases": [
+        11
+      ],
+      "deletionRisk": "Current nature profile and generic PlayerModifier path can leak old buffs into the V2.5 snapshot."
+    },
+    {
+      "id": "V25-013",
+      "part": 3,
+      "area": "sync-and-milestones",
+      "status": "missing",
+      "canonicalRefs": [
+        "spec section 36",
+        "acceptance cases 12–13"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Systems/CapabilitySystem.cs",
+        "src/Application/Persistence/GameSaveData.cs"
+      ],
+      "change": "Add 8 source Sync award ledger per species, source definition versions, commit sequence, permanent milestone IDs and LegacyDedupKeys; preserve historical awards during balance rebalance.",
+      "dependsOn": [
+        "V25-002",
+        "V25-003",
+        "V25-009"
+      ],
+      "acceptanceCases": [
+        12,
+        13
+      ],
+      "deletionRisk": "No existing Sync persistence exists; recalculating from latest definitions would violate rebalance preservation."
+    },
+    {
+      "id": "V25-014",
+      "part": 4,
+      "area": "profile-xp-breakthrough",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec sections 24–26",
+        "acceptance cases 16–18"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Rules/ProgressionRules.cs",
+        "src/Simulation/Systems/ProgressionSystem.cs",
+        "src/Simulation/Systems/PlayerSystem.cs"
+      ],
+      "change": "Replace old quadratic/clamping/pill chance progression with global XP requirements, profile caps, exact threshold ready state, boss/shrine breakthrough, discard at cap and beta-to-full reopening.",
+      "dependsOn": [
+        "V25-001",
+        "V25-002",
+        "V25-007"
+      ],
+      "acceptanceCases": [
+        1,
+        2,
+        16,
+        17,
+        18
+      ],
+      "deletionRisk": "SetProgression currently clamps invalid values and recomputation can heal current HP.",
+      "implementation": "Canonical global XP/relevance/kill reward and beta cap/breakthrough-ready primitives are live; boss/shrine breakthrough facts remain later."
+    },
+    {
+      "id": "V25-015",
+      "part": 4,
+      "area": "equipment-inventory-potions-shop",
+      "status": "missing",
+      "canonicalRefs": [
+        "spec sections 37–40"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Systems/ProgressionSystem.cs",
+        "src/Data/Definitions/BalanceDefinition.cs",
+        "src/Presentation/Arena.cs",
+        "scenes/Arena.tscn"
+      ],
+      "change": "Add inventory/equipment/stash/coin/consumable state, rank-gated 17 equipment families, potion rules, shop and atomic loadout validation; remove crafting/material/pill behavior after callers migrate.",
+      "dependsOn": [
+        "V25-001",
+        "V25-014"
+      ],
+      "acceptanceCases": [
+        17,
+        18
+      ],
+      "deletionRisk": "Arena inventory/progression UI and GameApplication Craft/UsePlayerStatPill APIs depend on old materials and pills."
+    },
+    {
+      "id": "V25-016",
+      "part": 4,
+      "area": "skills-mastery-capabilities",
+      "status": "missing",
+      "canonicalRefs": [
+        "spec sections 41–44"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Systems/CapabilitySystem.cs",
+        "src/Simulation/Systems/PlayerModifierSystem.cs",
+        "data/configs/characterAnimations.json",
+        "src/Application/GameApplication.cs"
+      ],
+      "change": "Add skill definitions, 8 equipment slots, learned-active capacity min(6, rank formula), passive capacity min(3, rank formula), cooldown/Spirit costs, mastery/promotion thresholds, capability source union/cache and release-only gameplay events. Remove old possession-only capability enum and AutoExpose-like defaults.",
+      "dependsOn": [
+        "V25-002",
+        "V25-005",
+        "V25-010",
+        "V25-012",
+        "V25-015"
+      ],
+      "acceptanceCases": [
+        11,
+        17
+      ],
+      "deletionRisk": "Old animation action descriptors are presentation timing data and must not become combat callbacks."
+    },
+    {
+      "id": "V25-017",
+      "part": 4,
+      "area": "quests-npc-unique-powers",
+      "status": "missing",
+      "canonicalRefs": [
+        "spec sections 45–48",
+        "content.v2.5.json"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Systems/WorldInteractionSystem.cs",
+        "src/Simulation/Systems/WorldMapSystem.cs",
+        "src/Presentation/WorldMapUI.cs",
+        "data/configs/desert.json",
+        "data/configs/volcano.json"
+      ],
+      "change": "Add quest state/receipts, An/Kha/Linh priority interactions, boss2 Chaos/Despair/Covenant rules and beta/full profile upgrade preservation.",
+      "dependsOn": [
+        "V25-003",
+        "V25-007",
+        "V25-014"
+      ],
+      "acceptanceCases": [
+        18
+      ],
+      "deletionRisk": "Current map interaction uses old BREAK_FRAGILE_WALL capability and direct destroyed-set mutation."
+    },
+    {
+      "id": "V25-018",
+      "part": 4,
+      "area": "regions-encounters-walkmesh",
+      "status": "obsolete",
+      "canonicalRefs": [
+        "spec sections 49–53",
+        "content.v2.5.json"
+      ],
+      "sourcePaths": [
+        "src/Data/Definitions/MapDefinitions.cs",
+        "src/Data/Definitions/WorldMapDefinitions.cs",
+        "src/Simulation/Systems/WorldMapSystem.cs",
+        "data/configs/worldMap.json",
+        "data/configs/desert.json",
+        "data/configs/volcano.json"
+      ],
+      "change": "Replace Desert/Volcano topology with beta ash_graves/moonwood region definitions, deterministic encounter/chunk/tile/shrine/NPC placement and walkmesh placement service.",
+      "dependsOn": [
+        "V25-001",
+        "V25-003",
+        "V25-010",
+        "V25-017"
+      ],
+      "acceptanceCases": [
+        10,
+        15,
+        18
+      ],
+      "deletionRisk": "Arena and world map UI currently assume old map IDs and clear monsters/summons on travel."
+    },
+    {
+      "id": "V25-019",
+      "part": 1,
+      "area": "save-schema-migration",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec sections 54–57",
+        "spec-lock.json",
+        "acceptance case 14"
+      ],
+      "sourcePaths": [
+        "src/Application/Persistence/GameSaveData.cs",
+        "src/Application/Persistence/LegacySaveAdapter.cs",
+        "src/Application/Persistence/V25/V25SaveData.cs",
+        "src/Application/Persistence/V25/V25SaveStore.cs",
+        "src/Application/GameApplication.cs",
+        "src/Presentation/GodotSaveStore.cs",
+        "src/Presentation/Arena.cs"
+      ],
+      "change": "Introduce V2.5 SaveSchemaVersion 1 envelope and an explicit LegacyV1ToV6 adapter namespace. Preserve supported old v1–v6 mappings as legacy input, but explicitly reject unsupported or missing mappings rather than inventing Density/progress; reject malformed/unknown canonical values without silent continue or clamp. Arena.TryLoad must preserve a rejected original and suppress its 10-second autosave/_ExitTree overwrite until a valid commit.",
+      "dependsOn": [
+        "V25-001",
+        "V25-002",
+        "V25-009",
+        "V25-013",
+        "V25-014",
+        "V25-015",
+        "V25-017"
+      ],
+      "acceptanceCases": [
+        2,
+        4,
+        5,
+        12,
+        13,
+        14,
+        18
+      ],
+      "deletionRisk": "Current version6 file is not a V2.5 schema; never label it as schema1 or discard it as a future format.",
+      "implementation": "Schema foundation remains separate from legacy v6; canonical capture/restore now carries current actors, statuses/shields, casts, projectiles with released offense snapshots, RNG, cooldowns, hit keys, dodge, stagger and displacement timers. Unsupported legacy mappings fail closed before mutation."
+    },
+    {
+      "id": "V25-020",
+      "part": 1,
+      "area": "save-wal-atomicity",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec sections 56–58",
+        "acceptance case 14"
+      ],
+      "sourcePaths": [
+        "src/Presentation/GodotSaveStore.cs",
+        "src/Application/Persistence/GameSaveData.cs",
+        "src/Application/Persistence/V25/V25SaveData.cs",
+        "src/Application/Persistence/V25/V25SaveStore.cs",
+        "src/Application/GameApplication.cs"
+      ],
+      "change": "Implement temp-file write, flush/close, atomic rename, checksum/envelope validation, WAL transaction stages, idempotent commit receipts and crash recovery/retry.",
+      "dependsOn": [
+        "V25-003",
+        "V25-009",
+        "V25-013",
+        "V25-019"
+      ],
+      "acceptanceCases": [
+        5,
+        6,
+        12,
+        13,
+        14,
+        18
+      ],
+      "deletionRisk": "GodotSaveStore currently opens the final path in Write mode and stores text directly.",
+      "implementation": "V25SaveStore commits the canonical live envelope through validated temp, durable staged/committed WAL, atomic replace, previous/backup fallback, rejected-file preservation, persistent transaction history and idempotent retry."
+    },
+    {
+      "id": "V25-021",
+      "part": 5,
+      "area": "asset-manifest-contract",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec section 32",
+        "asset-requirements.v2.5.json",
+        "style-lock.json"
+      ],
+      "sourcePaths": [
+        "src/Data/Definitions/AssetDefinitions.cs",
+        "data/asset-manifest.json",
+        "src/Presentation/Arena.cs",
+        "src/Application/GameApplication.cs",
+        "src/Data/Definitions/CharacterAnimationDefinitions.cs"
+      ],
+      "change": "Add versioned canonical AssetId manifest adapter with lowercase IDs, texture/frame metadata, actor canvas/pivot and clip/direction validation. Consume Art's incremental skeleton static manifest and emit runtime-only debug markers for missing assets.",
+      "dependsOn": [
+        "V25-001",
+        "V25-018"
+      ],
+      "acceptanceCases": [],
+      "deletionRisk": "Old manifest has 121 resolved entries but does not prove canonical logical coverage; old needs_rework animations are not approved dependencies."
+    },
+    {
+      "id": "V25-022",
+      "part": 5,
+      "area": "presentation-input-hud-camera",
+      "status": "partial",
+      "canonicalRefs": [
+        "spec sections 8, 9, 59",
+        "style-lock.json"
+      ],
+      "sourcePaths": [
+        "src/Presentation/Arena.cs",
+        "scenes/Arena.tscn",
+        "src/Presentation/HudMinimap.cs",
+        "project.godot",
+        "src/Presentation/fancy_ui_styles.gd"
+      ],
+      "change": "Migrate scene/HUD to Spirit, Density, Sync, banner, quest, combat telegraph and canonical controls/camera. Replace hardcoded Kenney minimap with AssetId lookup. Keep missing-art markers in runtime debug only.",
+      "dependsOn": [
+        "V25-004",
+        "V25-010",
+        "V25-011",
+        "V25-013",
+        "V25-021"
+      ],
+      "acceptanceCases": [
+        10,
+        11,
+        15,
+        18
+      ],
+      "deletionRisk": "Existing DevourConfirm, Craft buttons, old feature panel and save shortcut expose removed mechanics."
+    },
+    {
+      "id": "V25-023",
+      "part": 5,
+      "area": "obsolete-api-removal",
+      "status": "obsolete",
+      "canonicalRefs": [
+        "spec removed-mechanics list",
+        "spec sections 41, 45"
+      ],
+      "sourcePaths": [
+        "src/Simulation/Systems/DevourSystem.cs",
+        "src/Simulation/Systems/EssenceSystem.cs",
+        "src/Simulation/Systems/BloodlineSystem.cs",
+        "src/Simulation/Systems/ProgressionSystem.cs",
+        "src/Data/Definitions/SoulNatureDefinitions.cs",
+        "src/Data/Definitions/BalanceDefinition.cs",
+        "src/Application/GameApplication.cs",
+        "src/Simulation/Events/AdvancedSoulEvents.cs",
+        "src/Simulation/Events/ProgressionEvents.cs"
+      ],
+      "change": "After replacement call sites and save migration land, remove Soul devouring, Essence, Bloodline, crafting, enhancement, pills, old tiers and removed capabilities from runtime and UI APIs.",
+      "dependsOn": [
+        "V25-014",
+        "V25-015",
+        "V25-016",
+        "V25-019",
+        "V25-022"
+      ],
+      "acceptanceCases": [
+        17,
+        18
+      ],
+      "deletionRisk": "GameSession construction and Arena controls currently instantiate or call these systems; deleting first will break the runnable scene."
+    },
+    {
+      "id": "V25-024",
+      "part": 5,
+      "area": "docs-authority-consolidation",
+      "status": "partial",
+      "canonicalRefs": [
+        "game_spec/README.md",
+        "spec-lock.json"
+      ],
+      "sourcePaths": [
+        "docs/README.md",
+        "docs/V2.5/source-audit.md",
+        "docs/ARCHITECTURE.md",
+        "docs/MAP_SYSTEM.md",
+        "docs/GAME_TERMINOLOGY.md",
+        "docs/GAME_TERMINOLOGY_VN.md",
+        "docs/PERFORMANCE_BUDGET.md",
+        "Readme_for_Users.md"
+      ],
+      "change": "Consolidate gameplay documentation around the closed V2.5 authority and mark old docs historical. Retain vendor/legal/sample-pack documents until ownership/dependency review completes.",
+      "dependsOn": [
+        "V25-001",
+        "V25-018",
+        "V25-022"
+      ],
+      "acceptanceCases": [],
+      "deletionRisk": "Readme_for_Users.md and LICENSE files are untracked/vendor content, not gameplay authority."
+    },
+    {
+      "id": "V25-025",
+      "part": 5,
+      "area": "tests-and-probes-cleanup",
+      "status": "partial",
+      "canonicalRefs": [
+        "acceptance-cases.v2.5.json",
+        "AGENTS.md testing policy"
+      ],
+      "sourcePaths": [
+        "tests/",
+        "src/Presentation/PerformanceSoak.cs",
+        "build/",
+        "AGENTS.md",
+        "docs/V2.5/source-audit.md"
+      ],
+      "change": "Obsolete test files, parity programs and performance probes are deleted under the explicit user cleanup instruction; do not use reference-vector checks as engine tests. Remove generated build outputs only after artifact ownership review.",
+      "dependsOn": [
+        "V25-019",
+        "V25-020",
+        "V25-022",
+        "V25-023",
+        "V25-024"
+      ],
+      "acceptanceCases": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "deletionRisk": "The source test tree is gone; generated build outputs remain until artifact ownership is reviewed."
+    }
+  ],
+  "part3Implementation": {
+    "status": "partial",
+    "paths": [
+      "src/Core/Loop/SimulationClock.cs",
+      "src/Core/Rng/Pcg32.cs",
+      "src/Simulation/Rules/V25SimulationRules.cs",
+      "src/Simulation/Systems/V25CombatCoordinator.cs",
+      "src/Simulation/Systems/PlayerSystem.cs",
+      "src/Simulation/Systems/MonsterSystem.cs",
+      "src/Simulation/Systems/AllySystem.cs",
+      "src/Simulation/GameSession.cs",
+      "src/Application/GameApplication.cs",
+      "src/Application/GameSnapshot.cs"
+    ],
+    "build": "dotnet build solo_vs_mortal_godot.csproj --no-restore: 0 warnings, 0 errors",
+    "engineSmoke": "Godot 4.7.2 headless Arena startup completed without reported startup errors",
+    "baselineVerified": false,
+    "automatedTestsRun": false,
+    "remaining": [
+      "Soul and Density transaction/ledger",
+      "Sync and rebalance-persistent milestones",
+      "Banner gates",
+      "Spirit drain and summon ownership transaction",
+      "Equipment/inventory/loadout",
+      "Mastery/capability source union",
+      "Quest/region/world lifecycle",
+      "full Soul/inventory/quest/world save payload beyond the implemented live combat envelope",
+      "AI focus/telegraph/pathing parity and combat reward attribution beyond the current encounter receipt guard",
+      "art manifest replacement for the remaining beta actors and clips"
+    ]
+  },
+  "parentReview": {
+    "status": "in_progress_parts_2_3",
+    "implementationOwner": "parent (user requested direct implementation; do not delegate to Code)",
+    "fixedThisPass": [
+      "Cancel unreleased monster casts on leash return without deleting released projectiles.",
+      "Taunt is limited to nonboss monsters within 96 units.",
+      "Do not inject a prototype monster into a valid loaded save with no monsters.",
+      "Block HUD mutations and region travel during failed-save retry; retain the exact pending payload.",
+      "Prevent same-frame load/autosave from replacing a pending failed transaction.",
+      "Reject unsupported save versions before recovery mutates slot files; reject cross-save fallback candidates.",
+      "Correct faction relationships: monsters are allied to other monsters, Player and Allies share a side."
+    ],
+    "validation": {
+      "compile": "dotnet build solo_vs_mortal_godot.csproj --no-restore: 0 warnings, 0 errors",
+      "automatedTestsRun": false,
+      "gameplayAcceptance": "User manual testing only; not claimed."
+    },
+    "remainingReview": [
+      "Canonical Player breakthrough remains disabled awaiting a validated boss-clear fact; progression cannot be called complete.",
+      "Monster navigation currently uses direct line-of-sight and swept movement; pathing around obstacles and return-to-home still need review.",
+      "Review remaining combat phase, action-lock, reward attribution and persistence invariants before accepting Part 3.",
+      "Complete Part 2 documentation consolidation and make an explicit engine-baseline decision; Godot 4.5.2 compatibility remains unverified."
+    ],
+    "part4Started": false
+  }
+}

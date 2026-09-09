@@ -11,7 +11,9 @@ public sealed record StatModifiers(
     double AtkFlat = 0,
     double DefFlat = 0,
     double SpeedFlat = 0,
-    double Scalar = 1);
+    double Scalar = 1,
+    double SpiritCapacityPercent = 0, double SpiritCapacityFlat = 0,
+    double SpiritRegenPercent = 0, double SpiritRegenFlat = 0);
 
 public sealed record EntityStatContext(
     EntityType Type,

@@ -16,6 +16,7 @@ public sealed class UidGenerator
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(prefix);
         var value = Interlocked.Increment(ref _counter);
+        if (value <= 0) throw new OverflowException("Runtime UID allocator exhausted int64.");
         return string.Concat(prefix, "_", value.ToString(CultureInfo.InvariantCulture));
     }
 
@@ -27,5 +28,13 @@ public sealed class UidGenerator
         long current;
         do { current = Interlocked.Read(ref _counter); if (value <= current) return; }
         while (Interlocked.CompareExchange(ref _counter, value, current) != current);
+    }
+
+    public long NextValue => Interlocked.Read(ref _counter);
+
+    public void RestoreNext(long value)
+    {
+        if (value < 0) throw new ArgumentOutOfRangeException(nameof(value));
+        Interlocked.Exchange(ref _counter, value);
     }
 }

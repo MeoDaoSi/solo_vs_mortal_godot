@@ -2,6 +2,7 @@ using SoloVsMortal.Core.Events;
 using SoloVsMortal.Core.Math;
 using SoloVsMortal.Data.Definitions;
 using SoloVsMortal.Simulation.Events;
+using SoloVsMortal.Simulation.Systems.V25;
 
 namespace SoloVsMortal.Simulation.Systems;
 
@@ -12,8 +13,10 @@ public sealed class WorldInteractionSystem
     private readonly HashSet<string> _destroyed = new(StringComparer.Ordinal);
     private readonly Dictionary<string, HashSet<string>> _destroyedByMap = new(StringComparer.Ordinal);
     private readonly EventBus _events; private MapDefinition _map; private readonly CapabilitySystem _capabilities;
+    private V25TraversalSystem? _canonicalTraversal;
     public WorldInteractionSystem(EventBus events, MapDefinition map, CapabilitySystem capabilities) { _events = events; _map = map; _capabilities = capabilities; }
     public MapDefinition CurrentMap => _map;
+    public void ConfigureCanonicalTraversal(V25TraversalSystem traversal) => _canonicalTraversal = traversal ?? throw new ArgumentNullException(nameof(traversal));
 
     public void SetMap(MapDefinition map)
     {
@@ -34,4 +37,10 @@ public sealed class WorldInteractionSystem
         if (!_capabilities.Has(item.Interaction.RequiredCapabilityId)) return new(false, Failure: WorldInteractionFailure.CapabilityRequired, RequiredCapabilityId: item.Interaction.RequiredCapabilityId, ObjectDisplayName: item.Interaction.DisplayName);
         _destroyed.Add(item.Id); _events.Publish(new WorldObjectDestroyedEvent(item.Id, item.Interaction.Id, item.Interaction.DisplayName)); return new(true, item.Id, item.Interaction.Id);
     }
+
+    public bool CanTraverseCanonical(V25TerrainTag terrain, double widthUnits, bool gateOpen = true, bool isCombatAction = false) =>
+        _canonicalTraversal?.CanTraverse(terrain, widthUnits, gateOpen, isCombatAction) ?? false;
+
+    public V25TraversalResult TryTraverseCanonical(V25TraversalRequest request, long tick) =>
+        _canonicalTraversal?.TryTraverse(request, tick) ?? new(false, Vec2.Zero, V25TraversalFailure.UnknownTerrainProducer);
 }

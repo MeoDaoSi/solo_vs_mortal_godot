@@ -2,7 +2,7 @@ using SoloVsMortal.Simulation.Rules;
 
 namespace SoloVsMortal.Simulation.Systems;
 
-public enum PlayerModifierSource { TemporaryPills, Essence, Bloodline, Possession, DebugTestBoost }
+public enum PlayerModifierSource { TemporaryPills, Essence, Bloodline, Possession, Equipment, PassiveSkills, DebugTestBoost }
 
 /// <summary>Owns independent modifier-source contributions; PlayerSystem owns the resulting stats.</summary>
 public sealed class PlayerModifierSystem
@@ -26,6 +26,10 @@ public sealed class PlayerModifierSystem
     public IReadOnlyDictionary<PlayerModifierSource, IReadOnlyList<StatModifiers>> SnapshotAll() =>
         _sources.OrderBy(entry => entry.Key).ToDictionary(entry => entry.Key, entry => (IReadOnlyList<StatModifiers>)entry.Value.ToArray());
 
-    public void Recompute() => _player.RecomputeStats(
-        _sources.OrderBy(entry => entry.Key).SelectMany(entry => entry.Value).ToArray());
+    public void Recompute()
+    {
+        var modifiers = _sources.OrderBy(entry => entry.Key).SelectMany(entry => entry.Value).ToArray();
+        if (_player.CanonicalMode) _player.SetCanonicalModifiers(modifiers);
+        else _player.RecomputeStats(modifiers);
+    }
 }

@@ -1,5 +1,7 @@
 # World Map và Map Content
 
+> Tài liệu prototype lịch sử. Gameplay hiện tại theo authority V2.5 được chỉ mục tại `docs/README.md`; nội dung dưới đây không override canonical region data.
+
 Tài liệu này mô tả kiến trúc lâu dài của hệ thống World Map trong Solo vs Mortal. World Map là một lớp điều hướng và metadata phía trên các map gameplay; nó không thay thế `MapDefinition` và không chứa runtime gameplay state.
 
 ## Mục tiêu và phạm vi
@@ -74,12 +76,12 @@ Desert đã được dọn theo các zone `entry`, `combat`, `ruins`, `oasis`, `
 
 1. Thêm object vào `data/configs/worldMap.json` với ID kebab-case, metadata story/biome/coords, level range và `defaultSpawnId`.
 2. Nếu playable, cung cấp `mapDefinitionFile` an toàn tương đối dưới `data/configs/` và `scenePath`; map `id` phải bằng `mapContentId` và spawn ID phải tồn tại. Nếu chưa có content, để cả hai là `null` và đặt `available: false`.
-3. Khai báo zones/rules trong map JSON khi map có placement constraints; đặt blockers, collision, exits và spawns rồi chạy loader/parity để bắt lỗi bounds/overlap.
+3. Khai báo zones/rules trong map JSON khi map có placement constraints; đặt blockers, collision, exits và spawns rồi chạy loader và kiểm tra thủ công trong Godot để bắt lỗi bounds/overlap.
 4. Không thêm switch `if (regionId == ...)` vào Presentation hoặc Simulation. Logic chung đi qua `WorldMapSystem`, còn khác biệt content nằm trong definitions.
 5. Nếu region cần unlock gameplay, triển khai một `IRegionTravelConditionEvaluator` dựa trên query Simulation/Application phù hợp; không nhét cờ unlock mutable vào `RegionDefinition`.
 
 ## Validation
 
-- `tests/Parity` kiểm tra registry, starter/current region, details, unavailable/invalid travel, Desert placement metadata, spawn safety và transition Desert ↔ Volcano.
+- Các kiểm tra parity prototype đã được gỡ theo chính sách manual testing V2.5; hãy dùng Godot playtest theo checklist trong `docs/V2.5/source-audit.md`.
 - `dotnet build solo_vs_mortal_godot.sln -c Debug --no-restore` kiểm tra C# project.
 - Godot headless startup kiểm tra scene/Arena và managed assembly load. Các lỗi `user://logs`/save trong môi trường headless không thuộc map runtime; cần writable user data khi chạy desktop bình thường.

@@ -1,0 +1,561 @@
+{
+ "format": "csaf-tileset-sample-map/1",
+ "pack": "verdant-00-sample",
+ "name": "sample_map_01",
+ "title": "The Forked Path",
+ "description": "A grass clearing cut by a winding dirt path, with a rounded clearing and a grass island inside it — the island is there because it is the only shape that exercises all four inner-corner masks at once, so the map doubles as a visual check that the 47-mask set is complete.",
+ "cellSize": 16,
+ "cols": 24,
+ "rows": 14,
+ "howToUse": "Every entry in `ground` and `props` is a tile id from this pack's tiles.json, so this map can be rebuilt in any engine: paint `ground` row by row (it is [row][col], top-left origin), then place `props` IN ORDER — later props may overlap earlier ones, which is deliberate (a bush in front of a tree), so the order is part of the data and not an incidental detail. `legend` lists only the tiles this map actually uses, so you can find them without hunting through the whole pack. An id written as `other-pack-id:tile_id` comes from a DIFFERENT pack — every one of those is listed in `requires`, so you can see at a glance what this map needs beyond this pack.",
+ "ground": [
+  [
+   "grass_3",
+   "grass_1",
+   "grass_4",
+   "grass_4",
+   "grass_2",
+   "grass_3",
+   "grass_3",
+   "grass_3",
+   "grass_1",
+   "grass_3",
+   "grass_4",
+   "grass_2",
+   "grass_1",
+   "grass_3",
+   "grass_1",
+   "grass_1",
+   "grass_3",
+   "grass_1",
+   "grass_1",
+   "grass_1",
+   "grass_4",
+   "grass_2",
+   "grass_4",
+   "grass_1"
+  ],
+  [
+   "grass_4",
+   "grass_4",
+   "grass_1",
+   "grass_2",
+   "grass_3",
+   "grass_1",
+   "grass_4",
+   "grass_2",
+   "grass_1",
+   "grass_2",
+   "grass_2",
+   "grass_4",
+   "grass_3",
+   "grass_2",
+   "grass_1",
+   "grass_4",
+   "dirt_on_grass_es_se",
+   "dirt_on_grass_esw_sw",
+   "dirt_on_grass_ew",
+   "dirt_on_grass_esw_se",
+   "dirt_on_grass_sw_sw",
+   "grass_1",
+   "grass_4",
+   "grass_1"
+  ],
+  [
+   "grass_2",
+   "grass_4",
+   "grass_1",
+   "grass_3",
+   "grass_2",
+   "grass_3",
+   "grass_2",
+   "grass_3",
+   "grass_2",
+   "grass_2",
+   "grass_2",
+   "grass_3",
+   "grass_2",
+   "grass_1",
+   "grass_3",
+   "dirt_on_grass_es_se",
+   "dirt_on_grass_nesw_nesw",
+   "dirt_on_grass_nw_nw",
+   "grass_1",
+   "dirt_on_grass_nes_nese",
+   "dirt_on_grass_nsw_swnw",
+   "grass_2",
+   "grass_3",
+   "grass_2"
+  ],
+  [
+   "grass_4",
+   "grass_4",
+   "grass_1",
+   "grass_1",
+   "grass_3",
+   "grass_4",
+   "grass_2",
+   "grass_2",
+   "grass_1",
+   "grass_3",
+   "grass_4",
+   "grass_3",
+   "grass_1",
+   "grass_3",
+   "grass_2",
+   "dirt_on_grass_nes_nese",
+   "dirt_on_grass_nsw_swnw",
+   "grass_1",
+   "grass_4",
+   "dirt_on_grass_nes_nese",
+   "dirt_on_grass_nesw_seswnw",
+   "dirt_on_grass_sw_sw",
+   "grass_3",
+   "grass_2"
+  ],
+  [
+   "grass_3",
+   "grass_1",
+   "grass_1",
+   "grass_3",
+   "grass_3",
+   "grass_1",
+   "grass_1",
+   "grass_4",
+   "grass_1",
+   "grass_4",
+   "grass_2",
+   "grass_2",
+   "grass_3",
+   "grass_3",
+   "grass_1",
+   "dirt_on_grass_ne_ne",
+   "dirt_on_grass_new_nw",
+   "dirt_on_grass_esw_se",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_nesw_nesesw",
+   "dirt_3",
+   "dirt_on_grass_nesw_seswnw",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_esw_sesw"
+  ],
+  [
+   "grass_3",
+   "grass_2",
+   "grass_2",
+   "grass_1",
+   "grass_2",
+   "grass_4",
+   "grass_3",
+   "grass_3",
+   "grass_3",
+   "grass_4",
+   "grass_4",
+   "grass_1",
+   "grass_2",
+   "grass_4",
+   "grass_1",
+   "grass_1",
+   "grass_3",
+   "dirt_on_grass_nes_nese",
+   "dirt_4",
+   "dirt_4",
+   "dirt_2",
+   "dirt_2",
+   "dirt_2",
+   "dirt_4"
+  ],
+  [
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_sw_sw",
+   "grass_1",
+   "grass_3",
+   "grass_4",
+   "grass_2",
+   "grass_1",
+   "grass_1",
+   "grass_4",
+   "grass_2",
+   "grass_2",
+   "grass_2",
+   "grass_3",
+   "grass_1",
+   "grass_4",
+   "dirt_on_grass_es_se",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_nesw_nesesw",
+   "dirt_1",
+   "dirt_on_grass_nesw_neswnw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_new_nenw"
+  ],
+  [
+   "dirt_4",
+   "dirt_on_grass_nesw_seswnw",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_sw_sw",
+   "grass_2",
+   "grass_4",
+   "grass_4",
+   "grass_3",
+   "grass_2",
+   "grass_1",
+   "grass_2",
+   "grass_1",
+   "grass_3",
+   "dirt_on_grass_es_se",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_nesw_nesesw",
+   "dirt_on_grass_nesw_neswnw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_nw_nw",
+   "grass_3",
+   "grass_4",
+   "grass_1",
+   "grass_3"
+  ],
+  [
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_nesw_nesenw",
+   "dirt_on_grass_nesw_seswnw",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_esw_sesw",
+   "dirt_on_grass_nesw_nesesw",
+   "dirt_on_grass_nesw_neswnw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_nw_nw",
+   "grass_3",
+   "grass_1",
+   "grass_1",
+   "grass_2",
+   "grass_1",
+   "grass_2",
+   "grass_1"
+  ],
+  [
+   "grass_1",
+   "grass_3",
+   "dirt_on_grass_ne_ne",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_nesw_nesenw",
+   "dirt_1",
+   "dirt_2",
+   "dirt_2",
+   "dirt_2",
+   "dirt_2",
+   "dirt_3",
+   "dirt_1",
+   "dirt_on_grass_nesw_neswnw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_nw_nw",
+   "grass_2",
+   "grass_2",
+   "grass_4",
+   "grass_1",
+   "grass_3",
+   "grass_1",
+   "grass_3",
+   "grass_2",
+   "grass_2"
+  ],
+  [
+   "grass_4",
+   "grass_1",
+   "grass_4",
+   "grass_2",
+   "dirt_on_grass_ne_ne",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_new_nenw",
+   "dirt_on_grass_nw_nw",
+   "grass_2",
+   "grass_4",
+   "grass_4",
+   "grass_4",
+   "grass_2",
+   "grass_4",
+   "grass_3",
+   "grass_2",
+   "grass_2",
+   "grass_1",
+   "grass_3"
+  ],
+  [
+   "grass_3",
+   "grass_3",
+   "grass_3",
+   "grass_3",
+   "grass_3",
+   "grass_2",
+   "grass_1",
+   "grass_2",
+   "grass_1",
+   "grass_2",
+   "grass_3",
+   "grass_1",
+   "grass_2",
+   "grass_3",
+   "grass_2",
+   "grass_1",
+   "grass_3",
+   "grass_2",
+   "grass_4",
+   "grass_2",
+   "grass_2",
+   "grass_4",
+   "grass_3",
+   "grass_1"
+  ],
+  [
+   "grass_4",
+   "grass_3",
+   "grass_1",
+   "grass_4",
+   "grass_1",
+   "grass_3",
+   "grass_2",
+   "grass_3",
+   "grass_1",
+   "grass_4",
+   "grass_2",
+   "grass_4",
+   "grass_2",
+   "grass_1",
+   "grass_1",
+   "grass_2",
+   "grass_4",
+   "grass_1",
+   "grass_1",
+   "grass_1",
+   "grass_4",
+   "grass_2",
+   "grass_4",
+   "grass_1"
+  ],
+  [
+   "grass_4",
+   "grass_3",
+   "grass_2",
+   "grass_4",
+   "grass_2",
+   "grass_4",
+   "grass_1",
+   "grass_3",
+   "grass_2",
+   "grass_2",
+   "grass_3",
+   "grass_4",
+   "grass_4",
+   "grass_2",
+   "grass_2",
+   "grass_3",
+   "grass_3",
+   "grass_3",
+   "grass_1",
+   "grass_1",
+   "grass_4",
+   "grass_4",
+   "grass_4",
+   "grass_4"
+  ]
+ ],
+ "props": [
+  {
+   "id": "tree_1_grounded",
+   "x": 1,
+   "y": 1
+  },
+  {
+   "id": "tree_1_grounded",
+   "x": 7,
+   "y": 1
+  },
+  {
+   "id": "tree_1_grounded",
+   "x": 13,
+   "y": 1
+  },
+  {
+   "id": "tree_1_grounded",
+   "x": 21,
+   "y": 9
+  },
+  {
+   "id": "bush_1_grounded",
+   "x": 4,
+   "y": 2
+  },
+  {
+   "id": "bush_1_grounded",
+   "x": 10,
+   "y": 2
+  },
+  {
+   "id": "bush_1_grounded",
+   "x": 15,
+   "y": 11
+  },
+  {
+   "id": "bush_1_grounded",
+   "x": 5,
+   "y": 11
+  },
+  {
+   "id": "rock_1_grounded",
+   "x": 3,
+   "y": 4
+  },
+  {
+   "id": "rock_1_grounded",
+   "x": 19,
+   "y": 8
+  },
+  {
+   "id": "rock_1_grounded",
+   "x": 8,
+   "y": 12
+  },
+  {
+   "id": "stump_grounded",
+   "x": 17,
+   "y": 10
+  },
+  {
+   "id": "flowers_red_1",
+   "x": 12,
+   "y": 4
+  },
+  {
+   "id": "flowers_red_1",
+   "x": 22,
+   "y": 2
+  }
+ ],
+ "legend": {
+  "bush_1_grounded": {
+   "role": "prop",
+   "sizeCells": [
+    1,
+    1
+   ]
+  },
+  "dirt_1": {
+   "role": "fill"
+  },
+  "dirt_2": {
+   "role": "fill"
+  },
+  "dirt_3": {
+   "role": "fill"
+  },
+  "dirt_4": {
+   "role": "fill"
+  },
+  "dirt_on_grass_es_se": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_esw_se": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_esw_sesw": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_esw_sw": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_ew": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_ne_ne": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_nes_nese": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_nesw_nesenw": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_nesw_nesesw": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_nesw_nesw": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_nesw_neswnw": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_nesw_seswnw": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_new_nenw": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_new_nw": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_nsw_swnw": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_nw_nw": {
+   "role": "autotile"
+  },
+  "dirt_on_grass_sw_sw": {
+   "role": "autotile"
+  },
+  "flowers_red_1": {
+   "role": "prop",
+   "sizeCells": [
+    1,
+    1
+   ]
+  },
+  "grass_1": {
+   "role": "fill"
+  },
+  "grass_2": {
+   "role": "fill"
+  },
+  "grass_3": {
+   "role": "fill"
+  },
+  "grass_4": {
+   "role": "fill"
+  },
+  "rock_1_grounded": {
+   "role": "prop",
+   "sizeCells": [
+    1,
+    1
+   ]
+  },
+  "stump_grounded": {
+   "role": "prop",
+   "sizeCells": [
+    1,
+    1
+   ]
+  },
+  "tree_1_grounded": {
+   "role": "prop",
+   "sizeCells": [
+    2,
+    2
+   ]
+  }
+ }
+}

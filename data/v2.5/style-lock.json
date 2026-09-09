@@ -1,0 +1,35 @@
+{
+  "styleId": "svm-ash-soulfire",
+  "styleVersion": "0.2-calibrated",
+  "status": "calibrated",
+  "masterSetVersion": "svm-masters-v001",
+  "calibratedAt": "2026-09-07",
+  "calibrationEvidence": "art/masters/v001/master-registry.json",
+  "camera": "top_down_three_quarter_orthographic",
+  "viewport": [640, 360],
+  "tileSize": 32,
+  "nativePixelsPerWorldUnit": 1,
+  "lightDirection": "upper_left",
+  "palette": {
+    "ash": ["#161820", "#272B36", "#414653", "#626777"],
+    "stone": ["#343635", "#54564F", "#797969", "#A2A18A"],
+    "bone": ["#655344", "#9B8564", "#D0B88A", "#F1DDB0"],
+    "soulAmber": ["#754719", "#B87825", "#E9B94A", "#FFF1B8"],
+    "cloth": ["#332C40", "#54435D", "#7A607D", "#AA879E"],
+    "danger": ["#663238", "#A34842", "#D96C52", "#FFC187"],
+    "vegetation": ["#293C36", "#46624D", "#718560", "#A1AD7C"],
+    "water": ["#233B48", "#3B5F6E", "#638998", "#A0B8BD"]
+  },
+  "roles": {
+    "actor": {"canvas": [64, 64], "defaultPivot": [32, 56], "alpha": "binary", "requiresTransparency": true, "maxColors": 16},
+    "large_actor": {"canvas": [96, 96], "defaultPivot": [48, 88], "alpha": "binary", "requiresTransparency": true, "maxColors": 16},
+    "huge_actor": {"canvas": [128, 128], "defaultPivot": [64, 120], "alpha": "binary", "requiresTransparency": true, "maxColors": 16},
+    "pickup": {"canvas": [24, 24], "defaultPivot": [12, 20], "alpha": "binary", "requiresTransparency": true, "maxColors": 12},
+    "icon": {"canvas": [32, 32], "defaultPivot": [16, 16], "alpha": "binary", "requiresTransparency": true, "maxColors": 16},
+    "portrait": {"canvas": [128, 128], "defaultPivot": [64, 64], "alpha": "binary", "requiresTransparency": true, "maxColors": 24},
+    "tile": {"canvas": [32, 32], "defaultPivot": [0, 0], "alpha": "binary", "requiresTransparency": false, "maxColors": 12},
+    "prop": {"canvas": [64, 64], "defaultPivot": [32, 56], "alpha": "binary", "requiresTransparency": true, "maxColors": 16},
+    "vfx": {"canvas": [64, 64], "defaultPivot": [32, 56], "alpha": "graded", "requiresTransparency": true, "maxColors": 16},
+    "ui": {"canvas": [32, 32], "defaultPivot": [0, 0], "alpha": "binary", "requiresTransparency": false, "maxColors": 16}
+  }
+}

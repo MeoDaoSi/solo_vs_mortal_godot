@@ -69,23 +69,24 @@ public partial class WorldMapUI : Control
         backdrop.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect); AddChild(backdrop);
 
         var panel = new PanelContainer { Position = new Vector2(90, 48), Size = new Vector2(1100, 624), MouseFilter = Control.MouseFilterEnum.Stop };
+        FancyUi.ApplyPanel(panel, main: true);
         AddChild(panel);
         var margin = new MarginContainer(); margin.AddThemeConstantOverride("margin_left", 22); margin.AddThemeConstantOverride("margin_top", 18); margin.AddThemeConstantOverride("margin_right", 22); margin.AddThemeConstantOverride("margin_bottom", 18); panel.AddChild(margin);
         var column = new VBoxContainer(); margin.AddChild(column);
 
         var header = new HBoxContainer(); column.AddChild(header);
-        var title = new Label { Text = "BẢN ĐỒ THẾ GIỚI", ThemeTypeVariation = "HeaderLarge", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }; header.AddChild(title);
-        var close = new Button { Text = "Đóng  (M / Esc)", CustomMinimumSize = new Vector2(150, 36) }; close.Pressed += Close; header.AddChild(close);
+        var title = new Label { Text = "BẢN ĐỒ THẾ GIỚI", ThemeTypeVariation = "HeaderLarge", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }; title.AddThemeColorOverride("font_color", FancyUi.TextBright); header.AddChild(title);
+        var close = new Button { Text = "Đóng  (M / Esc)", CustomMinimumSize = new Vector2(150, 36) }; close.Pressed += Close; FancyUi.ApplyButton(close); header.AddChild(close);
         column.AddChild(new Label { Text = "Chọn một khu vực để xem câu chuyện và điều kiện di chuyển.", Modulate = new Color(0.72f, 0.78f, 0.88f) });
 
         var body = new HBoxContainer { SizeFlagsVertical = Control.SizeFlags.ExpandFill }; column.AddChild(body);
         _mapCanvas = new WorldMapCanvas { CustomMinimumSize = new Vector2(650, 500), SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, SizeFlagsVertical = Control.SizeFlags.ExpandFill }; body.AddChild(_mapCanvas);
-        var detailsPanel = new PanelContainer { CustomMinimumSize = new Vector2(360, 0) }; body.AddChild(detailsPanel);
+        var detailsPanel = new PanelContainer { CustomMinimumSize = new Vector2(360, 0) }; FancyUi.ApplyPanel(detailsPanel, main: false); body.AddChild(detailsPanel);
         var detailsMargin = new MarginContainer(); detailsMargin.AddThemeConstantOverride("margin_left", 18); detailsMargin.AddThemeConstantOverride("margin_top", 18); detailsMargin.AddThemeConstantOverride("margin_right", 18); detailsMargin.AddThemeConstantOverride("margin_bottom", 18); detailsPanel.AddChild(detailsMargin);
         var details = new VBoxContainer(); detailsMargin.AddChild(details);
         _selectionTitle = new Label { Text = "Chọn khu vực", ThemeTypeVariation = "HeaderMedium", AutowrapMode = TextServer.AutowrapMode.WordSmart }; details.AddChild(_selectionTitle);
         _selectionDetails = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, SizeFlagsVertical = Control.SizeFlags.ExpandFill }; details.AddChild(_selectionDetails);
-        _travelButton = new Button { Text = "Đi tới khu vực", CustomMinimumSize = new Vector2(0, 42) }; _travelButton.Pressed += TravelSelected; details.AddChild(_travelButton);
+        _travelButton = new Button { Text = "Đi tới khu vực", CustomMinimumSize = new Vector2(0, 42) }; _travelButton.Pressed += TravelSelected; FancyUi.ApplyButton(_travelButton); details.AddChild(_travelButton);
         details.AddChild(new Label { Text = "Màu vàng: hiện tại\nMàu đỏ: chưa thể đến\nMàu xanh: đã sẵn sàng", Modulate = new Color(0.72f, 0.78f, 0.88f) });
     }
 

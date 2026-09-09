@@ -1,5 +1,7 @@
 # Solo vs Mortal — Game terminology
 
+> Historical prototype glossary. Current gameplay authority is the closed V2.5 bundle indexed by `docs/README.md`.
+
 This glossary maps player-facing terms to the implementation concepts in the current Godot C# codebase. English terms are followed by the Vietnamese display term used in the game.
 
 ## Entities and progression

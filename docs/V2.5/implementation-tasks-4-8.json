@@ -1,0 +1,862 @@
+{
+  "schemaVersion": 1,
+  "authority": "C:/ws/asset-production_system/Solo_vs_Mortal_Gameplay_System_V2.5.md closed-1 and pinned game_spec JSON",
+  "purpose": "Execution plan only; numbers and mechanics remain canonical authority. Each required bullet is mandatory, not a suggestion.",
+  "executionRules": [
+    "User authorizes continuous implementation of an entire numbered part. Microtasks clarify scope and evidence; they are not user-prompt or permission gates. Code completes 4.02 through 4.12 automatically after 4.01, sends checkpoints, and continues in dependency order. Do not start Part5 without authorization.",
+    "Parent reviews checkpoint output concurrently. Code fixes reported findings before dependent work; missing implementation is not silently deferred. Do not wait for routine parent acknowledgement to begin the next implemented-dependency task. Genuine tool/quota blockers are reported and agent self-ends.",
+    "Read exact canonical sections/records and current code before editing. Expand every required clause into requirement-to-symbol evidence; flag contradiction before implementing.",
+    "Every newly live state must have capture/validated staged restore in its activation task. No deferred save support for collectible progress.",
+    "Compile allowed; user sole gameplay tester. No automated tests/harnesses or fake in-engine verification.",
+    "Do not mark complete on a stub, unused helper, alwaysfalse, hardcoded placeholder or build alone. Resolve missing owned scope before handing back.",
+    "Do not commit, overwrite user edits, touch art source, or introduce parallel writers. Preserve existing changes."
+  ],
+  "priorPartsOpen": [
+    "Part2 docs consolidation/enginebaseline unresolved; track through6.03/8.02, not claim prior completion.",
+    "Part3 Playerbreakthrough closed by4.03, pathfinding by4.06, grant/exposure by5.02 and rewarddurability by4.02/5.05; parent review still required."
+  ],
+  "entryDecision": "User authorized starting Part4 now. 4.01 pure ownership/Density core is independent of unresolved boss/pathing producers. Later live stages are gated.",
+  "tasks": [
+    {
+      "id": "4.01",
+      "title": "Species ownership và Density transaction",
+      "dependsOn": [],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/State/V25/",
+        "src/Simulation/Systems/V25/",
+        "src/Simulation/Rules/",
+        "src/Data/Definitions/V25/"
+      ],
+      "required": [
+        "Canonical state keyed by SpeciesId, micro int64 checked arithmetic, derived level/rank; Locked differs from owned D0.",
+        "Pure staged absorb/proof-only command with stable TransactionId receipt; failed validation changes nothing; same ID/same input returns same receipt, conflicting input rejects.",
+        "Exact gain, relevance from pretransaction SoulRank, all eight gates, permanent proofs, release old pending before new gain, pending cap25 and discarded accounting.",
+        "Immutable amount/source/version ledger; D99+30 => D100/P25/discard4, proof-only=>125, proof+2=>127 by code reasoning; do not create automated tests.",
+        "Expose typed snapshot/restore validation for these fields; no live pickup consumption until 4.02 wires atomic persistence."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [
+          "Canonical state keyed by SpeciesId: V25DensityEngine._ownership, V25SpeciesOwnershipSnapshot (Locked versus OwnedAtZero), V25DensityMath checked micro helpers and derived SoulLevel/SoulRank.",
+          "Pure staged absorb/proof command: V25DensityEngine.Apply, StageTransition and ValidateSourceProvenance; single mutation point after validation; TransactionId replay returns the immutable receipt and conflicting payloads reject.",
+          "Exact gain/relevance/gates: V25DensityMath.ComputeGainMicro, RelevanceForRanks, MinimumProofRank and GateMicro; V25DensityEngine stages permanent proof keys, consumes old pending before new gain, enforces all eight canonical gates and the 25 point cap.",
+          "Immutable ledger and accounting: V25DensityLedgerEntry and V25DensityTransactionReceipt preserve AwardId, SourceId, SourceVersion, exact GrantedMicro, committed/pending/discarded amounts, proof keys and resulting state; no balance-version recomputation on replay/restore.",
+          "Typed snapshot/restore boundary: V25DensityEngineSnapshot, V25DensityEngine.Snapshot/Restore/RestoreSnapshot validate profile species, ownership invariants, gate thresholds, proof permanence, ledger conservation and atomic staged swap; live pickup/save consumption remains unconnected for 4.02."
+        ],
+        "changedFiles": [
+          "src/Simulation/State/V25/V25DensityState.cs",
+          "src/Simulation/Systems/V25/V25DensityEngine.cs"
+        ],
+        "build": "dotnet build solo_vs_mortal_godot.csproj --no-restore (Godot.NET 4.7.2): succeeded, 0 warnings, 0 errors; no automated tests or headless smoke run.",
+        "remainingOwnedScope": [
+          "4.02 must atomically wire World Soul pickup consumption, first ownership claim plus absorb, and durable save/WAL capture; this pure core is not called by the live pickup loop.",
+          "V25 Application save capture/restore does not yet serialize this engine snapshot; 4.02 owns that activation boundary.",
+          "Manual gameplay acceptance and parent review remain pending."
+        ],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "4.02",
+      "title": "World Soul drop, capture và durable save",
+      "dependsOn": [
+        "4.01"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/Systems/SoulSystem.cs",
+        "src/Simulation/GameSession.cs",
+        "src/Application/",
+        "src/Presentation/Arena.cs"
+      ],
+      "required": [
+        "Wire canonical eligible kill into species pity/drop RNG: fifth unowned/tenth owned guaranteed; guarantee does not advance RNG; Banner ineligible does not roll/increase pity.",
+        "Persist pickups/no timeout, pity, owned state, ledger/proofs/pending, consumed pickup IDs and receipts through existing staged restore/WAL. No empty NewGame-owned capture placeholder.",
+        "Auto collect48/E only alive+eligible; ownership/gain/counters/proofs/pickup consumption/events commit together; disk failure pauses and retries same payload/identity.",
+        "Tutorial spawn API requires stable quest receipt; normal debug/add/Arena actors grant no rewards. No tutorial fake completed quest.",
+        "Wire Application snapshot+current UI readout minimally; collectible loop reachable, no orphan service. Save/load of nonempty owned state supported before completion."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [
+          "Canonical drop/pity/capture: SoulSystem.SpawnCanonicalDrop/AutoCollect and V25SoulState enforce eligible normal/elite/boss identity, unowned fifth/owned tenth pity guarantees without RNG advance, no banner-ineligible roll, and 48-unit/E alive pickup eligibility.",
+          "Atomic ownership transaction: SoulSystem.AcquireNear/AcquireCanonical commits pickup consumption, first ownership and V25DensityEngine absorb/proof ledger together before publishing events; tutorial SpawnCanonicalTutorialSoul requires a stable receipt and Arena/debug encounters carry RewardEligible=false.",
+          "Durable state: GameApplication.CaptureCanonicalSave serializes non-empty density ownership/ledger, pickups, pity, consumed pickup IDs and tutorial receipts; RestoreCanonicalSave stages an isolated application and V25SaveStore owns WAL/current-previous-backup retry without mutating live state on failure.",
+          "Presentation reachability: GameApplication.AcquireNearbySouls and Arena pickup/save UI call the canonical Soul loop; no empty NewGame-owned capture is emitted."
+        ],
+        "changedFiles": [
+          "src/Simulation/Systems/SoulSystem.cs",
+          "src/Simulation/State/V25/V25SoulState.cs",
+          "src/Simulation/GameSession.cs",
+          "src/Application/GameApplication.cs",
+          "src/Application/Persistence/V25/V25SaveData.cs",
+          "src/Application/Persistence/V25/V25SaveStore.cs",
+          "src/Presentation/Arena.cs"
+        ],
+        "build": "dotnet build solo_vs_mortal_godot.csproj --no-restore (Godot.NET 4.7.2): succeeded, 0 warnings, 0 errors; no automated tests or headless smoke run.",
+        "remainingOwnedScope": [
+          "Manual gameplay acceptance and parent review remain pending; future equipment/quest systems still own their producers."
+        ],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "4.03",
+      "title": "Fact ledger và Player breakthrough dependency",
+      "dependsOn": [
+        "4.02"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/Systems/ProgressionSystem.cs",
+        "src/Application/",
+        "src/Simulation/GameSession.cs"
+      ],
+      "required": [
+        "Typed durable facts with stable provenance; boss-clear producer contract validates real encounter identity, not any Skeleton death.",
+        "Implement existing disabled Player breakthrough: full threshold+current rank boss fact at shrine; level+1/XP0/no refill/no RNG or pill.",
+        "Persist facts, breakthroughReady and receipts; invalid gate has no side effects; beta cap20 and full upgrade preserve progress.",
+        "Expose legitimate fact ingestion for later quest/world producers; record producers not yet connected as dependency, never fabricate boss clear."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [
+          "Typed facts and producer validation: V25FactEvidence/V25FactLedger and ProgressionSystem.IngestBossClear require authored EncounterType=Boss, reward eligibility, encounter/story identity and profile; arbitrary Skeleton deaths cannot fabricate a boss fact.",
+          "Breakthrough gate: ProgressionSystem.AttemptPlayerBreakthrough checks full canonical XP threshold, rank-boundary, current-region boss fact and shrine, then atomically records receipt and advances exactly one level with XP0 without pill/refill/RNG side effects.",
+          "Persistence/cap: GameApplication captures Facts, CommittedFactIds, BreakthroughReady and receipts; V25SaveData validates contiguous typed facts and beta profile cap20, and RestoreCanonicalFactState stages/rebuilds the ledger.",
+          "Producer seam: ProgressionSystem.IngestFact exposes stable fact ingestion for quest/world producers; no disconnected producer is treated as a completed boss clear."
+        ],
+        "changedFiles": [
+          "src/Simulation/State/V25/V25FactState.cs",
+          "src/Simulation/Systems/ProgressionSystem.cs",
+          "src/Simulation/Events/V25ProgressionEvents.cs",
+          "src/Simulation/GameSession.cs",
+          "src/Application/GameApplication.cs",
+          "src/Application/Persistence/V25/V25SaveData.cs"
+        ],
+        "build": "dotnet build solo_vs_mortal_godot.csproj --no-restore (Godot.NET 4.7.2): succeeded, 0 warnings, 0 errors; no automated tests or headless smoke run.",
+        "remainingOwnedScope": [
+          "Manual gameplay acceptance and parent review remain pending; quest/world producers remain explicitly tracked for later content parts."
+        ],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "4.04",
+      "title": "Banner gates",
+      "dependsOn": [
+        "4.03"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/Systems/SoulBannerSystem.cs",
+        "src/Application/",
+        "src/Presentation/Arena.cs"
+      ],
+      "required": [
+        "NewGame Banner1; PT eligibility and species slots from capture; beta cap2.",
+        "Upgrade at shrine requires PlayerRank,next rank boss proof, one eligible owned D>=min(100,15r); no currency/density consumption.",
+        "Stable gate/version/receipt and snapshot/save; repeated command no duplicate unlock.",
+        "Replace canonical bind-count/active-slot-limit assumptions and display failure reason."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "4.05",
+      "title": "Sync historical amounts và milestones",
+      "dependsOn": [
+        "4.03"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/Systems/V25/",
+        "src/Application/Persistence/V25/",
+        "src/Application/GameApplication.cs"
+      ],
+      "required": [
+        "Use all authored8sources/species; facts may precede ownership, auto claim once owned.",
+        "AwardId unique save/species/source across definition versions; persist exact amount/version and legacy dedup keys, never recalculate historical gain.",
+        "Atomic receipt+award+permanent milestone20/40/60/80/100; cap display100 only, no ledger truncation.",
+        "Item/fact source replay returns AlreadyClaimed without consume; load validation staged and no negative rebalance compensation."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "4.06",
+      "title": "Shared placement/pathfinding prerequisite",
+      "dependsOn": [
+        "4.02"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/Systems/PlayerSystem.cs",
+        "src/Simulation/Systems/MonsterSystem.cs",
+        "src/Simulation/Systems/V25/"
+      ],
+      "required": [
+        "Collision-aware reachable route and nearest-free placement respecting world blockers/gates; direct LOS is not full pathfinding.",
+        "Deterministic nearest ring search within48,16unit increments clockwise fromSouth; no-space leaves state unchanged.",
+        "Fix Monster return path around obstacles, retain spawn/life/reward budgets; no teleport through walls.",
+        "Shared API for Ally pathing and return; finite bounds and actor radii10/18/26. Manual check instructions only."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "4.07",
+      "title": "Summon/recall/vitality state machine",
+      "dependsOn": [
+        "4.04",
+        "4.06"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/Systems/SummonSystem.cs",
+        "src/Simulation/Systems/AllySystem.cs",
+        "src/Simulation/GameSession.cs",
+        "src/Application/"
+      ],
+      "required": [
+        "One Ally/species; validate Ready/owned/alive/Spirit/vitality/transition/Possession; atomic placement+mode+Ally, not partial mutation.",
+        "SummonAll sortSpeciesId independent outcomes; targetable/drain immediately,300ms fade presentation only.",
+        "Recall after same-tick lethal resolution preserves HP ratio/CD; dead=>Dispersed20s=>Ready25%; shrine regen Ready only.",
+        "Persist live/dead/ready ownership links/recovery/cooldowns and reject inconsistent restore; usable Application commands/HUD."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "4.08",
+      "title": "Spirit net flow và death coordination",
+      "dependsOn": [
+        "4.07"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/GameSession.cs",
+        "src/Simulation/Systems/",
+        "src/Application/Persistence/V25/"
+      ],
+      "required": [
+        "Authoritative milli units and fixed-tick fractional remainder; canonical capacity/regen/drain from owned Soul state.",
+        "Net crossing integration:1spirit,60/min regen,120/min drain empties1s; recall once then integrate remaining tick with new rates, never auto summon.",
+        "Player death recall living with vitality, dispersed stays dead, cancel cast/buffer/projectile/effects;2s respawn50%HP/Spirit while timers continue.",
+        "No resource refill by save/load, no progression rollback; persist crossing/remainders/timers and shrine/rest eligibility."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [
+          "Authoritative Spirit milli/remainder: src/Simulation/Systems/V25/V25SpiritSystem.cs V25SpiritSystem.CurrentMilli/MaximumMilli/RemainderMicro and GameApplication capture/restore SpiritRemainderMicro; PlayerState remains the actor resource authority.",
+          "Net crossing and summon drain: V25SpiritSystem.Tick computes RegenPerMinute/DrainPerMinute from CanonicalDensity and SummonSystem.CanonicalSnapshot, recalls once through SummonSystem.RecallAllLivingForSpirit, then integrates the remaining fixed tick; no resummon path exists.",
+          "Death pipeline: GameSession player-defeat subscription calls Combat.ClearCanonicalRuntime and SummonSystem.RecallAllLivingForDeath, retains Dispersed rows, starts the 120 tick timer, and respawns using Balance.Save fractions while simulation timers continue.",
+          "Persistence/rest: V25SaveDocument.SpiritRemainderMicro is range-validated and staged with actor restore; GameSession.TryRestAtCanonicalShrine and IsCanonicalCombatActive gate authored Rest, while SummonSystem.Update gates Ready vitality regen at shrine radius96. Restore never refills current resources."
+        ],
+        "changedFiles": [
+          "src/Simulation/Systems/V25/V25SpiritSystem.cs",
+          "src/Simulation/Systems/SummonSystem.cs",
+          "src/Simulation/GameSession.cs",
+          "src/Application/GameApplication.cs",
+          "src/Application/Persistence/V25/V25SaveData.cs"
+        ],
+        "build": "dotnet build solo_vs_mortal_godot.csproj --no-restore (Godot.NET 4.7.2): succeeded, 0 warnings, 0 errors; no automated tests or headless smoke run.",
+        "remainingOwnedScope": [
+          "Manual gameplay acceptance and parent review remain pending. Spirit capacity modifiers from future Equipment/loadout are intentionally not active before Part5.",
+          "Hazard-specific traversal/rescue and full possession death cleanup are completed in 4.10/4.11; current combat gate is conservative for implemented actors."
+        ],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "4.09",
+      "title": "Ally AI and focus",
+      "dependsOn": [
+        "4.06",
+        "4.08"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/Systems/AllySystem.cs",
+        "src/Simulation/Systems/V25CombatCoordinator.cs",
+        "src/Application/",
+        "src/Presentation/Arena.cs"
+      ],
+      "required": [
+        "Think100ms states,Guard160/Assault320,focus480/8s; priorityfocus->recent Player attacker2s->nearest tieUID.",
+        "Lock target during windup; signature valid/ready else basic; return384/512 cancels unreleased only with cooldown retained.",
+        "Formation sorted species radius/angle formula,separation8; path fail2s outsidecombat reposition reachable samegate, incombat Recall Unreachable.",
+        "Wire player focus/mode commands and persist AI timers/targets/formation facts; no nearest-target prototype shortcut."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [
+          "Think/mode/focus: AllyState.AiMode, ThinkTicks, FocusTargetUid/FocusRemainingTicks and AllySystem.UpdateCanonical implement 6 tick (100ms) reconsideration, Guard160/Assault320, Focus480 for 480 ticks, and focus→recent player attacker→nearest UID ordering.",
+          "Target/cast behavior: AllySystem retains a valid target between think windows; V25CombatCoordinator.AcceptActorIntents consumes AllyState.TargetUid and cancels only unreleased Ally casts in Return, leaving accepted cooldowns. Signature readiness/validity falls back to authored basic style in the coordinator.",
+          "Formation/path safety: AllySystem.RebuildCanonicalFormation applies sorted species radius48+24*floor(index/6), angle60*(index%6), EnforceFriendlySeparation keeps 8 unit spacing, and MoveToward uses PlayerSystem V25Navigation; path failure reaches 2s then repositions out of combat or publishes AllyUnreachableEvent in combat for SummonSystem recall.",
+          "Commands/save: GameApplication.FocusAlly and SetAllyMode expose player commands; V25RuntimeActorSaveState/V25ActorRuntimeSnapshot carry mode, think/focus/path/recent-attacker state and staged restore validates them."
+        ],
+        "changedFiles": [
+          "src/Simulation/State/AllyState.cs",
+          "src/Simulation/Systems/AllySystem.cs",
+          "src/Simulation/Systems/V25CombatCoordinator.cs",
+          "src/Simulation/Events/SoulEvents.cs",
+          "src/Simulation/Systems/SummonSystem.cs",
+          "src/Simulation/GameSession.cs",
+          "src/Application/GameApplication.cs",
+          "src/Application/GameSnapshot.cs",
+          "src/Application/Persistence/V25/V25SaveData.cs"
+        ],
+        "build": "dotnet build solo_vs_mortal_godot.csproj --no-restore (Godot.NET 4.7.2): succeeded, 0 warnings, 0 errors; no automated tests or headless smoke run.",
+        "remainingOwnedScope": [
+          "Manual gameplay acceptance and parent review remain pending; target lock is represented by retained AllyState.TargetUid and future combat additions must preserve it."
+        ],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "4.10",
+      "title": "Possession snapshot and grant lifetime",
+      "dependsOn": [
+        "4.05",
+        "4.08"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/Systems/PossessionSystem.cs",
+        "src/Simulation/Systems/CapabilitySystem.cs",
+        "src/Simulation/Systems/V25CombatCoordinator.cs",
+        "src/Application/"
+      ],
+      "required": [
+        "Start validates all gates; snapshot exact duration/cooldown/level/milestones/stats per spec; Spirit/vitality unchanged.",
+        "SourceInstance grants fourstats/signatureF/capability threshold; end/death/cancel full snapshotCD; switch300ms.",
+        "Revoke only own source; cancel unreleased cast, keep released projectile offense/effects; shared skill cooldown cannot be bypassed.",
+        "Persist active snapshot and per-species CD, restore same lifetime; commands+HUD reachable."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "4.11",
+      "title": "Capability union and traversal safety",
+      "dependsOn": [
+        "4.06",
+        "4.10"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/Systems/CapabilitySystem.cs",
+        "src/Simulation/Systems/WorldInteractionSystem.cs",
+        "src/Application/"
+      ],
+      "required": [
+        "Source-instance union for8canonical capabilities, gate/wall restrictions and combat-vs-hazard distinctions.",
+        "Safe anchor500ms; Flight2s/Breathing3s grace, cancelcast return reachable anchor or rescue10%HP nonlethal, no unopened gate crossing.",
+        "Connect world capability queries through typed terrain tags; persistent sources/anchors/grace, no broad clear removes unrelated grant.",
+        "Expose missing canonical world tag producers explicitly for5.06; no fake traversal or cosmetic-only capability."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "4.12",
+      "title": "Soul loop integration and obsolete removal",
+      "dependsOn": [
+        "4.02",
+        "4.04",
+        "4.05",
+        "4.09",
+        "4.11"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/",
+        "src/Application/",
+        "src/Presentation/",
+        "docs/V2.5/"
+      ],
+      "required": [
+        "Remove canonical Devour/Essence/Bloodline/pill/cost/slot paths and misleading HUD after callers migrated; preserve unsupported legacy save files.",
+        "Trace actual kill->pickup->absorb->Density/Sync->Banner->summon->recall/death->Possession->save/load call chain; map each acceptance clause to symbol.",
+        "Compile and list manual sequence incl failure/retry; no stub/alwaysfalse/default0 for completed scope.",
+        "Parent review fixes returned as same task, not new part; close only owned scope and dependency producers explicitly listed."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "5.01",
+      "title": "Inventory/equipment transactions",
+      "dependsOn": [
+        "4.12"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/",
+        "src/Application/",
+        "src/Presentation/"
+      ],
+      "required": [
+        "60slots,stack99,unlimited overflow; int64coin; NewGame equipment/potions/100coin exactly once.",
+        "8slots/accessoryfamily exclusivity/twohand eviction to inventory-or-stash atomic; equiprank and combat/hazard/transition restrictions.",
+        "17families stats rankscale once, MainHand CombatStyle/Offhand grants; no armor worldbody variants.",
+        "Save instanceUID/equipped/stash/coins; shop/sell/potion share10s; resource-full reject withoutconsume."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "5.02",
+      "title": "Skill grants/loadout and cast exposure",
+      "dependsOn": [
+        "5.01",
+        "4.10"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/Systems/V25CombatCoordinator.cs",
+        "src/Application/",
+        "src/Presentation/"
+      ],
+      "required": [
+        "SourceKind/ExposurePolicy distinct, revocation by instance/sharedSkillIdCD; exact newgame learned/defaultslots.",
+        "6active/3passive formulas,weapon compatibility keeps disabled slot, RMB/C/F/T separate from learnedslots.",
+        "Effective rank max learned/active grant; basic1, only power heal shield scaled; basicAttackRate phase only.",
+        "Replace hardcoded PowerSlash exposure; persist grants/learned/loadout/promotion/CD; all casts use validation."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "5.03",
+      "title": "Mastery credit and promotion",
+      "dependsOn": [
+        "5.02"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/",
+        "src/Application/Persistence/V25/"
+      ],
+      "required": [
+        "Learned active only, no duplicate track by grant source; promotedmax6/player gate, authored thresholds.",
+        "ActualHPloss budget perlife cappedspawnMaxHP; shield/overkill0, failedboss/heal/leash never reset budget.",
+        "Healing hostile debt30s oldestfirst; prevention counterfactual split; shield actual; distance/stealth/meaningful-use rules per spec.",
+        "Persist budgets/debts/ledger/promotion; wire actual combat effect events not animation; exclusions adds/debug/Arena."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "5.04",
+      "title": "Quests/NPC/fact producers",
+      "dependsOn": [
+        "4.03",
+        "4.05",
+        "5.01"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/",
+        "src/Application/",
+        "src/Presentation/"
+      ],
+      "required": [
+        "Implement authored41quest definitions with beta scope filter, prerequisites/objectives/rewards/receipts not fabricated completion.",
+        "An/Kha/Linh interaction priority and rank-gated learn/shop, tutorial worldSoul receipt, hint once.",
+        "Connect questfacts to Sync/Banner/Playerbreakthrough; facts persisted before user-facing reward confirmation.",
+        "Replay rewards idempotent and overflow-safe; UI objectives and disabled reasons."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "5.05",
+      "title": "Loot and unique powers",
+      "dependsOn": [
+        "5.01",
+        "5.04"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/",
+        "src/Application/"
+      ],
+      "required": [
+        "Normal/elite/boss coin/drop formulas17family uniform; eligible life receipt one roll, stash avoids reroll.",
+        "Boss2 Chaos/Despair/Covenant authored conditions/powerrank/one-time reward and cooldown/grants.",
+        "Unique and normal Soul roll distinct; no debug/adds rewards; owner credit includes Allykills.",
+        "Atomic durable all awarded items/coins/unique/facts; death/reload/retry never duplicates."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "5.06",
+      "title": "Canonical regions and encounter lifecycle",
+      "dependsOn": [
+        "5.04",
+        "4.11"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Data/",
+        "src/Simulation/",
+        "src/Application/",
+        "src/Presentation/"
+      ],
+      "required": [
+        "Replace Desert/Volcano with ash_graves/moonwood authored topology/chunks/spawnslots/walkmesh/shrines/NPCs/anchors.",
+        "Field/Ruins6groupsx3normal+Ruinselite; discovery/chests/hazard/shortcuts/portals/story gates exact.",
+        "RestReset newlife only defeated, living leash unchanged; checkpoint/rest/travel distinct and atomic.",
+        "Persist cycles/pickups/actors/fog/chests/facts/safe anchors; beta/full upgrade without progress loss."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "5.07",
+      "title": "Boss A/B/C runtime",
+      "dependsOn": [
+        "5.06",
+        "5.03",
+        "5.05"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Simulation/",
+        "src/Application/",
+        "src/Presentation/"
+      ],
+      "required": [
+        "Author exact pattern positions/timing/power, pursuit, adds limits and exclusions; ground snapshot atwindup.",
+        "Stagger25/100/recovery1.5s/immune4s, interrupt semantics; failed attempt mastery budget storyinstance.",
+        "Bossclear authored encounter->fact->quest/Sync/upgrade, exactly once; deadboss reset rules.",
+        "Persist bossphase/timers/addownership/budget; present telegraphs from snapshot, never animation damage."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "5.08",
+      "title": "Complete save/migration/rebalance audit",
+      "dependsOn": [
+        "5.07"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Application/Persistence/",
+        "src/Application/GameApplication.cs",
+        "src/Presentation/",
+        "docs/V2.5/"
+      ],
+      "required": [
+        "Every introduced field capture+validate+stagedrestore: no omitted runtime resetting afterload;3slots/suspend per spec.",
+        "WAL flush/temp/checksum/swap/previousbackup/exactretry/history; unsupported versions preserve originals, no foreignslot selection.",
+        "Legacy adapters exact amounts/version/milestones or explicit reject; removed items relicstash; fullprofile upgrade preservesbeta.",
+        "Close reward visibility durability, commit sequencing and UID/RNG ownership; docs state engine/build/manual acceptance limits."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "6.01",
+      "title": "Asset dependency inventory",
+      "dependsOn": [
+        "5.08"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "data/",
+        "scenes/",
+        "src/Presentation/",
+        "docs/V2.5/"
+      ],
+      "required": [
+        "Inventory all scene/resource/script/import/manifest references before deleting anything; ownership classify vendor/user/generated.",
+        "Protect4reusedSkeleton hashes, newArt exports/raw/masters and liveagent files; no wildcard asset-root deletion.",
+        "Explicit remove/retain/replace list with reference sites and licenses; resolve dependencies before delete."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "6.02",
+      "title": "Canonical asset adapter and presentation",
+      "dependsOn": [
+        "6.01"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Presentation/",
+        "src/Data/Definitions/",
+        "data/",
+        "scenes/",
+        "project.godot"
+      ],
+      "required": [
+        "Canonical AssetId manifest adapter texture/frame/duration/pivot/rank/direction; static south legacy IDs explicit adapter, never pretend animated.",
+        "640x360 nearest integer scale, UI/camera input/HUD per spec; durations ms correct, render casts from simulation state.",
+        "Missing asset deterministic debug marker and exact missing-ID report; presentation never changes hitbox/events."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "6.03",
+      "title": "Remove old assets/code/docs safely",
+      "dependsOn": [
+        "6.02"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/",
+        "data/",
+        "scenes/",
+        "docs/"
+      ],
+      "required": [
+        "Delete only resolved owned obsolete files, update references/import metadata together, preserve licenses inuse.",
+        "Consolidate MD authority index; move historical gameplay docs out of active instructions; do not erase vendor/legal docs.",
+        "Remove all tests/probes/buildreferences user requested; no replacement harness. Compile and bounded leftover-reference search."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "7.01",
+      "title": "Art production handoff coordination",
+      "dependsOn": [
+        "6.02"
+      ],
+      "status": "pending",
+      "owner": "Art + Code contract review",
+      "scopePaths": [
+        "docs/V2.5/"
+      ],
+      "required": [
+        "Art owns generation via49micro-parts; Code does not generate/polish art or decide aesthetics.",
+        "Reuse4staticSkeleton; exact158planned IDs adjusted forreuse; report generated vs userapproved vs technicalpass separately.",
+        "User decides beauty/fit/regenerate; Code validates manifest compatibility and requests only concrete technical corrections."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "7.02",
+      "title": "Slice package completeness",
+      "dependsOn": [
+        "7.01"
+      ],
+      "status": "pending",
+      "owner": "Art + Code contract review",
+      "scopePaths": [
+        "docs/V2.5/"
+      ],
+      "required": [
+        "Assemble required slice actor/weapon/pickup/world assets from realfiles; list omitted beta assets honestly.",
+        "Frame rectangles/gutters/pivots/timing/hashes/directions/socket metadata; no rawboard silently used as atlas.",
+        "Userreview pending remains pending, immutable versioned export; no defaultautopromote aesthetics."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "8.01",
+      "title": "Godot slice integration",
+      "dependsOn": [
+        "6.03",
+        "7.02"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "src/Presentation/",
+        "scenes/",
+        "data/"
+      ],
+      "required": [
+        "Import textures+manifest+SpriteFrames/socket resources and map all sliceIDs with explicit staticfallbacks.",
+        "Wire idle/move/attack/hit/death/summon/recall to simulation state, preserve authored durations and layering/Ysort.",
+        "User preview scene forscale/timing/equipment/souls/terrain; no debugaward shortcuts in production loop."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "8.02",
+      "title": "Build/package/manual acceptance",
+      "dependsOn": [
+        "8.01"
+      ],
+      "status": "pending",
+      "owner": "Code",
+      "scopePaths": [
+        "tools/",
+        "export_presets.cfg",
+        "docs/V2.5/"
+      ],
+      "required": [
+        "Compile/export actual engine; resolve4.5.2baseline separately, never claim tested compatibility from4.7.2build.",
+        "Provide launch/instructions and canonical18manual acceptance cases plus slice size/pivot/timing userchecks; do not execute gameplaytests.",
+        "Package files real, missing assets/features exact and fix ownedscope before acceptance; no claim complete wholebeta fromslice."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    },
+    {
+      "id": "8.03",
+      "title": "Parent final review and combined report",
+      "dependsOn": [
+        "8.02"
+      ],
+      "status": "pending",
+      "owner": "parent",
+      "scopePaths": [
+        "docs/V2.5/"
+      ],
+      "required": [
+        "Parent audits everytask evidence against authority/source, not agent declaration alone; any gap returns to same task.",
+        "User receives one concise Vietnamese report covering8parts + delivered build/assets + manualtest steps and honest limitations.",
+        "No unexplained missingA/deferredY in completed parts; distinguish codecomplete/buildpass/useracceptance."
+      ],
+      "completionEvidence": {
+        "requirementToSymbol": [],
+        "changedFiles": [],
+        "build": null,
+        "remainingOwnedScope": [],
+        "parentReview": "pending"
+      }
+    }
+  ]
+}

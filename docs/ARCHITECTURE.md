@@ -1,8 +1,10 @@
 # SOLO VS MORTAL — Architecture
 
-This document defines the long-term architecture of Solo vs Mortal. It is the normative source for module boundaries, dependency direction, state ownership, and naming responsibilities. Implementation plans may describe how the code reaches this architecture, but they do not redefine it.
+> Historical prototype document. Current gameplay authority is the closed V2.5 bundle and `docs/README.md`; this file is retained only as an architectural migration reference.
 
-The architecture is designed to keep gameplay deterministic, headless-testable, and independent from scene-tree lifetime while using Godot as the presentation and platform runtime.
+This document records the pre-V2.5 prototype architecture for migration context. It does not define current gameplay or override the closed V2.5 bundle. Implementation plans and current source boundaries are indexed from docs/README.md.
+
+The prototype architecture aimed to keep gameplay deterministic and independent from scene-tree lifetime while using Godot as the presentation and platform runtime.
 
 ## Dependency direction
 
@@ -123,4 +125,4 @@ Before accepting a new or changed type, answer all of the following:
 4. Does Data contain a UID, current value, timer, position, lifecycle flag, or writable instance collection? If yes, move it to Simulation.
 5. Does a `*Rules` type retain session state or use Godot APIs? If yes, split or relocate it.
 6. Does a `*System` only calculate a pure value? If yes, rename it to `*Rules`.
-7. Can a headless test execute the gameplay behavior without a scene tree? If no, engine concerns have leaked inward.
+7. Can the gameplay behavior remain independent from the scene tree? If no, engine concerns have leaked inward.

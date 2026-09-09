@@ -1,5 +1,7 @@
 # Runtime and export acceptance budget
 
+> Historical prototype budget. Current acceptance is manual Godot playtesting against the closed V2.5 checklist in `docs/V2.5/source-audit.md`.
+
 These are initial measurable runtime and export gates for the game. They may be tightened with representative-content profiling; changes require recorded evidence.
 
 ## Reference scenario
@@ -15,7 +17,7 @@ These are initial measurable runtime and export gates for the game. They may be 
 - No unbounded growth in nodes, subscriptions, runtime state collections, or managed allocations during a 15-minute arena soak.
 - Scene changes and save/load do not retain gameplay instances from the previous session.
 - Texture import settings preserve pixel-art edges and remain within a measured memory budget established after the first complete asset slice.
-- Desktop export launches without editor dependencies and reports no unhandled errors during the playable parity route.
+- Desktop export launches without editor dependencies and reports no unhandled errors during the manual playable route.
 
 ## Evidence to record
 

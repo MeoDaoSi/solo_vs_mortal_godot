@@ -1,0 +1,43 @@
+{
+  "packId": "verdant-00-sample",
+  "title": "Verdant 00 — Free Sample [16x16]",
+  "series": {
+    "name": "Verdant",
+    "number": 0
+  },
+  "cellSize": 16,
+  "gridVariants": [
+    16
+  ],
+  "palette": [
+    "#1a1a24",
+    "#eef0e6",
+    "#2b4a2a",
+    "#3d6b33",
+    "#4f8a3c",
+    "#6faa48",
+    "#93c65c",
+    "#3a2a20",
+    "#5a4030",
+    "#7a5840",
+    "#9c7554",
+    "#33333f",
+    "#4e4e5c",
+    "#6e6e7d",
+    "#9494a2",
+    "#1c3a24",
+    "#2b5730",
+    "#3d7a3c",
+    "#58a34d",
+    "#43291c",
+    "#6b4227",
+    "#96633a",
+    "#c8443c",
+    "#132215",
+    "#1c3420"
+  ],
+  "tileCount": 64,
+  "sampleOf": "verdant-01-overworld",
+  "licence": "Commercial use permitted, including in paid games. See LICENSE.txt.",
+  "aiDisclosure": "Graphics generated programmatically. See Readme_for_Users.md."
+}
