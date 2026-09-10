@@ -12,7 +12,7 @@
     "Do not commit, overwrite user edits, touch art source, or introduce parallel writers. Preserve existing changes."
   ],
   "priorPartsOpen": [
-    "Part2 docs consolidation/enginebaseline unresolved; track through6.03/8.02, not claim prior completion.",
+    "Part2 documentation consolidation remains tracked through6.03/8.02; ISSUE-01 engine baseline is complete at Godot.NET4.7.2, without claiming prior gameplay completion.",
     "Part3 Playerbreakthrough closed by4.03, pathfinding by4.06, grant/exposure by5.02 and rewarddurability by4.02/5.05; parent review still required."
   ],
   "entryDecision": "User authorized starting Part4 now. 4.01 pure ownership/Density core is independent of unresolved boss/pathing producers. Later live stages are gated.",
@@ -822,7 +822,7 @@
         "docs/V2.5/"
       ],
       "required": [
-        "Compile/export actual engine; resolve4.5.2baseline separately, never claim tested compatibility from4.7.2build.",
+        "Verify local Godot.NET4.7.2 executable/templates and compile/export with that official baseline; never treat technical evidence as gameplay acceptance.",
         "Provide launch/instructions and canonical18manual acceptance cases plus slice size/pivot/timing userchecks; do not execute gameplaytests.",
         "Package files real, missing assets/features exact and fix ownedscope before acceptance; no claim complete wholebeta fromslice."
       ],

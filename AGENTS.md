@@ -12,4 +12,4 @@ These rules are normative for the V2.5 migration.
 
 4. The gameplay authority is the closed bundle at `C:/ws/asset-production_system/game_spec`, revision `2026-09-08.closed-1`, with the hashes in `data/v2.5/spec-lock.json`. The source audit and work-items are planning/implementation records and must not redefine gameplay numbers.
 
-5. Reuse the existing typed C# Core/Data/Simulation/Application/Presentation layers. The canonical target remains Godot 4.5.2 Compatibility, but this project currently builds with Godot.NET 4.7.2; isolate engine calls and do not silently rewrite the project or claim the 4.5.2 baseline is verified.
+5. Reuse the existing typed C# Core/Data/Simulation/Application/Presentation layers. The official V2.5 implementation baseline is Godot .NET 4.7.2. Isolate engine calls; a successful 4.7.2 compile or export is valid technical evidence, but never gameplay acceptance. Do not change rendering mode merely because of this baseline decision.

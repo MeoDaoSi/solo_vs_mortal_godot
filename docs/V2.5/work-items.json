@@ -13,12 +13,14 @@
     "acceptanceCases": 18
   },
   "engineDecision": {
-    "target": "reuse-existing-csharp",
+    "target": "official-godot-dotnet-4.7.2",
     "projectSdk": "Godot.NET.Sdk/4.7.2",
     "projectFeature": "Godot 4.7 C# Forward Plus",
-    "canonicalBaseline": "Godot 4.5.2 Compatibility",
-    "baselineVerified": false,
-    "decision": "Keep the existing typed C# Core/Data/Simulation/Application/Presentation boundary. Isolate Godot calls in Presentation, avoid 4.7-only APIs, and verify/export on 4.5.2 Compatibility before declaring the canonical baseline verified. Do not rewrite the project to GDScript blindly."
+    "canonicalBaseline": "Godot .NET 4.7.2",
+    "baselineVerified": true,
+    "exportRenderingMethod": "gl_compatibility",
+    "renderingConfiguration": "project.godot advertises Godot 4.7 C# Forward Plus while the Windows export preset selects gl_compatibility; ISSUE-01 records this difference and does not change rendering mode.",
+    "decision": "User decision on 2026-09-10: Godot .NET 4.7.2 is the official V2.5 implementation baseline. Keep the typed C# Core/Data/Simulation/Application/Presentation boundary and isolate engine calls. APIs supported by 4.7.2 may be used. A successful 4.7.2 compile/export is valid baseline technical evidence, never gameplay acceptance. Do not rewrite the project to GDScript blindly."
   },
   "auditMetrics": {
     "sourceCsFiles": 59,
@@ -786,7 +788,7 @@
     ],
     "build": "dotnet build solo_vs_mortal_godot.csproj --no-restore: 0 warnings, 0 errors",
     "engineSmoke": "Godot 4.7.2 headless Arena startup completed without reported startup errors",
-    "baselineVerified": false,
+    "baselineVerified": true,
     "automatedTestsRun": false,
     "remaining": [
       "Soul and Density transaction/ledger",
@@ -822,7 +824,7 @@
       "Canonical Player breakthrough remains disabled awaiting a validated boss-clear fact; progression cannot be called complete.",
       "Monster navigation currently uses direct line-of-sight and swept movement; pathing around obstacles and return-to-home still need review.",
       "Review remaining combat phase, action-lock, reward attribution and persistence invariants before accepting Part 3.",
-      "Complete Part 2 documentation consolidation and make an explicit engine-baseline decision; Godot 4.5.2 compatibility remains unverified."
+      "ISSUE-01 is complete: Godot .NET 4.7.2 is the official implementation baseline. Preserve local 4.7.2 executable/template availability and repeat baseline build/export validation when the toolchain or package configuration changes; technical evidence never closes gameplay acceptance."
     ],
     "part4Started": false
   }

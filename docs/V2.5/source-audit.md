@@ -16,6 +16,8 @@ The largest gaps are the V2.5 state model and transaction boundaries: fixed 60 H
 
 The engine/language baseline differs. `solo_vs_mortal_godot.csproj` targets `Godot.NET.Sdk/4.7.2`, `net8.0`, and `project.godot` advertises Godot `4.7`, C#, Forward Plus; `export_presets.cfg` selects `gl_compatibility` for exports. The canonical README asks for Godot 4.5.2 Compatibility and the original implementation prompt asked for typed GDScript. The bounded decision is to reuse the existing typed C# architecture rather than rewrite it blindly: keep engine calls behind the existing Presentation boundary, avoid 4.7-only APIs, and verify/export with a 4.5.2 Compatibility installation before calling that baseline verified. Current audit evidence only confirms the installed 4.7.2 toolchain; 4.5.2 was not verified.
 
+**Engine-baseline supersession (2026-09-10):** The preceding paragraph and later baseline observations are preserved as historical audit evidence. The user has since established Godot .NET 4.7.2 as the official V2.5 implementation baseline. A successful 4.7.2 compile/export is valid technical evidence, not gameplay acceptance. The Forward Plus editor feature versus `gl_compatibility` export-preset difference remains recorded and was not changed by this decision.
+
 ## Authority and verification inputs
 
 The closed authority files were parsed and their sizes/hashes were checked against `game_spec/spec-lock.json`:

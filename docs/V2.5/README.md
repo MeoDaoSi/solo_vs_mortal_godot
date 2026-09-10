@@ -22,4 +22,4 @@ Vendor readmes and license files stay with their corresponding dependency. They 
 
 ## Validation boundary
 
-The user owns real-Godot gameplay acceptance. Agents may run compile-only `dotnet build`; it proves compilation only. Do not add automated gameplay runners or test harnesses.
+The official V2.5 implementation baseline is Godot .NET 4.7.2, established by the user on 2026-09-10. `project.godot` currently advertises Godot 4.7 C# Forward Plus, while `export_presets.cfg` exports Windows with `gl_compatibility`; that configuration difference is documented, not changed, by ISSUE-01. Agents may run a 4.7.2 compile/export as technical evidence. The user owns real-Godot gameplay acceptance. Do not add automated gameplay runners or test harnesses.

@@ -12,9 +12,9 @@ Ngày cập nhật: 10/09/2026. Người rà soát: agent chính, đối chiếu
 
 **complete**: phạm vi của phần đã hoàn tất, không còn yêu cầu triển khai chưa xử lý được biết đến. **in_progress**: đã có code nhưng còn công việc cụ thể bên dưới. **not_complete**: chưa đủ sản phẩm đầu ra hoặc chưa triển khai đầy đủ pipeline.
 
-Build/current package gần nhất: `dotnet build solo_vs_mortal_godot.csproj --no-restore` pass 0 warning/0 error; Godot 4.7.2 đã export debug/package thành công. Đây chỉ là compile/package evidence. Baseline đặc tả vẫn là Godot .NET 4.5.2 Compatibility và CHƯA được xác minh; source hiện pin `Godot.NET.Sdk/4.7.2` và project vẫn ở 4.7 Forward Plus. Vì vậy 4.7.2 không được dùng để tự suy ra 4.5.2-compatible.
+Build/current package gần nhất: `dotnet build solo_vs_mortal_godot.csproj --no-restore` pass 0 warning/0 error; Godot .NET 4.7.2 đã export debug/package thành công. Đây chỉ là compile/package evidence. Theo quyết định user ngày 2026-09-10, Godot .NET 4.7.2 là implementation baseline chính thức; source pin `Godot.NET.Sdk/4.7.2` và project advertise 4.7 C# Forward Plus. Windows export preset hiện chọn `gl_compatibility`; khác biệt rendering này được ghi nhận riêng và không bị thay đổi bởi ISSUE-01.
 
-Không đánh dấu cả phần complete chỉ vì có class/API, static audit hoặc build thành công. Agent tự chịu trách nhiệm audit source, sửa code/data/docs, build/export bằng toolchain đã có, technical asset QA, dependency cleanup và chuẩn bị checklist. User giữ các gate không thể thay thế: quyết định baseline engine nếu cần đổi đặc tả, cài/cung cấp Godot .NET + export templates còn thiếu, chạy 18 manual gameplay acceptance cases trong game thật và approve/reject mỹ thuật. Không tạo/chạy automated gameplay tests, harness, parity runner, soak hay headless gameplay smoke theo policy hiện hành.
+Không đánh dấu cả phần complete chỉ vì có class/API, static audit hoặc build thành công. Agent tự chịu trách nhiệm audit source, sửa code/data/docs, build/export bằng toolchain 4.7.2 đã chốt, technical asset QA, dependency cleanup và chuẩn bị checklist. User giữ các gate không thể thay thế: chạy 18 manual gameplay acceptance cases trong game thật và approve/reject mỹ thuật. Không tạo/chạy automated gameplay tests, harness, parity runner, soak hay headless gameplay smoke theo policy hiện hành.
 
 Số phần dưới đây là kế hoạch 8 phần đã giao trong hội thoại. Trường `part` trong một số work item của audit ban đầu dùng cách nhóm khác; không lấy số đó để tự đổi thứ tự kế hoạch. `implementation-tasks-4-8.json` còn trạng thái pending và evidence cũ; phải cập nhật sau khi đối chiếu, không dùng nguyên trạng làm bằng chứng tiến độ.
 
@@ -46,8 +46,8 @@ Các bước tiếp theo:
 3. Tách metadata compatibility cần giữ thành adapter có tên rõ ràng. Chốt các trường có thể bỏ khi hoàn thành phần 6, tránh hai loader cùng quyết định gameplay.
 4. Gom tài liệu hướng dẫn hiện hành về `docs/V2.5/`; đưa ARCHITECTURE/MAP_SYSTEM/GAME_TERMINOLOGY/GAME_TERMINOLOGY_VN/PERFORMANCE_BUDGET cũ vào vùng historical. Cập nhật link ở `docs/README.md`, AGENTS và các tài liệu có liên quan. Giữ license/tài liệu vendor ở đúng nơi.
 5. Cập nhật work-items và evidence theo source hiện tại. Mỗi yêu cầu chỉ một dòng trạng thái hiện hành; ghi file/symbol thực hiện và mục còn thiếu. Giữ audit ban đầu dưới dạng lịch sử có ngày, không để bảng “missing” cũ bị hiểu là hiện trạng.
-6. Giải quyết baseline engine: chuẩn bị Godot .NET 4.5.2 Compatibility cùng export templates tương ứng; đối chiếu API/SDK/project/export trước khi chuyển cấu hình. Nếu baseline không khả thi, báo rõ để user quyết định thay đổi; không tự coi 4.7.2 tương đương.
-7. Build/export bằng toolchain đã chốt. Ghi phiên bản thực tế và kết quả; không chạy gameplay thay user.
+6. ISSUE-01 complete: dùng Godot .NET 4.7.2 làm implementation baseline chính thức. Xác minh executable/templates 4.7.2 cục bộ rồi build/export bằng chính baseline đó; APIs hỗ trợ bởi 4.7.2 được phép dùng. Không đổi renderer chỉ do đổi baseline.
+7. Ghi phiên bản thực tế và kết quả build/export; không chạy gameplay thay user.
 
 **Điều kiện complete:** chỉ còn một authority gameplay hiện hành; bootstrap/loader không quyết định khác nhau; link tài liệu hợp lệ; baseline engine được giải quyết và có bằng chứng compile/package phù hợp.
 
@@ -205,7 +205,7 @@ Như vậy **persistence/world không còn là blocker logic chính cho cleanup*
 
 ### 10.3. Những điểm CHƯA khớp/CHƯA đóng so với V2.5
 
-1. **Engine baseline mismatch:** đặc tả/policy khóa Godot .NET **4.5.2 Compatibility**, trong khi source/build hiện dùng **Godot.NET 4.7.2 + Forward Plus**. Đây là blocker kỹ thuật của Phần 2/8 cho tới khi baseline được xác minh hoặc user chính thức đổi authority.
+1. **Engine baseline (ISSUE-01 complete):** user đã chọn **Godot .NET 4.7.2** làm implementation baseline chính thức. Đây không còn là blocker của Phần 2/8 và không đổi gameplay authority. Cấu hình hiện có vẫn khác renderer: editor advertise **Forward Plus**, Windows export preset dùng **`gl_compatibility`**; chỉ ghi nhận, không đổi renderer trong ISSUE-01.
 2. **Style/runtime resolution mismatch:** style lock yêu cầu native **640×360**, nearest/integer scale/pixel snap; project/presentation hiện còn layout **1280×720** và nhiều HUD/WorldMap absolute coordinate nên chưa thể đổi một dòng config mà không migrate layout.
 3. **Asset completeness:** canonical adapter đã có foundation nhưng catalog runtime hiện chỉ map được package Skeleton static nhỏ; phần lớn Beta/Slice asset vẫn chưa có user-approved, hash-versioned integration export. W09 vì vậy chưa đóng.
 4. **Manual acceptance:** combat, Soul loop, save/load, world và UI mới có static/build evidence. 18 canonical acceptance cases chưa có user result; không được nâng Part 3/4/5/8 thành complete.
@@ -226,12 +226,11 @@ Vấn đề 6 chỉ được coi là đóng khi:
 
 ### 11.1. Kết luận current-state
 
-Source hiện **không ở trạng thái “thiếu core gameplay”**. Phần lớn nền tảng V2.5 quan trọng đã có: authority loader, deterministic simulation, combat runtime, Soul systems, inventory/skill/mastery/quest/loot/world, staged persistence và asset adapter foundation. Blocker lớn nhất hiện tại đã chuyển từ “thiếu system” sang bốn nhóm:
+Source hiện **không ở trạng thái “thiếu core gameplay”**. Phần lớn nền tảng V2.5 quan trọng đã có: authority loader, deterministic simulation, combat runtime, Soul systems, inventory/skill/mastery/quest/loot/world, staged persistence và asset adapter foundation. ISSUE-01 baseline engine đã complete; blocker lớn nhất hiện tại chuyển từ “thiếu system” sang ba nhóm:
 
-1. **xác minh baseline Godot 4.5.2 Compatibility**;
-2. **đóng static review/caller coverage còn lại ở Part 4–5 và chuẩn bị manual acceptance**;
-3. **hoàn thiện asset production → user approval → versioned export → canonical mapping**;
-4. **giảm architecture debt của Presentation/Application trước khi tích hợp visual cuối và cleanup legacy**.
+1. **đóng static review/caller coverage còn lại ở Part 4–5 và chuẩn bị manual acceptance**;
+2. **hoàn thiện asset production → user approval → versioned export → canonical mapping**;
+3. **giảm architecture debt của Presentation/Application trước khi tích hợp visual cuối và cleanup legacy**.
 
 Do đó hướng xử lý đúng là **không rewrite gameplay**, không đổi formula/spec đang khóa. Tiếp tục theo chiến lược: `close functional delta → stabilize boundary → integrate approved assets → cleanup → baseline build → user acceptance`.
 
@@ -240,10 +239,10 @@ Do đó hướng xử lý đúng là **không rewrite gameplay**, không đổi 
 | Việc | Agent tự làm | User phải làm |
 |---|---|---|
 | Audit source/spec/hash/caller/save field | **Có** | Không cần prompt từng microtask |
-| Sửa C#/JSON/MD/project config/export preset | **Có**, nếu không đổi gameplay authority | Chỉ cần quyết định khi thay baseline/spec |
+| Sửa C#/JSON/MD/project config/export preset | **Có**, nếu không đổi gameplay authority | Chỉ cần quyết định khi thay gameplay authority hoặc rendering intent |
 | Build `dotnet` và Godot CLI/export | **Có**, khi executable/templates tương ứng tồn tại trong environment | Cài/cung cấp toolchain còn thiếu |
-| Cài Godot .NET 4.5.2 và export templates trên máy user | Không thể thay user trên máy local | **Bắt buộc nếu giữ baseline 4.5.2** |
-| Quyết định bỏ 4.5.2 để chuyển authority sang 4.7.x | Không tự quyết | **User quyết định** |
+| Verify Godot .NET 4.7.2 executable/templates và baseline package | **Có**, khi toolchain hiện diện | Không cần hành động sau quyết định baseline 2026-09-10 |
+| Quyết định implementation baseline Godot .NET 4.7.2 | Đã ghi vào policy/docs | **User đã quyết định — complete** |
 | Refactor architecture không đổi behavior | **Có** | Không cần duyệt từng file; report nếu có risk gameplay/save |
 | Generate asset theo batch, technical QA, hash/manifest/export | **Có** | Không cần prompt từng AssetId |
 | Đánh giá “đẹp/xấu”, approve/reject art, identity/style | Không tự approve | **User quyết định** |
@@ -251,24 +250,11 @@ Do đó hướng xử lý đúng là **không rewrite gameplay**, không đổi 
 | Cung cấp screenshot/log/runtime symptom khi manual case fail | Phân tích/fix | **User cung cấp evidence runtime** |
 | Cleanup dead code/assets đã qua dependency gate | **Có** | User chỉ cần can thiệp với asset/file protected hoặc quyết định phá vỡ compatibility |
 
-Quy tắc vận hành: user **không phải ngồi giao từng việc nhỏ cho agent**. Agent tiếp tục tự audit/sửa/build/QA theo plan; chỉ dừng ở các gate thật sự cần con người: engine installation/baseline decision, visual approval và gameplay acceptance.
+Quy tắc vận hành: user **không phải ngồi giao từng việc nhỏ cho agent**. Agent tiếp tục tự audit/sửa/build/QA theo plan; chỉ dừng ở các gate thật sự cần con người: visual approval và gameplay acceptance.
 
-### 11.3. Bước A — chốt Godot baseline trước khi gọi Part 2 complete
+### 11.3. Bước A — ISSUE-01 baseline engine complete; giữ package gate
 
-**User:**
-
-1. Nếu giữ đặc tả hiện tại, cài **Godot .NET 4.5.2** và **export templates 4.5.2** tương ứng.
-2. Không cần tự sửa `.csproj`, `project.godot` hay export preset.
-3. Nếu không muốn cài 4.5.2 và muốn chuẩn hóa lên 4.7.x, user phải nói rõ đây là thay đổi authority/baseline; agent không tự đổi vì build 4.7.2 đang pass.
-
-**Agent sau khi toolchain 4.5.2 có sẵn:**
-
-1. Audit API/project setting khác nhau giữa source hiện tại và 4.5.2.
-2. Chuyển/điều chỉnh `Godot.NET.Sdk`, renderer và export preset đúng Compatibility mà không thay gameplay.
-3. `dotnet build` + Godot compile/export debug bằng **đúng 4.5.2**.
-4. Sửa compile/API incompatibility nếu có.
-5. Ghi riêng evidence 4.5.2; không dùng kết quả 4.7.2 để lấp.
-6. Chỉ khi bước này pass mới đổi Phần 2 baseline thành complete.
+User đã quyết định ngày 2026-09-10: **Godot .NET 4.7.2** là implementation baseline chính thức. Không cần cài, compile, export hoặc verify một baseline Godot cũ hơn. Agent xác minh executable/templates 4.7.2 cục bộ, chạy `dotnet build` và Godot export bằng đúng 4.7.2, rồi ghi evidence kỹ thuật. APIs do 4.7.2 hỗ trợ được phép dùng; không đổi `project.godot`/export renderer chỉ vì quyết định baseline. Compile/export pass là baseline technical evidence, không phải gameplay acceptance và không tự đóng Part 2 hoặc các part gameplay.
 
 ### 11.4. Bước B — đóng phần code V2.5 còn mở trước visual integration lớn
 
@@ -336,7 +322,7 @@ Agent thực hiện theo dependency, không xóa wildcard:
 
 Khi code + approved asset scope + baseline engine đều sẵn:
 
-1. Agent build/export package bằng baseline đã chốt.
+1. Agent build/export package bằng Godot .NET 4.7.2 baseline đã chốt.
 2. Agent đưa checklist 18 case theo thứ tự dễ chạy, kèm expected result và cách lấy log/screenshot khi fail.
 3. **User chạy game thật** và ghi pass/fail; agent không tự đánh dấu pass.
 4. Agent sửa từng lỗi user phát hiện, static review vùng bị ảnh hưởng, build lại.
@@ -348,10 +334,10 @@ Khi code + approved asset scope + baseline engine đều sẵn:
 1. **Không thêm gameplay feature mới ngoài V2.5** cho tới khi current requirements/caller matrix được reconcile.
 2. Agent tiếp tục Part 4–5 static closure + architecture boundary cleanup có kiểm soát.
 3. Song song Art chạy world batches; Player dependent clips chờ 4-direction Idle rework + user decision.
-4. User chuẩn bị Godot .NET 4.5.2 + export templates hoặc ra quyết định chính thức chuyển baseline.
+4. Agent duy trì evidence executable/templates Godot .NET 4.7.2 và baseline build/export khi toolchain/package configuration thay đổi.
 5. Khi approved asset export xuất hiện: map catalog → migrate 640×360 presentation → đóng W09.
 6. Sau đó cleanup legacy/repo hygiene.
-7. Cuối cùng build đúng baseline và user chạy 18 acceptance cases.
+7. Cuối cùng build/export bằng Godot .NET 4.7.2 baseline và user chạy 18 acceptance cases.
 
 ## 12. Nhật ký thực hiện append-only
 
@@ -669,3 +655,12 @@ Khi code + approved asset scope + baseline engine đều sẵn:
 - **Trạng thái:** `in_progress`.
 - **Đã hoàn thành:** Validator pass 18/18 manifest hiện có. Animation preview hiện dùng timestamp elapsed ms và duration array trong manifest, không dùng counter frame-rate dependent; snapshot có 28 Skeleton clips, Idle 4×200 ms và Move 6×100 ms. Kiểm data hiện tại không phát hiện frame nào chạm gutter 2px.
 - **Chưa hoàn thành / lý do:** Đây không xác nhận pixel ownership của slash/effect, motion/identity hoặc visual phù hợp; 0 output có in-engine QA. Mỗi output mới trong Queue A/B phải có kiểm frame/pivot/gutter/alpha/palette/hash và animation phải có frame-step/onion/timing evidence trước khi có thể chuyển sang integration-ready.
+
+### 2026-09-10 — ISSUE-01: Godot .NET 4.7.2 implementation baseline
+
+- **Trạng thái:** `complete` — user đã quyết định Godot .NET 4.7.2 là implementation/toolchain baseline chính thức cho V2.5. Quyết định này không thay gameplay mechanics, balance, save rules, AssetIds, style rules, 18 acceptance cases hoặc hash-pinned authority.
+- **Cấu hình thực tế:** `solo_vs_mortal_godot.csproj` pin `Godot.NET.Sdk/4.7.2`; `project.godot` advertise `4.7`, `C#`, `Forward Plus`; preset Windows trong `export_presets.cfg` dùng `gl_compatibility`. Khác biệt renderer editor/export được ghi nhận, không đổi trong ISSUE-01.
+- **Evidence toolchain/package:** executable `C:/Users/levan/Downloads/Godot/Godot.exe` báo `4.7.2.stable.mono.official.ed1daf0bf`; templates `C:/Users/levan/AppData/Roaming/Godot/export_templates/4.7.2.stable.mono/` có Windows debug/release x86_64. `dotnet build solo_vs_mortal_godot.csproj --no-restore` pass 0 warning/0 error. Sau restore target `win-x64` (sửa `NETSDK1047` assets thiếu runtime target), `dotnet publish` và Godot `--export-release` exit 0, tạo `build/issue-01-4.7.2/SoloVsMortal.exe` và `.pck`. Godot có warning root-certificate/editor-settings không block export; không chạy gameplay/harness.
+- **Tài liệu/evidence đã reconcile:** `AGENTS.md`, `docs/README.md`, `docs/V2.5/README.md`, `CURRENT_IMPLEMENTATION_STATUS.md`, `work-items.json`, `implementation-tasks-4-8.json`, và sections 1–11 của báo cáo này nay dùng baseline 4.7.2; `source-audit.md` giữ evidence cũ kèm supersession note. `C:/ws/asset-production_system/game_spec/README.md` đổi prompt implementation hiện hành; `deliverables/review-beta/REVIEW.md` giữ review lịch sử kèm supersession note.
+- **Historical/authority safety:** các entry 4.5.2 trước đây trong Section 12 vẫn là historical evidence hợp lệ tại thời điểm ghi nhưng bị supersede cho implementation tương lai. `data/v2.5/spec-lock.json` không đổi. Hash-pinned `C:/ws/asset-production_system/Solo_vs_Mortal_Gameplay_System_V2.5.md` vẫn giữ wording baseline cũ và SHA-256 `402c93eff6879ec25076aeea10c3d3ff4ec75580a518d00d89ac8b74f93d1b53`; không regenerate authority chỉ để đổi toolchain.
+- **Bước tiếp theo:** giữ executable/templates 4.7.2 và lặp lại baseline build/export khi toolchain/package configuration đổi. Gameplay acceptance 1–18 vẫn hoàn toàn thuộc user; next implementation gate vẫn là Part 6 asset mapping/user approval.

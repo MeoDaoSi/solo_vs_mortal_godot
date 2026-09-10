@@ -22,4 +22,4 @@ The bundled, hash-pinned machine-readable inputs are under `data/v2.5/` and are 
 
 ## Engine and testing boundary
 
-The implementation reuses the typed C# project while keeping Godot calls in Presentation. The editor project advertises Godot 4.7 Forward Plus and the export preset selects `gl_compatibility`; Godot 4.5.2 Compatibility is the target baseline and is not yet verified. The user performs manual gameplay acceptance; automated tests and test harnesses are not part of the V2.5 source checkout.
+The implementation reuses the typed C# project while keeping Godot calls in Presentation. The official V2.5 implementation baseline is Godot .NET 4.7.2, established by the user on 2026-09-10. The editor project advertises Godot 4.7 C# Forward Plus, while the Windows export preset selects `gl_compatibility`; this rendering-configuration difference is recorded separately and is not changed by the engine-baseline decision. A successful 4.7.2 compile/export is technical evidence only. The user performs manual gameplay acceptance; automated tests and test harnesses are not part of the V2.5 source checkout.

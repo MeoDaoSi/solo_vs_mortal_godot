@@ -10,7 +10,7 @@ Gameplay authority is `C:/ws/asset-production_system/Solo_vs_Mortal_Gameplay_Sys
 | Scope | Current status | Evidence / remaining boundary |
 |---|---|---|
 | Part 1 — authority, loader, save foundation | `complete` | Closed authority loader, schema-1 canonical save and durable WAL boundary are implemented. See progress journal entries through 2026-09-09. |
-| Part 2 — documentation and technical packaging | `in_progress` | V2.5 document entry point and historical-document boundary are complete. 4.7.2 compile/package are complete. The required 4.5.2 Compatibility baseline is unavailable locally and therefore unverified. |
+| Part 2 — documentation and technical packaging | `in_progress` | V2.5 document entry point and historical-document boundary are complete. ISSUE-01 is complete: Godot .NET 4.7.2 is the official implementation baseline. Other documentation/package work remains. |
 | Part 3 — combat and control | `in_progress` | Static implementation is present and compile-valid. User manual acceptance remains open. |
 | Part 4 — gameplay/content systems | `in_progress` | Implemented work is tracked in the progress journal; dependency and user acceptance work remain. |
 | Part 5 — presentation/runtime validation | `in_progress` | World/persistence items P01–P10 and W01–W08 are complete by static audit; W09 awaits canonical asset mapping. |
@@ -23,12 +23,12 @@ Gameplay authority is `C:/ws/asset-production_system/Solo_vs_Mortal_Gameplay_Sys
 | Check | Result | Scope limit |
 |---|---|---|
 | `dotnet build solo_vs_mortal_godot.csproj --no-restore` | `complete` — 0 warnings, 0 errors on 2026-09-10 | Compilation only; it does not run gameplay. |
-| Godot 4.7.2 debug export | `complete` — `build/v25-4.7.2/SoloVsMortal.exe`, `.console.exe`, `.pck` were produced on 2026-09-10 | The project uses Godot .NET 4.7.2. This does not verify the canonical Godot 4.5.2 Compatibility baseline. |
-| Godot 4.5.2 Compatibility compile/export | `not_complete` | No Godot 4.5.2 .NET executable/templates exist in the local environment. Do not infer compatibility from 4.7.2. |
+| Godot .NET 4.7.2 baseline build/export | `complete` — `dotnet build solo_vs_mortal_godot.csproj --no-restore` passed with 0 warnings/0 errors; Windows release export exited 0 and produced `build/issue-01-4.7.2/SoloVsMortal.exe` and `.pck` on 2026-09-10 | This is valid baseline compile/package evidence only; it does not prove gameplay acceptance. Godot reported non-blocking root-certificate/editor-settings warnings. |
+| Rendering configuration review | `recorded` | `project.godot` advertises C# Forward Plus, while the Windows export preset selects `gl_compatibility`. ISSUE-01 does not change either rendering setting. |
 | Manual acceptance cases 1–18 | `not_complete` | Must be exercised by the user in the real game under `AGENTS.md`; no agent gameplay runner is permitted. |
 
 ## Current asset dependency decision
 
 The accepted reusable export `C:/ws/asset-production_system/art/exports/skeleton-static-integration-v001/` remains an incremental source package. Its four Skeleton rank-01 static IDs may be integrated only through a versioned canonical manifest. They do not close the beta asset requirement and no `needs_rework` animation becomes approved by default.
 
-The next active implementation step is Part 6.01: record each V2.5 `AssetId`, its production/export state, runtime consumer, and any fallback. Part 6.02 then introduces the adapter contract; only after its mapping validates may obsolete presentation paths and legacy assets be cleaned.
+The next active implementation step is Part 6.01: record each V2.5 `AssetId`, its production/export state, runtime consumer, and any fallback. Part 6.02 then introduces the adapter contract; only after its mapping validates may obsolete presentation paths and legacy assets be cleaned. The next engine maintenance task is to keep the local Godot .NET 4.7.2 executable/templates available and repeat baseline build/export validation when toolchain or package configuration changes.
