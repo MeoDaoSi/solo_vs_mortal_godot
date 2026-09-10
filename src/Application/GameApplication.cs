@@ -14,6 +14,22 @@ using SoloVsMortal.Simulation.Systems.V25;
 
 namespace SoloVsMortal.Application;
 
+/// <summary>Read model for the canonical Soul Loop panel. Density is points (not a percent)
+/// and Sync remains the immutable ledger total rather than a display-truncated value.</summary>
+public sealed record V25SoulLoopView(
+    string SoulId,
+    string SpeciesId,
+    string DisplayName,
+    long CommittedDensityMicro,
+    long PendingDensityMicro,
+    int PassedGateIndex,
+    IReadOnlyList<int> ProofKeys,
+    long SyncMicro,
+    IReadOnlyList<string> MilestoneIds,
+    SoulRuntimeStatus RuntimeStatus,
+    double Vitality,
+    double RecoverySeconds);
+
 /// <summary>Command/query boundary exposed to Presentation.</summary>
 public sealed class GameApplication
 {
@@ -68,7 +84,11 @@ public sealed class GameApplication
     public int CanonicalBannerRank => _session.SoulBanners.CanonicalBannerRank;
     public void RecordCanonicalSyncSource(string sourceId, string eventId, bool atShrine = false, bool currentSpeciesPossession = false) { (_session.Sync ?? throw new InvalidOperationException("Canonical Sync is not enabled.")).RecordSourceEvent(sourceId, eventId, atShrine, currentSpeciesPossession); _session.RequireCanonicalDurableCommit(); }
     public WorldSoulState? SpawnCanonicalTutorialSoul(string questReceiptId, string speciesId, int level, Vec2 position) => _session.Souls.SpawnCanonicalTutorialSoul(questReceiptId, speciesId, level, position);
-    public IReadOnlyList<string> AcquireNearbySouls() => _session.Souls.AcquireNear(_session.Player.State.Position, _session.CanonicalContent is null ? _session.Definitions.Soul.PickupRadius : 48).Select(soul => soul.Id).ToArray();
+    public IReadOnlyList<string> AcquireNearbySouls()
+    {
+        if (CanonicalContent is not null && !_session.Player.State.Alive) return Array.Empty<string>();
+        return _session.Souls.AcquireNear(_session.Player.State.Position, _session.CanonicalContent is null ? _session.Definitions.Soul.PickupRadius : 48).Select(soul => soul.Id).ToArray();
+    }
     public bool HasCanonicalDurableChanges => _session.CanonicalDurableCommitRequired;
     public void PrepareCanonicalRewardCommit()
     {
@@ -89,8 +109,13 @@ public sealed class GameApplication
         if (runtime.Status is SoulRuntimeStatus.Summoned or SoulRuntimeStatus.Possessed) return new(false, UnbindSoulFailure.SoulActive);
         return CanonicalContent is null ? _session.SoulBanners.Unbind(soulId, bannerId) : new(false, UnbindSoulFailure.SoulNotBound);
     }
-    public StartPossessionResult StartPossession(string soulId) => _session.Possession.Start(soulId);
-    public bool EndPossession() => _session.Possession.End();
+    public StartPossessionResult StartPossession(string soulId)
+    {
+        var result = _session.Possession.Start(soulId);
+        if (result.Success) _session.RequireCanonicalDurableCommit();
+        return result;
+    }
+    public bool EndPossession() => MarkIfTrue(_session.Possession.End());
     public bool RestAtCanonicalShrine(double seconds = 1) => MarkIfTrue(_session.TryRestAtCanonicalShrine(seconds));
     public bool RestResetCanonicalEncounters() => _session.TryCanonicalRestReset();
     public bool DiscoverCanonicalLandmark(string landmarkId) { var result = _session.TryDiscoverCanonicalLandmark(landmarkId); if (result) _session.RequireCanonicalDurableCommit(); return result; }
@@ -100,8 +125,24 @@ public sealed class GameApplication
     public V25TraversalResult TraverseCanonical(V25TraversalRequest request) =>
         _session.Traversal?.TryTraverse(request, _session.SimulationTick) ?? new(false, _session.Player.State.Position, V25TraversalFailure.UnknownTerrainProducer);
     public bool ReturnToCanonicalSafeAnchor() => _session.Traversal?.TryReturnToSafeAnchor() ?? false;
-    public bool SetAllyMode(AllyAiMode mode, string? soulId = null) => _session.Allies.SetCanonicalMode(mode, soulId);
-    public bool FocusAlly(string allyUid, string targetUid) => _session.Allies.FocusCanonical(allyUid, targetUid, _session.Monsters, _session.SimulationTick);
+    public bool SetAllyMode(AllyAiMode mode, string? soulId = null) => MarkIfTrue(_session.Allies.SetCanonicalMode(mode, soulId));
+    public bool FocusAlly(string allyUid, string targetUid) => MarkIfTrue(_session.Allies.FocusCanonical(allyUid, targetUid, _session.Monsters, _session.SimulationTick));
+    public int FocusAlliesAt(Vec2 targetPosition)
+    {
+        if (CanonicalContent is null || !double.IsFinite(targetPosition.X) || !double.IsFinite(targetPosition.Y)) return 0;
+        var target = _session.Monsters.AliveMonsters().OrderBy(monster => monster.Position.DistanceTo(targetPosition)).ThenBy(monster => monster.Uid, StringComparer.Ordinal).FirstOrDefault();
+        if (target is null) return 0;
+        var focused = _session.Allies.AliveAllies().OrderBy(ally => ally.SpeciesId, StringComparer.Ordinal).ThenBy(ally => ally.Uid, StringComparer.Ordinal)
+            .Count(ally => _session.Allies.FocusCanonical(ally.Uid, target.Uid, _session.Monsters, _session.SimulationTick));
+        if (focused > 0) _session.RequireCanonicalDurableCommit();
+        return focused;
+    }
+    public bool ToggleCanonicalAllyMode()
+    {
+        if (CanonicalContent is null) return false;
+        var mode = _session.Allies.AliveAllies().Any(ally => ally.AiMode == AllyAiMode.Assault) ? AllyAiMode.Guard : AllyAiMode.Assault;
+        return SetAllyMode(mode);
+    }
     public bool WasCanonicalTileVisited(Vec2 position) => CanonicalContent is null || _session.WasVisited(position);
     public IReadOnlyList<V25TerrainArea> CanonicalTerrain() => _session.CanonicalTerrain;
     public IReadOnlyList<V25RoadSegment> CanonicalRoads() => CanonicalContent is null ? Array.Empty<V25RoadSegment>() : V25WorldLayout.Roads(CanonicalContent.Content.LayoutBlueprint);
@@ -145,11 +186,44 @@ public sealed class GameApplication
     }
 
     public WorldInteractionResult Interact() => _session.World.TryInteract(_session.Player.State.Position);
-    public SummonResult SummonSoul(string soulId, string bannerId, Vec2 position) => _session.Summons.Summon(soulId, bannerId, position);
-    public bool UnsummonSoul(string soulId) => _session.Summons.UnsummonSoul(soulId);
+    public SummonResult SummonSoul(string soulId, string bannerId, Vec2 position)
+    {
+        var result = _session.Summons.Summon(soulId, bannerId, position);
+        if (result.Success) _session.RequireCanonicalDurableCommit();
+        return result;
+    }
+    public bool UnsummonSoul(string soulId) => MarkIfTrue(_session.Summons.UnsummonSoul(soulId));
+    public CanonicalSummonAllResult SummonAllSouls() => _session.Summons.SummonAllCanonical(_session.Player.State.Position);
+    public int RecallAllSouls()
+    {
+        var recalled = _session.Summons.RecallAllCanonical();
+        if (recalled > 0) _session.RequireCanonicalDurableCommit();
+        return recalled;
+    }
     public SoulRuntimeView SoulRuntime(string soulId) => _session.Summons.Runtime(soulId);
     public string? ActivePossessionSoulId => _session.Possession.ActiveSoulId;
     public double PossessionRemainingSeconds() => _session.Possession.RemainingSeconds;
+    public IReadOnlyList<V25SoulLoopView> CanonicalSoulLoop()
+    {
+        if (CanonicalContent is null || _session.Souls.CanonicalDensity is null) return Array.Empty<V25SoulLoopView>();
+        return _session.Souls.CanonicalDensity.Ownership.Values.Where(ownership => ownership.IsOwned)
+            .OrderBy(ownership => ownership.SpeciesId, StringComparer.Ordinal).Select(ownership =>
+            {
+                var soul = _session.Souls.CanonicalOwnedSpecies(ownership.SpeciesId)!;
+                var runtime = _session.Summons.Runtime(soul.Id);
+                return new V25SoulLoopView(soul.Id, ownership.SpeciesId, soul.Origin.DisplayName,
+                    ownership.CommittedDensityMicro, ownership.PendingDensityMicro, ownership.PassedGateIndex, ownership.ProofKeys.ToArray(),
+                    _session.Sync?.TotalMicro(ownership.SpeciesId) ?? 0, (_session.Sync?.Milestones(ownership.SpeciesId) ?? new HashSet<string>(StringComparer.Ordinal)).Order(StringComparer.Ordinal).ToArray(),
+                    runtime.Status, runtime.Stability, runtime.RecoverySeconds);
+            }).ToArray();
+    }
+    public V25SyncRitualProgress BeginCanonicalSyncRitual() => _session.Sync?.BeginAvailableRitual() ?? new(false, false, null, 0, "Canonical Sync is not enabled.");
+    public V25SyncRitualProgress AdvanceCanonicalSyncRitual(bool held)
+    {
+        var result = _session.Sync?.AdvanceRitual(held) ?? new(false, false, null, 0, "Canonical Sync is not enabled.");
+        if (result.Completed) _session.RequireCanonicalDurableCommit();
+        return result;
+    }
     public IReadOnlyList<InventoryItem> Inventory() => CanonicalContent is not null
         ? (_session.InventoryV25?.Items.Concat(_session.InventoryV25.Overflow).Select(item => new InventoryItem(item.DefinitionId, item.Count)).ToArray() ?? Array.Empty<InventoryItem>())
         : _session.Progression.InventorySnapshot();
@@ -194,7 +268,7 @@ public sealed class GameApplication
     public bool PromoteCanonicalMastery(string skillId) => _session.MasteryV25?.TryPromote(skillId) == true;
     public IReadOnlyList<V25QuestState> CanonicalQuests() => _session.QuestsV25?.Quests ?? Array.Empty<V25QuestState>();
     public bool IsAtCanonicalShrine() => CanonicalContent is not null && _session.IsAtCanonicalShrine();
-    public bool HasNearbyCanonicalPickup() => CanonicalContent is not null && _session.Souls.WorldSouls().Any(soul => soul.Position.DistanceTo(_session.Player.State.Position) <= 48);
+    public bool HasNearbyCanonicalPickup() => CanonicalContent is not null && _session.Player.State.Alive && _session.Souls.WorldSouls().Any(soul => soul.Position.DistanceTo(_session.Player.State.Position) <= 48);
     public string? NearbyCanonicalNpcId(bool requirePendingQuest)
     {
         if (CanonicalContent is null) return null;
@@ -353,7 +427,8 @@ public sealed class GameApplication
             _session.Progression.CanonicalFactSnapshot().Select(fact => new V25FactSaveRecord(fact.FactId, fact.ProducerId, fact.SourceId, fact.SourceVersion, fact.ProducedTick)).ToArray(),
             _session.SoulBanners.CanonicalBannerRank,
             _session.SoulBanners.CanonicalUpgradeReceipts.Select(receipt => new V25BannerGateSaveRecord(receipt.GateId, receipt.GateVersion, receipt.ReceiptId, receipt.FromRank, receipt.ToRank)).ToArray(),
-            summonStates.Values.Select(state => new V25SummonSaveState(state.SpeciesId, state.RecoveryTicks, state.HpRatio, 0)).ToArray(),
+            summonStates.Values.Select(state => new V25SummonSaveState(state.SpeciesId, state.RecoveryTicks, state.HpRatio, 0,
+                _session.Summons.CanonicalStoredCooldowns(state.SpeciesId).Select(cooldown => new V25SummonSkillCooldownSaveState(cooldown.SkillId, cooldown.RemainingTicks)).ToArray())).ToArray(),
             _session.Spirit?.RemainderMicro ?? 0,
             _session.Spirit?.RateRemainderMicro ?? 0,
             _session.Possession.CanonicalSnapshot is { } possession ? new V25PossessionSaveState(possession.SourceInstanceId, possession.SoulId, possession.SpeciesId, possession.SoulLevel, possession.SoulRank, possession.SyncMicro,
@@ -505,6 +580,11 @@ public sealed class GameApplication
                 detail?.RecoveryTicks ?? 0, detail?.HpRatio ?? 1, 0);
         }).ToArray();
         _session.Summons.RestoreCanonicalState(summonSnapshots);
+        _session.Summons.RestoreCanonicalStoredCooldowns(summonRows.ToDictionary(
+            item => item.SpeciesId,
+            item => (IReadOnlyList<V25StoredSummonCooldown>)(item.SkillCooldowns ?? Array.Empty<V25SummonSkillCooldownSaveState>())
+                .Select(cooldown => new V25StoredSummonCooldown(cooldown.SkillId, cooldown.RemainingTicks)).ToArray(),
+            StringComparer.Ordinal));
         _session.Progression.RestoreCanonicalRewardReceipts(save.Payload.Receipts.Where(receipt => receipt.Kind == "combatReward").Select(receipt => receipt.ReceiptId));
         var factRows = (save.Payload.Facts ?? Array.Empty<V25FactSaveRecord>()).Select(fact => new V25FactEvidence(fact.FactId, fact.ProducerId, fact.SourceId, fact.SourceVersion, fact.ProducedTick));
         _session.Progression.RestoreCanonicalFactState(factRows, save.Payload.Receipts.Where(receipt => receipt.Kind == "breakthrough").Select(receipt => receipt.ReceiptId));

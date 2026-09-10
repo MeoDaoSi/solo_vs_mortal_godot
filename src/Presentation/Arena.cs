@@ -2,6 +2,7 @@ using Godot;
 using SoloVsMortal.Application;
 using SoloVsMortal.Simulation.Systems;
 using SoloVsMortal.Simulation.Systems.V25;
+using SoloVsMortal.Simulation.Rules;
 using SoloVsMortal.Data.Definitions;
 using SoloVsMortal.Simulation.State;
 using SoloVsMortal.Application.Persistence.V25;
@@ -49,6 +50,7 @@ public partial class Arena : Node2D
     private int _visualRank;
     private BossTelegraphLayer _bossTelegraphs = null!;
     private string? _activeRitualPowerId;
+    private string? _activeSyncRitualSpeciesId;
 
     private string SelectedSaveId => _selectedSaveSlot == 1 ? "slot.primary" : $"slot.{_selectedSaveSlot}";
 
@@ -99,9 +101,54 @@ public partial class Arena : Node2D
         if (Input.IsActionJustPressed("possession_skill")) _application.RequestCanonicalPossessionSkill();
         if (Input.IsActionJustPressed("unique_skill")) _application.RequestCanonicalUniqueSkill();
         for (var slot = 0; slot < 6; slot++) if (Input.IsActionJustPressed($"learned_skill_{slot + 1}")) _application.RequestCanonicalLearnedSkill(slot);
+        if (_application.CanonicalContent is not null && Input.IsActionJustPressed("summon_all"))
+        {
+            var results = _application.SummonAllSouls().Results;
+            var summoned = results.Count(result => result.Value.Success);
+            var durable = summoned == 0 || Save(showMessage: false);
+            Toast(summoned == 0 ? "Không có Soul sẵn sàng để Triệu hồi toàn bộ." : durable ? $"Đã triệu hồi {summoned}/{results.Count} Soul." : "Triệu hồi đang chờ lưu bền vững.");
+            RefreshSnapshot();
+        }
+        if (_application.CanonicalContent is not null && Input.IsActionJustPressed("recall_all"))
+        {
+            var recalled = _application.RecallAllSouls();
+            var durable = recalled == 0 || Save(showMessage: false);
+            Toast(recalled == 0 ? "Không có Ally để Thu hồi." : durable ? $"Đã thu hồi {recalled} Ally." : "Thu hồi đang chờ lưu bền vững.");
+            RefreshSnapshot();
+        }
+        if (_application.CanonicalContent is not null && Input.IsActionJustPressed("focus_allies"))
+        {
+            var focused = _application.FocusAlliesAt(new SimVec2(mouse.X, mouse.Y));
+            var durable = focused == 0 || Save(showMessage: false);
+            Toast(focused == 0 ? "Không có mục tiêu Focus hợp lệ dưới con trỏ." : durable ? $"Focus: {focused} Ally." : "Focus đang chờ lưu bền vững.");
+            RefreshSnapshot();
+        }
+        if (_application.CanonicalContent is not null && Input.IsActionJustPressed("toggle_ally_mode"))
+        {
+            var changed = _application.ToggleCanonicalAllyMode();
+            var durable = !changed || Save(showMessage: false);
+            Toast(changed && durable ? "Đã đổi Guard/Assault và regroup đội hình." : changed ? "Đổi mode đang chờ lưu bền vững." : "Không có Ally để đổi mode.");
+            RefreshSnapshot();
+        }
         _application.SetInput(new SimVec2(move.X, move.Y), Input.IsActionPressed("attack"), new SimVec2(mouse.X, mouse.Y), Input.IsActionJustPressed("dodge"));
         _application.Tick(delta);
-        if (_activeRitualPowerId is not null)
+        if (_activeSyncRitualSpeciesId is not null)
+        {
+            var ritual = _application.AdvanceCanonicalSyncRitual(Input.IsActionPressed("acquire_soul"));
+            if (ritual.Completed)
+            {
+                _activeSyncRitualSpeciesId = null;
+                var durable = Save(showMessage: false);
+                Toast(durable ? "Nghi thức Sync hoàn tất." : "Nghi thức Sync hoàn tất nhưng đang chờ lưu bền vững.");
+                RefreshSnapshot();
+            }
+            else if (!ritual.Started)
+            {
+                _activeSyncRitualSpeciesId = null;
+                Toast(ritual.Failure switch { "Released" => "Nghi thức Sync đã hủy vì nhả E.", "MovedOrLeftShrine" => "Nghi thức Sync đã hủy vì di chuyển hoặc rời Shrine.", "Canceled" => "Nghi thức Sync đã hủy vì nhận sát thương.", _ => "Nghi thức Sync đã hủy vì điều kiện thay đổi." });
+            }
+        }
+        else if (_activeRitualPowerId is not null)
         {
             var ritual = _application.AdvanceCanonicalUniqueRitual(Input.IsActionPressed("acquire_soul"));
             if (ritual.Completed)
@@ -141,13 +188,22 @@ public partial class Arena : Node2D
             }
             else if (_application.IsAtCanonicalShrine())
             {
-                var ritual = _application.BeginCanonicalUniqueRitual();
-                if (ritual.Started)
+                var syncRitual = _application.BeginCanonicalSyncRitual();
+                if (syncRitual.Started)
                 {
-                    _activeRitualPowerId = ritual.PowerId;
-                    Toast($"Đang thực hiện nghi thức {ritual.PowerId}: giữ E trong {Math.Ceiling(ritual.RemainingTicks / 60.0)} giây.");
+                    _activeSyncRitualSpeciesId = syncRitual.SpeciesId;
+                    Toast($"Đang thực hiện nghi thức Sync {syncRitual.SpeciesId}: giữ E trong {Math.Ceiling(syncRitual.RemainingTicks / 60.0)} giây.");
                 }
-                else Toast("Shrine: dùng Nghỉ, nhận thưởng hoặc nghi thức khi đủ điều kiện.");
+                else
+                {
+                    var ritual = _application.BeginCanonicalUniqueRitual();
+                    if (ritual.Started)
+                    {
+                        _activeRitualPowerId = ritual.PowerId;
+                        Toast($"Đang thực hiện nghi thức {ritual.PowerId}: giữ E trong {Math.Ceiling(ritual.RemainingTicks / 60.0)} giây.");
+                    }
+                    else Toast("Shrine: dùng Nghỉ, nhận thưởng hoặc nghi thức khi đủ điều kiện.");
+                }
             }
             else
             {
@@ -252,7 +308,9 @@ public partial class Arena : Node2D
         _bossTelegraphs.Refresh(runtime.Casts, runtime.Actors ?? Array.Empty<V25ActorRuntimeSnapshot>());
         var signature = string.Join('|', _snapshot.OwnedSouls.Select(soul => $"{soul.Id}:{soul.Level}:{soul.Xp}")); if (signature != _lastSoulSignature) { RebuildSoulPanel(_snapshot); _lastSoulSignature = signature; }
         var questSignature = string.Join(';', _application.CanonicalQuests().Select(item => $"{item.QuestId}:{item.Status}:{item.ObjectiveProgress}"));
-        var featureSignature = $"{_snapshot.OwnedSouls.Count}:{_snapshot.SoulBanners.Sum(item => item.BoundSoulIds.Count)}:{_application.Inventory().Count}:{_application.SoulRuntime(_snapshot.OwnedSouls.FirstOrDefault()?.Id ?? "").Status}:{_application.PossessionRemainingSeconds()}:{questSignature}"; if (featureSignature != _lastFeatureSignature) { RebuildFeaturePanel(_snapshot); _lastFeatureSignature = featureSignature; }
+        var soulLoopSignature = string.Join(';', _application.CanonicalSoulLoop().Select(item => $"{item.SpeciesId}:{item.CommittedDensityMicro}:{item.PendingDensityMicro}:{item.PassedGateIndex}:{item.SyncMicro}:{item.RuntimeStatus}:{item.Vitality:0.######}:{item.RecoverySeconds:0.###}"));
+        var allySignature = string.Join(';', _snapshot.Allies.OrderBy(item => item.Uid, StringComparer.Ordinal).Select(item => $"{item.Uid}:{item.AiState}:{item.Vitality:0.######}"));
+        var featureSignature = $"{_snapshot.OwnedSouls.Count}:{_snapshot.SoulBanners.Sum(item => item.BoundSoulIds.Count)}:{_application.Inventory().Count}:{_application.SoulRuntime(_snapshot.OwnedSouls.FirstOrDefault()?.Id ?? "").Status}:{_application.PossessionRemainingSeconds():0.###}:{questSignature}:{soulLoopSignature}:{allySignature}"; if (featureSignature != _lastFeatureSignature) { RebuildFeaturePanel(_snapshot); _lastFeatureSignature = featureSignature; }
         var banner = _snapshot.SoulBanners.FirstOrDefault(); var screenSignature = $"{player.Level}:{player.Xp}:{inventorySignature(_application.Inventory())}:{banner?.Level}:{banner?.BoundSoulIds.Count}"; if (screenSignature != _lastScreenSignature) { RebuildScreens(_snapshot); _lastScreenSignature = screenSignature; }
         QueueRedraw();
     }
@@ -541,6 +599,34 @@ public partial class Arena : Node2D
             _featureList.AddChild(new Label { Text = $"Hồn Phiên canonical · Rank {_application.CanonicalBannerRank}\nSpecies Soul: {snapshot.OwnedSouls.Count} · Mỗi species một Ally", ThemeTypeVariation = "HeaderMedium" });
             var canonicalPossession = new Label { Text = _application.ActivePossessionSoulId is { } canonicalActiveId ? $"Phụ hồn: {canonicalActiveId} ({Math.Ceiling(_application.PossessionRemainingSeconds())}s)" : "Phụ hồn: không hoạt động" };
             _featureList.AddChild(canonicalPossession);
+            if (_application.ActivePossessionSoulId is not null)
+            {
+                var endPossession = new Button { Text = "Kết thúc Phụ hồn" }; StyleActionButton(endPossession);
+                endPossession.Pressed += () => { if (GameplayCommandsBlocked) return; var ended = _application.EndPossession(); var durable = !ended || Save(showMessage: false); Toast(ended && durable ? "Đã kết thúc Phụ hồn; cooldown bắt đầu." : ended ? "Kết thúc Phụ hồn đang chờ lưu bền vững." : "Không có Phụ hồn đang hoạt động."); RefreshSnapshot(); };
+                _featureList.AddChild(endPossession);
+            }
+            var soulLoop = _application.CanonicalSoulLoop();
+            if (soulLoop.Count > 0)
+                _featureList.AddChild(new Label { Text = string.Join('\n', soulLoop.Select(item => $"{item.DisplayName}: D {V25FixedPoint.FromMicro(item.CommittedDensityMicro):0.###} + pending {V25FixedPoint.FromMicro(item.PendingDensityMicro):0.###}; gate {item.PassedGateIndex}; Sync {V25FixedPoint.FromMicro(item.SyncMicro):0.###}; vitality {item.Vitality:P0}")) });
+            var teamActions = new HBoxContainer();
+            var summonAll = new Button { Text = "Triệu hồi tất cả (Shift+Q)" }; StyleActionButton(summonAll);
+            summonAll.Pressed += () => { if (GameplayCommandsBlocked) return; var results = _application.SummonAllSouls().Results; var count = results.Count(item => item.Value.Success); var durable = count == 0 || Save(showMessage: false); Toast(count == 0 ? "Không có Soul sẵn sàng." : durable ? $"Đã triệu hồi {count}/{results.Count} Soul." : "Triệu hồi đang chờ lưu bền vững."); RefreshSnapshot(); };
+            teamActions.AddChild(summonAll);
+            var recallAll = new Button { Text = "Thu hồi tất cả (Ctrl+Q)" }; StyleActionButton(recallAll);
+            recallAll.Pressed += () => { if (GameplayCommandsBlocked) return; var count = _application.RecallAllSouls(); var durable = count == 0 || Save(showMessage: false); Toast(count == 0 ? "Không có Ally để thu hồi." : durable ? $"Đã thu hồi {count} Ally." : "Thu hồi đang chờ lưu bền vững."); RefreshSnapshot(); };
+            teamActions.AddChild(recallAll);
+            _featureList.AddChild(teamActions);
+            var aiActions = new HBoxContainer();
+            var mode = new Button { Text = "Đổi Guard/Assault (H)" }; StyleActionButton(mode);
+            mode.Pressed += () => { if (GameplayCommandsBlocked) return; var changed = _application.ToggleCanonicalAllyMode(); var durable = !changed || Save(showMessage: false); Toast(changed && durable ? "Đã đổi mode và regroup." : changed ? "Đổi mode đang chờ lưu bền vững." : "Không có Ally để đổi mode."); RefreshSnapshot(); };
+            aiActions.AddChild(mode);
+            var focus = new Button { Text = "Focus tại con trỏ (G)" }; StyleActionButton(focus);
+            focus.Pressed += () => { if (GameplayCommandsBlocked) return; var mouse = GetGlobalMousePosition(); var count = _application.FocusAlliesAt(new SimVec2(mouse.X, mouse.Y)); var durable = count == 0 || Save(showMessage: false); Toast(count == 0 ? "Không có Focus hợp lệ." : durable ? $"Focus: {count} Ally." : "Focus đang chờ lưu bền vững."); RefreshSnapshot(); };
+            aiActions.AddChild(focus);
+            _featureList.AddChild(aiActions);
+            var syncRitual = new Button { Text = "Nghi thức Sync tại Shrine (giữ E)" }; StyleActionButton(syncRitual);
+            syncRitual.Pressed += () => { if (GameplayCommandsBlocked || _activeRitualPowerId is not null) return; var ritual = _application.BeginCanonicalSyncRitual(); if (ritual.Started) { _activeSyncRitualSpeciesId = ritual.SpeciesId; Toast($"Giữ E trong {Math.Ceiling(ritual.RemainingTicks / 60.0)} giây để hoàn tất Sync."); } else Toast("Cần ở Shrine và đủ 7 nguồn Sync khác của một Soul."); };
+            _featureList.AddChild(syncRitual);
             if (_application.CanonicalSkillGrants() is { } grants)
             {
                 var skillRow = new HBoxContainer();

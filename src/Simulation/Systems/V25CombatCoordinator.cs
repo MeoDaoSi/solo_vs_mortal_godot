@@ -160,6 +160,35 @@ public sealed class V25CombatCoordinator
         _requestedPlayerSkill = null; _requestedPlayerSkillTicks = 0; _preparedTick = null;
     }
 
+    /// <summary>Moves a recalled Ally's cooldowns into its species-owned Soul runtime. The
+    /// caller restores them onto the new Ally UID after a later summon; no cooldown is ever
+    /// discarded merely because the presentation actor was despawned.</summary>
+    public IReadOnlyList<V25CooldownView> ExtractCooldowns(string sourceUid)
+    {
+        RequireRuntimeId(sourceUid, "cooldown.sourceUid");
+        var result = _cooldowns.Where(item => item.Key.SourceUid == sourceUid)
+            .OrderBy(item => item.Key.SkillId, StringComparer.Ordinal)
+            .Select(item => new V25CooldownView(item.Key.SourceUid, item.Key.SkillId, item.Value)).ToArray();
+        foreach (var item in result) _cooldowns.Remove((sourceUid, item.SkillId));
+        return result;
+    }
+
+    /// <summary>Reattaches a stored Soul cooldown to its newly spawned Ally UID. The actor is
+    /// already live at this boundary, so restored entries use the normal combat ledger.</summary>
+    public void RestoreCooldowns(string sourceUid, IReadOnlyList<V25CooldownView> cooldowns)
+    {
+        RequireRuntimeId(sourceUid, "cooldown.sourceUid");
+        ArgumentNullException.ThrowIfNull(cooldowns);
+        if (!TryGetActor(sourceUid, out _)) throw new InvalidDataException("Cannot restore a cooldown for an absent actor.");
+        var staged = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (var cooldown in cooldowns)
+        {
+            if (cooldown is null || cooldown.SourceUid != sourceUid || cooldown.RemainingTicks <= 0 || FindSkill(cooldown.SkillId) is null || !staged.TryAdd(cooldown.SkillId, cooldown.RemainingTicks))
+                throw new InvalidDataException("Stored Soul cooldown is invalid or duplicated.");
+        }
+        foreach (var entry in staged) _cooldowns[(sourceUid, entry.Key)] = entry.Value;
+    }
+
     public void ConfigurePlayerSkillGrant(Func<string, bool> grant) => _playerSkillGrant = grant ?? throw new ArgumentNullException(nameof(grant));
     public void ConfigurePlayerSkillRank(Func<string, int> rank) => _playerSkillRank = rank ?? throw new ArgumentNullException(nameof(rank));
 

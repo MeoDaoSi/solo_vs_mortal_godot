@@ -3,12 +3,12 @@
   "scopeVersion": "slice-01.reconciled.2026-09-10",
   "createdAt": "2026-09-09T18:11:27.7921633Z",
   "source": {
-    "catalogPath": "C:/ws/asset-production_system/art/production/catalog.json",
+    "catalogPath": "C:/ws/asset-production-system/art/production/catalog.json",
     "catalogSnapshotSha256": "8fca0adb8a4cc3432a8e094f7ac6dbe271c1132a2486a9fa9b2d47eb198e46b0",
     "catalogScopeVersion": "2.5.1-closed",
     "catalogUpdatedAt": "2026-09-10T01:07:23.143466+07:00",
     "scopeMembershipSha256": "994ebfd3d946d506a085452da40523ce141cd5b22ab020bdd95d301f15143df6",
-    "worklistPath": "C:/ws/asset-production_system/art/production/slice-parts.json",
+    "worklistPath": "C:/ws/asset-production-system/art/production/slice-parts.json",
     "worklistSha256": "62fe4258096a27bdb9ddcd3ddfc29badb0e6440e12400a697abf8951376603a5"
   },
   "rules": [

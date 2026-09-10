@@ -36,6 +36,8 @@ public sealed class CombatSystem : IDisposable
         IReadOnlyList<V25CooldownView> cooldowns, IReadOnlyList<V25HitKeyView> hitKeys, IReadOnlyList<V25KnockbackView>? knockbacks = null) => (_canonical ?? throw new InvalidOperationException("Canonical combat is not enabled.")).RestoreRuntime(casts, projectiles, cooldowns, hitKeys, knockbacks);
     public void ClearCanonicalRuntime() => _canonical?.ClearRuntime();
     public void CancelUnreleasedCanonicalCasts(string sourceUid) => _canonical?.CancelUnreleasedCasts(sourceUid);
+    public IReadOnlyList<V25CooldownView> ExtractCanonicalCooldowns(string sourceUid) => (_canonical ?? throw new InvalidOperationException("Canonical combat is not enabled.")).ExtractCooldowns(sourceUid);
+    public void RestoreCanonicalCooldowns(string sourceUid, IReadOnlyList<V25CooldownView> cooldowns) => (_canonical ?? throw new InvalidOperationException("Canonical combat is not enabled.")).RestoreCooldowns(sourceUid, cooldowns);
     public void ConfigureCanonicalPlayerSkillGrant(Func<string, bool> grant) => _canonical?.ConfigurePlayerSkillGrant(grant);
     public void ConfigureCanonicalPlayerSkillRank(Func<string, int> rank) => _canonical?.ConfigurePlayerSkillRank(rank);
     public void AdvanceCanonicalMovement(long tick) => _canonical?.AdvanceCanonicalMovement(tick);

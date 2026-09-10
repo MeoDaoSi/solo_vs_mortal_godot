@@ -55,13 +55,18 @@ public sealed partial class GameSession : IDisposable
         Capabilities = new CapabilitySystem();
         if (canonical is not null) Capabilities.ConfigureCanonical(canonical.Content.Capabilities);
         Possession = new PossessionSystem(Events, definitions.SoulNatures, Souls, SoulBanners, Summons, PlayerModifiers, Capabilities, Player);
-        if (canonical is not null) Summons.ConfigureCanonical(canonical, Player, () => Possession.ActiveSoulId is not null,
-            () => IsWithinCanonicalShrine(96), IsCanonicalCombatActive);
+        if (canonical is not null) Summons.ConfigureCanonical(canonical, Player, () => Possession.ActiveSoulId is not null || Possession.CanonicalTransitionLocked,
+            () => IsWithinCanonicalShrine(96), IsCanonicalCombatActive,
+            Combat.CancelUnreleasedCanonicalCasts, Combat.ExtractCanonicalCooldowns, Combat.RestoreCanonicalCooldowns);
         if (canonical is not null) Allies.ConfigureCanonical(Player, (start, goal, radius, distance) => Player.FindReachableNextStep(start, goal, radius, distance),
             (origin, radius, maxRadius) => Player.FindNearestFree(origin, radius, maxRadius), IsCanonicalCombatActive);
         World = new WorldInteractionSystem(Events, map, Capabilities);
         Devouring = canonical is null ? new DevourSystem(Events, definitions, Souls, SoulBanners, Summons, Essence!, Bloodline!, Progression.AddPlayerXp) : null;
-        Sync = canonical is null ? null : new V25SyncSystem(Events, canonical, Souls, () => SimulationTick, IsAtCanonicalShrine, Capabilities.Has, speciesId => Possession.CanonicalSnapshot?.SpeciesId == speciesId);
+        Sync = canonical is null ? null : new V25SyncSystem(Events, canonical, Souls, () => SimulationTick, IsAtCanonicalShrine, Capabilities.Has,
+            speciesId => Possession.CanonicalSnapshot?.SpeciesId == speciesId,
+            allyUid => Allies.Get(allyUid)?.SourceSoulId,
+            () => Player.State.Uid,
+            () => Player.State.Position);
         if (canonical is not null) Possession.ConfigureCanonical(canonical,
             speciesId => Sync?.TotalMicro(speciesId) ?? 0,
             speciesId => Sync?.Milestones(speciesId) ?? new HashSet<string>(StringComparer.Ordinal),
@@ -197,9 +202,14 @@ public sealed partial class GameSession : IDisposable
     public double ElapsedSeconds => _clock.Time;
     public long SimulationTick => _clock.TickCount;
     public long UidNext => _uids.NextValue;
-    public bool CanonicalDurableCommitRequired => _canonicalDurableCommitRequired || Souls.HasCanonicalAcquisitionsPendingCommit;
+    public bool CanonicalDurableCommitRequired => _canonicalDurableCommitRequired || Souls.HasCanonicalDurableChanges || Sync?.HasCanonicalDurableChanges == true;
     public void RequireCanonicalDurableCommit() { if (CanonicalContent is not null) _canonicalDurableCommitRequired = true; }
-    public void CompleteCanonicalDurableCommit() => _canonicalDurableCommitRequired = false;
+    public void CompleteCanonicalDurableCommit()
+    {
+        _canonicalDurableCommitRequired = false;
+        Souls.CompleteCanonicalDurableCommit();
+        Sync?.CompleteCanonicalDurableCommit();
+    }
     public string CanonicalRegionId => WorldMap.CurrentRegionId;
 
     public RegionTravelResult PreviewCanonicalRegion(string regionId)

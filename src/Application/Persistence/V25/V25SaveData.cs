@@ -77,11 +77,14 @@ public sealed record V25BannerGateSaveRecord(
     int FromRank,
     int ToRank);
 
+public sealed record V25SummonSkillCooldownSaveState(string SkillId, int RemainingTicks);
+
 public sealed record V25SummonSaveState(
     string SpeciesId,
     int RecoveryTicks,
     double HpRatio,
-    double AttackCooldown);
+    double AttackCooldown,
+    IReadOnlyList<V25SummonSkillCooldownSaveState>? SkillCooldowns = null);
 
 public sealed record V25PossessionSaveState(
     string SourceInstanceId,
@@ -575,6 +578,13 @@ public static class V25SaveCodec
             RequireRecord(state, "summonState"); RequireId(state.SpeciesId, "summonState.speciesId");
             if (state.RecoveryTicks < 0 || !double.IsFinite(state.HpRatio) || state.HpRatio is < 0 or > 1 || !double.IsFinite(state.AttackCooldown) || state.AttackCooldown < 0)
                 throw new InvalidDataException("Canonical summon state is invalid.");
+            var skillCooldowns = state.SkillCooldowns ?? Array.Empty<V25SummonSkillCooldownSaveState>();
+            ValidateUnique(skillCooldowns.Select(item => item?.SkillId ?? throw new InvalidDataException("summon skillCooldowns contains a null record.")), "summon skill cooldown");
+            foreach (var cooldown in skillCooldowns)
+            {
+                RequireRecord(cooldown, "summon skillCooldown"); RequireId(cooldown.SkillId, "summon skillCooldown.skillId");
+                if (cooldown.RemainingTicks <= 0) throw new InvalidDataException("Canonical summon skill cooldown is invalid.");
+            }
         }
         ValidateUnique(possessionCooldowns.Select(item => item?.SpeciesId ?? throw new InvalidDataException("possessionCooldowns contains a null record.")), "possession cooldown species");
         foreach (var cooldown in possessionCooldowns)

@@ -6,8 +6,8 @@ The exact machine-readable membership is locked in `data/v2.5/slice-01.scope-loc
 
 ## Authority and fixed membership
 
-- Production catalog: `C:/ws/asset-production_system/art/production/catalog.json`, scope version `2.5.1-closed`.
-- Production worklist: `C:/ws/asset-production_system/art/production/slice-parts.json`.
+- Production catalog: `C:/ws/asset-production-system/art/production/catalog.json`, scope version `2.5.1-closed`.
+- Production worklist: `C:/ws/asset-production-system/art/production/slice-parts.json`.
 - Reconciled scope version: `slice-01.reconciled.2026-09-10`.
 - Slice membership: every catalog entry whose `slice01` field is `true` at the hashes recorded in the lock file.
 - Stable membership digest: `scopeMembershipSha256` in the lock is calculated from the sorted ID list, so an automatically refreshed catalog timestamp cannot invalidate the scope decision.

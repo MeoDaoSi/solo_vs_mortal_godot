@@ -13,6 +13,7 @@ namespace SoloVsMortal.Simulation.Systems;
 public enum SoulRuntimeStatus { Ready, Summoned, Dispersed, Possessed }
 public sealed record SoulRuntimeView(string SoulId, SoulRuntimeStatus Status, string? SummonUid, double RecoverySeconds, double Stability);
 public sealed record DispersedSoulSaveData(string SoulId, double RecoverySeconds, double? RecoveryDurationSeconds = null);
+public sealed record V25StoredSummonCooldown(string SkillId, int RemainingTicks);
 public enum SummonFailure { BannerNotFound, SoulNotBound, AlreadySummoned, Dispersed, ActiveLimitReached, SoulNotFound, Possessed, BannerRankTooLow, InsufficientSpirit, NoSpawnSpace, InvalidState }
 public sealed record SummonResult(bool Success, string? SummonUid = null, SummonFailure? Failure = null);
 public sealed record CanonicalSummonAllResult(IReadOnlyDictionary<string, SummonResult> Results);
@@ -26,11 +27,15 @@ public sealed class SummonSystem : IDisposable
     private readonly Dictionary<string, double> _recoveryDuration = new(StringComparer.Ordinal);
     private readonly HashSet<string> _possessed = new(StringComparer.Ordinal);
     private readonly Dictionary<string, V25SummonStateSnapshot> _canonicalState = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, IReadOnlyList<V25StoredSummonCooldown>> _canonicalStoredCooldowns = new(StringComparer.Ordinal);
     private CanonicalContentRegistry? _canonical;
     private PlayerSystem? _canonicalPlayer;
     private Func<bool>? _canonicalPossessionActive;
     private Func<bool>? _canonicalAtShrine96;
     private Func<bool>? _canonicalCombatOrHazard;
+    private Action<string>? _canonicalCancelUnreleasedCasts;
+    private Func<string, IReadOnlyList<V25CooldownView>>? _canonicalExtractCooldowns;
+    private Action<string, IReadOnlyList<V25CooldownView>>? _canonicalRestoreCooldowns;
     private readonly EventBus _events; private readonly GameDefinitions _definitions; private readonly SoulSystem _souls; private readonly SoulBannerSystem _banners; private readonly AllySystem _allies; private readonly IDisposable _defeatSubscription; private readonly IDisposable _unreachableSubscription;
     public SummonSystem(EventBus events, GameDefinitions definitions, SoulSystem souls, SoulBannerSystem banners, AllySystem allies) { _events = events; _definitions = definitions; _souls = souls; _banners = banners; _allies = allies; _defeatSubscription = events.Subscribe<AllyDefeatedEvent>(OnAllyDefeated); _unreachableSubscription = events.Subscribe<AllyUnreachableEvent>(OnAllyUnreachable); }
 
@@ -49,17 +54,26 @@ public sealed class SummonSystem : IDisposable
     }
 
     public void ConfigureCanonical(CanonicalContentRegistry canonical, PlayerSystem player, Func<bool> possessionActive,
-        Func<bool>? atShrine96 = null, Func<bool>? combatOrHazard = null)
+        Func<bool>? atShrine96 = null, Func<bool>? combatOrHazard = null,
+        Action<string>? cancelUnreleasedCasts = null, Func<string, IReadOnlyList<V25CooldownView>>? extractCooldowns = null,
+        Action<string, IReadOnlyList<V25CooldownView>>? restoreCooldowns = null)
     {
         _canonical = canonical ?? throw new ArgumentNullException(nameof(canonical));
         _canonicalPlayer = player ?? throw new ArgumentNullException(nameof(player));
         _canonicalPossessionActive = possessionActive ?? throw new ArgumentNullException(nameof(possessionActive));
         _canonicalAtShrine96 = atShrine96;
         _canonicalCombatOrHazard = combatOrHazard;
+        _canonicalCancelUnreleasedCasts = cancelUnreleasedCasts;
+        _canonicalExtractCooldowns = extractCooldowns;
+        _canonicalRestoreCooldowns = restoreCooldowns;
     }
 
     /// <summary>Recalls all living canonical Allies at a Spirit zero crossing.</summary>
     public int RecallAllLivingForSpirit() => RecallAllLiving("spirit_empty");
+
+    /// <summary>Manual RecallAll uses the same no-heal recall path as Spirit exhaustion and
+    /// Player death. Each living species is resolved independently.</summary>
+    public int RecallAllCanonical() => RecallAllLiving("manual");
 
     /// <summary>Player death recalls living Allies while preserving their HP ratio and skill cooldown.</summary>
     public int RecallAllLivingForDeath() => RecallAllLiving("player_death");
@@ -92,9 +106,15 @@ public sealed class SummonSystem : IDisposable
         if (existing?.Mode == V25SoulRuntimeMode.Dispersed) return new(false, Failure: SummonFailure.Dispersed);
         if (_canonicalPossessionActive()) return new(false, Failure: SummonFailure.Possessed);
         if (!_canonicalPlayer.State.Alive || _canonicalPlayer.State.CurrentSpirit <= 0) return new(false, Failure: SummonFailure.InsufficientSpirit);
-        var placement = _canonicalPlayer.FindNearestFree(requestedPosition, 18, 48);
+        // Radius belongs to the species role from the locked content, not to the Player or a
+        // one-size legacy Ally body. FindNearestFree itself owns the South-first 16-unit rings.
+        var bodyRadius = V25ActorBodyRadii.ForSpeciesRole(species.Role);
+        var placement = _canonicalPlayer.FindNearestFree(requestedPosition, bodyRadius, 48);
         if (placement is null) return new(false, Failure: SummonFailure.NoSpawnSpace);
         var ally = _allies.SpawnSoul(soul, _banners.Starter()!, placement.Value);
+        var storedCooldowns = _canonicalStoredCooldowns.GetValueOrDefault(species.Id) ?? Array.Empty<V25StoredSummonCooldown>();
+        _canonicalRestoreCooldowns?.Invoke(ally.Uid, storedCooldowns.Select(item => new V25CooldownView(ally.Uid, item.SkillId, item.RemainingTicks)).ToArray());
+        _canonicalStoredCooldowns.Remove(species.Id);
         var state = new V25SummonStateSnapshot(species.Id, V25SoulRuntimeMode.Summoned, ally.Uid, V25FixedPoint.DensitySyncScale, 0, 1, 0);
         _canonicalState[species.Id] = state;
         _summonBySoul[soul.Id] = ally.Uid; _soulBySummon[ally.Uid] = soul.Id;
@@ -117,6 +137,7 @@ public sealed class SummonSystem : IDisposable
         var owned = _souls.CanonicalDensity?.Ownership.Values.Where(item => item.IsOwned).OrderBy(item => item.SpeciesId, StringComparer.Ordinal).ToArray() ?? Array.Empty<V25SpeciesOwnershipSnapshot>();
         for (var index = 0; index < owned.Length; index++)
         {
+            // South is +Y; subtracting walks clockwise in the authored world coordinate system.
             var angle = Math.PI / 2 - (index % 16) * 2 * Math.PI / 16;
             var radius = 36 + (index / 6) * 24;
             var position = new Vec2(center.X + Math.Cos(angle) * radius, center.Y + Math.Sin(angle) * radius);
@@ -134,6 +155,13 @@ public sealed class SummonSystem : IDisposable
         var soul = _souls.CanonicalOwnedSpecies(speciesId);
         if (ally is null || soul is null) return false;
         var ratio = ally.MaxHp > 0 ? Math.Clamp(ally.CurrentHp / ally.MaxHp, 0, 1) : state.HpRatio;
+        // Recall cancels only windups. Released projectiles retain their offense snapshot, and
+        // accepted cooldowns move from the despawned Ally UID to the persistent species state.
+        _canonicalCancelUnreleasedCasts?.Invoke(ally.Uid);
+        var cooldowns = _canonicalExtractCooldowns?.Invoke(ally.Uid) ?? Array.Empty<V25CooldownView>();
+        if (cooldowns.Count > 0)
+            _canonicalStoredCooldowns[speciesId] = cooldowns.Select(item => new V25StoredSummonCooldown(item.SkillId, item.RemainingTicks)).ToArray();
+        else _canonicalStoredCooldowns.Remove(speciesId);
         var next = state with { Mode = V25SoulRuntimeMode.Ready, ActiveAllyUid = null, HpRatio = ratio, AttackCooldown = 0, RecoveryTicks = 0 };
         _canonicalState[speciesId] = next;
         _summonBySoul.Remove(soul.Id); _soulBySummon.Remove(ally.Uid); _allies.Remove(ally.Uid);
@@ -181,6 +209,8 @@ public sealed class SummonSystem : IDisposable
     }
 
     public int ActiveCount => _summonBySoul.Count;
+    public IReadOnlyList<V25StoredSummonCooldown> CanonicalStoredCooldowns(string speciesId) =>
+        _canonicalStoredCooldowns.GetValueOrDefault(speciesId)?.OrderBy(item => item.SkillId, StringComparer.Ordinal).ToArray() ?? Array.Empty<V25StoredSummonCooldown>();
     public void RestoreCanonicalActiveLink(string soulId, string allyUid, string? bannerId = null)
     {
         if (string.IsNullOrWhiteSpace(soulId) || string.IsNullOrWhiteSpace(allyUid)) throw new InvalidDataException("Canonical summon link identity is missing.");
@@ -217,6 +247,7 @@ public sealed class SummonSystem : IDisposable
         // combat coordinator's integer tick ledger, so this persisted compatibility field
         // is deliberately normalized to zero on restore.
         _canonicalState.Clear(); foreach (var state in staged) _canonicalState.Add(state.SpeciesId, state with { AttackCooldown = 0 });
+        _canonicalStoredCooldowns.Clear();
         _summonBySoul.Clear(); _soulBySummon.Clear();
         foreach (var state in staged.Where(item => item.Mode == V25SoulRuntimeMode.Summoned))
         {
@@ -235,6 +266,27 @@ public sealed class SummonSystem : IDisposable
         }
         foreach (var uid in _soulBySummon.Keys.ToArray()) _allies.Remove(uid);
         _summonBySoul.Clear(); _soulBySummon.Clear(); _bannerBySoul.Clear();
+    }
+    public void RestoreCanonicalStoredCooldowns(IReadOnlyDictionary<string, IReadOnlyList<V25StoredSummonCooldown>> cooldowns)
+    {
+        if (_souls.CanonicalMode is false) throw new InvalidOperationException("Canonical summon is not enabled.");
+        ArgumentNullException.ThrowIfNull(cooldowns);
+        var staged = new Dictionary<string, IReadOnlyList<V25StoredSummonCooldown>>(StringComparer.Ordinal);
+        foreach (var entry in cooldowns)
+        {
+            if (entry.Value is null ||
+                entry.Value.Any(item => item is null || string.IsNullOrWhiteSpace(item.SkillId) || item.RemainingTicks <= 0 || !_canonical!.Content.Skills.Any(skill => skill.Id == item.SkillId)) ||
+                entry.Value.Select(item => item.SkillId).Distinct(StringComparer.Ordinal).Count() != entry.Value.Count)
+                throw new InvalidDataException("Stored canonical Soul cooldown state is invalid.");
+            // A save writes an empty cooldown collection for every owned species.  Only a
+            // recalled Ready Soul may carry non-empty cooldowns outside the live actor ledger;
+            // a Summoned actor's cooldowns restore from Runtime.Cooldowns instead.
+            if (entry.Value.Count == 0) continue;
+            if (_canonicalState.GetValueOrDefault(entry.Key) is not { Mode: V25SoulRuntimeMode.Ready })
+                throw new InvalidDataException("Only a Ready canonical Soul may carry stored cooldowns.");
+            staged.Add(entry.Key, entry.Value.OrderBy(item => item.SkillId, StringComparer.Ordinal).ToArray());
+        }
+        _canonicalStoredCooldowns.Clear(); foreach (var entry in staged) _canonicalStoredCooldowns.Add(entry.Key, entry.Value);
     }
     public IReadOnlyList<DispersedSoulSaveData> DispersedSnapshot() => _recovery.Select(entry => new DispersedSoulSaveData(entry.Key, entry.Value, _recoveryDuration.GetValueOrDefault(entry.Key, _definitions.Soul.Summon.StabilityRecoverySeconds))).ToArray();
     public void RestoreDispersed(IEnumerable<DispersedSoulSaveData>? snapshot)
@@ -285,6 +337,7 @@ public sealed class SummonSystem : IDisposable
             var speciesId = _souls.OwnedSoul(soulId)?.Origin.SpeciesId;
             if (speciesId is not null)
             {
+                _canonicalStoredCooldowns.Remove(speciesId);
                 var ticks = defeated.RecoveryMs is > 0 ? V25CombatRules.MillisecondsToTicksCeil(defeated.RecoveryMs.Value) : V25CombatRules.MillisecondsToTicksCeil(_canonical?.Balance.Summon.RecoveryMs ?? 20000);
                 _canonicalState[speciesId] = new V25SummonStateSnapshot(speciesId, V25SoulRuntimeMode.Dispersed, null, 0, ticks, 0, 0);
             }

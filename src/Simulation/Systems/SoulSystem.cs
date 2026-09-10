@@ -21,6 +21,9 @@ public sealed class SoulSystem : IDisposable
     private readonly HashSet<string> _canonicalConsumedPickupIds = new(StringComparer.Ordinal);
     private readonly HashSet<string> _canonicalTutorialReceipts = new(StringComparer.Ordinal);
     private readonly List<string> _canonicalAcquisitionEventsPendingCommit = new();
+    // Drops/pity and tutorial pickups are gameplay state too.  Keep the arena on the same
+    // immediate WAL path as capture instead of waiting for a periodic autosave.
+    private bool _canonicalMutationPendingCommit;
     private readonly EventBus _events; private readonly UidGenerator _uids; private readonly SeededRng _rng; private readonly GameDefinitions _definitions; private readonly CanonicalContentRegistry? _canonical; private readonly Pcg32? _canonicalDropRng; private readonly IDisposable _defeatSubscription;
     private V25DensityEngine? _density;
     private int _canonicalBannerRank = 1;
@@ -57,6 +60,7 @@ public sealed class SoulSystem : IDisposable
     public IReadOnlyList<string> CanonicalConsumedPickupIds => _canonicalConsumedPickupIds.Order(StringComparer.Ordinal).ToArray();
     public IReadOnlyList<string> CanonicalTutorialReceipts => _canonicalTutorialReceipts.Order(StringComparer.Ordinal).ToArray();
     public bool HasCanonicalAcquisitionsPendingCommit => _canonicalAcquisitionEventsPendingCommit.Count > 0;
+    public bool HasCanonicalDurableChanges => _canonicalMutationPendingCommit || HasCanonicalAcquisitionsPendingCommit;
     public V25DensityEngineSnapshot CanonicalDensitySnapshot() => _density?.Snapshot()
         ?? throw new InvalidOperationException("Canonical Density is not enabled.");
 
@@ -95,8 +99,12 @@ public sealed class SoulSystem : IDisposable
         if (_canonical is null) throw new InvalidOperationException("Canonical content is not enabled.");
         if (string.IsNullOrWhiteSpace(questReceiptId) || !questReceiptId.StartsWith("quest.", StringComparison.Ordinal))
             throw new InvalidDataException("Tutorial Soul spawn requires a stable quest receipt ID.");
-        if (!double.IsFinite(position.X) || !double.IsFinite(position.Y) || level is < 1 or > 90)
-            throw new InvalidDataException("Tutorial Soul spawn position or level is invalid.");
+        if (!double.IsFinite(position.X) || !double.IsFinite(position.Y))
+            throw new InvalidDataException("Tutorial Soul spawn position is invalid.");
+        // The closed authority has exactly one tutorial reward shape; a generic spawn endpoint
+        // must not be able to fabricate a different owned species or a higher-rank proof source.
+        if (!string.Equals(speciesId, "skeleton", StringComparison.Ordinal) || level != 1)
+            throw new InvalidDataException("The canonical tutorial reward is exactly one Skeleton Level 1 world Soul.");
         var species = _canonical.SpeciesForProfile(_canonical.ActiveProfileId).FirstOrDefault(item => item.Id == speciesId)
             ?? throw new InvalidDataException($"Tutorial Soul species '{speciesId}' is unavailable in beta_01.");
         var pickupId = $"tutorial.{questReceiptId[6..]}";
@@ -112,6 +120,7 @@ public sealed class SoulSystem : IDisposable
         var world = new WorldSoulState(pickup.PickupId, pickup.SoulNatureId,
             new SoulOrigin(pickup.MonsterUid, pickup.MonsterDefinitionId, pickup.SpeciesId, pickup.DisplayName, pickup.Rank, pickup.RankKey, pickup.RankDisplayName), pickup.Position);
         _worldSouls.Add(pickup.PickupId, world);
+        _canonicalMutationPendingCommit = true;
         _events.Publish(new SoulGeneratedEvent(pickup.MonsterUid, pickup.PickupId, pickup.RankKey, pickup.Position));
         return world;
     }
@@ -150,6 +159,7 @@ public sealed class SoulSystem : IDisposable
         _density = restoredDensity; _canonicalBannerRank = bannerRank;
         _worldSouls.Clear(); _canonicalPickups.Clear(); _pickupRegions.Clear(); _canonicalPity.Clear(); _canonicalConsumedPickupIds.Clear(); _canonicalTutorialReceipts.Clear(); _owned.Clear();
         _canonicalAcquisitionEventsPendingCommit.Clear();
+        _canonicalMutationPendingCommit = false;
         foreach (var pickup in restoredPickups)
         {
             _canonicalPickups.Add(pickup.PickupId, pickup);
@@ -244,6 +254,7 @@ public sealed class SoulSystem : IDisposable
         // until the WAL/current-file commit succeeds; failure pauses the caller and retries the
         // exact payload without exposing an uncommitted reward to Sync or presentation.
         _canonicalAcquisitionEventsPendingCommit.Add(owned.Id);
+        _canonicalMutationPendingCommit = true;
         return owned;
     }
 
@@ -254,6 +265,9 @@ public sealed class SoulSystem : IDisposable
         _canonicalAcquisitionEventsPendingCommit.Clear();
         foreach (var soulId in committed) _events.Publish(new SoulAcquiredEvent(soulId));
     }
+
+    /// <summary>Called only after the exact staged canonical payload has committed to the WAL/current save.</summary>
+    public void CompleteCanonicalDurableCommit() => _canonicalMutationPendingCommit = false;
 
     public bool RemoveOwned(string soulId) { if (!_owned.Remove(soulId)) return false; _events.Publish(new SoulLostEvent(soulId)); return true; }
 
@@ -324,6 +338,7 @@ public sealed class SoulSystem : IDisposable
         var chance = CanonicalSoulDropChance(defeated.Rank, species.PowerTier, defeated.EncounterType);
         var dropped = guaranteed || _canonicalDropRng.Chance(chance);
         _canonicalPity[species.Id] = dropped ? 0 : nextPity;
+        _canonicalMutationPendingCommit = true;
         if (!dropped) return;
 
         var monster = _definitions.Monsters.FirstOrDefault(item => item.Id == defeated.DefinitionId)
@@ -336,6 +351,7 @@ public sealed class SoulSystem : IDisposable
         if (_currentRegion is not null) _pickupRegions[pickup.PickupId] = _currentRegion();
         _worldSouls.Add(pickup.PickupId, new WorldSoulState(pickup.PickupId, pickup.SoulNatureId,
             new SoulOrigin(pickup.MonsterUid, pickup.MonsterDefinitionId, pickup.SpeciesId, pickup.DisplayName, pickup.Rank, pickup.RankKey, pickup.RankDisplayName), pickup.Position));
+        _canonicalMutationPendingCommit = true;
         _events.Publish(new SoulGeneratedEvent(defeated.Uid, pickup.PickupId, defeated.RankKey, defeated.Position));
     }
 

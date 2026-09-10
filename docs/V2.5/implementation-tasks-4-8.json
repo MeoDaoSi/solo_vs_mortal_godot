@@ -15,13 +15,27 @@
     "Part2 documentation consolidation remains tracked through6.03/8.02; ISSUE-01 engine baseline is complete at Godot.NET4.7.2, without claiming prior gameplay completion.",
     "Part3 Playerbreakthrough closed by4.03, pathfinding by4.06, grant/exposure by5.02 and rewarddurability by4.02/5.05; parent review still required."
   ],
-  "entryDecision": "User authorized starting Part4 now. 4.01 pure ownership/Density core is independent of unresolved boss/pathing producers. Later live stages are gated.",
+  "entryDecision": "ISSUE-04 closure completed on 2026-09-10: all Part4 Soul-loop runtime paths are source-audited and code-complete; user gameplay acceptance remains the only Part4 acceptance gate. See ISSUE-04_SOUL_LOOP_CLOSURE_MATRIX.md.",
+  "issue04Closure": {
+    "status": "ISSUE-04 CODE_COMPLETE — READY_FOR_USER_ACCEPTANCE",
+    "authorityVerification": "All six data/v2.5/spec-lock.json SHA-256 entries matched C:/ws/asset-production-system on 2026-09-10.",
+    "matrix": "docs/V2.5/ISSUE-04_SOUL_LOOP_CLOSURE_MATRIX.md",
+    "confirmedFixes": [
+      "Completed live Sync producers for Ally kills, possession kills and the hold-E ritual.",
+      "Corrected canonical role-based summon body radius and possession transition-lock guard.",
+      "Added canonical Application/Presentation paths for SummonAll, RecallAll, Ally focus/mode and possession termination.",
+      "Preserved recalled Ally skill cooldowns across UID replacement and corrected valid empty cooldown-row restore.",
+      "Restricted tutorial reward spawn to Skeleton Level 1 and made Soul drop/pity plus Sync progress request the immediate WAL boundary."
+    ],
+    "manualAcceptance": "All 18 closed acceptance cases are user-owned and mapped in ISSUE-04_SOUL_LOOP_CLOSURE_MATRIX.md; no automated gameplay runner was created or run.",
+    "assetResult": "NO_ASSET_APPROVAL_REQUIRED_FOR_ISSUE_04 — visual asset production/in-engine visual acceptance belongs to Part 6/7/W09."
+  },
   "tasks": [
     {
       "id": "4.01",
       "title": "Species ownership và Density transaction",
       "dependsOn": [],
-      "status": "pending",
+      "status": "complete",
       "owner": "Code",
       "scopePaths": [
         "src/Simulation/State/V25/",
@@ -42,7 +56,7 @@
           "Pure staged absorb/proof command: V25DensityEngine.Apply, StageTransition and ValidateSourceProvenance; single mutation point after validation; TransactionId replay returns the immutable receipt and conflicting payloads reject.",
           "Exact gain/relevance/gates: V25DensityMath.ComputeGainMicro, RelevanceForRanks, MinimumProofRank and GateMicro; V25DensityEngine stages permanent proof keys, consumes old pending before new gain, enforces all eight canonical gates and the 25 point cap.",
           "Immutable ledger and accounting: V25DensityLedgerEntry and V25DensityTransactionReceipt preserve AwardId, SourceId, SourceVersion, exact GrantedMicro, committed/pending/discarded amounts, proof keys and resulting state; no balance-version recomputation on replay/restore.",
-          "Typed snapshot/restore boundary: V25DensityEngineSnapshot, V25DensityEngine.Snapshot/Restore/RestoreSnapshot validate profile species, ownership invariants, gate thresholds, proof permanence, ledger conservation and atomic staged swap; live pickup/save consumption remains unconnected for 4.02."
+          "Typed snapshot/restore boundary: V25DensityEngineSnapshot, V25DensityEngine.Snapshot/Restore/RestoreSnapshot validate profile species, ownership invariants, gate thresholds, proof permanence, ledger conservation and atomic staged swap; ISSUE-04 wired the live pickup/save caller in 4.02."
         ],
         "changedFiles": [
           "src/Simulation/State/V25/V25DensityState.cs",
@@ -50,9 +64,7 @@
         ],
         "build": "dotnet build solo_vs_mortal_godot.csproj --no-restore (Godot.NET 4.7.2): succeeded, 0 warnings, 0 errors; no automated tests or headless smoke run.",
         "remainingOwnedScope": [
-          "4.02 must atomically wire World Soul pickup consumption, first ownership claim plus absorb, and durable save/WAL capture; this pure core is not called by the live pickup loop.",
-          "V25 Application save capture/restore does not yet serialize this engine snapshot; 4.02 owns that activation boundary.",
-          "Manual gameplay acceptance and parent review remain pending."
+          "No known implementation gap remains in the Part4 Soul loop. The only remaining Part4 gate is user-owned real-scene acceptance; see ISSUE-04_SOUL_LOOP_CLOSURE_MATRIX.md."
         ],
         "parentReview": "pending"
       }
@@ -63,7 +75,7 @@
       "dependsOn": [
         "4.01"
       ],
-      "status": "pending",
+      "status": "complete",
       "owner": "Code",
       "scopePaths": [
         "src/Simulation/Systems/SoulSystem.cs",
@@ -107,7 +119,7 @@
       "dependsOn": [
         "4.02"
       ],
-      "status": "pending",
+      "status": "complete",
       "owner": "Code",
       "scopePaths": [
         "src/Simulation/Systems/ProgressionSystem.cs",
@@ -148,7 +160,7 @@
       "dependsOn": [
         "4.03"
       ],
-      "status": "pending",
+      "status": "complete",
       "owner": "Code",
       "scopePaths": [
         "src/Simulation/Systems/SoulBannerSystem.cs",
@@ -175,7 +187,7 @@
       "dependsOn": [
         "4.03"
       ],
-      "status": "pending",
+      "status": "complete",
       "owner": "Code",
       "scopePaths": [
         "src/Simulation/Systems/V25/",
@@ -202,7 +214,7 @@
       "dependsOn": [
         "4.02"
       ],
-      "status": "pending",
+      "status": "complete",
       "owner": "Code",
       "scopePaths": [
         "src/Simulation/Systems/PlayerSystem.cs",
@@ -230,7 +242,7 @@
         "4.04",
         "4.06"
       ],
-      "status": "pending",
+      "status": "complete",
       "owner": "Code",
       "scopePaths": [
         "src/Simulation/Systems/SummonSystem.cs",
@@ -258,7 +270,7 @@
       "dependsOn": [
         "4.07"
       ],
-      "status": "pending",
+      "status": "complete",
       "owner": "Code",
       "scopePaths": [
         "src/Simulation/GameSession.cs",
@@ -288,7 +300,7 @@
         "build": "dotnet build solo_vs_mortal_godot.csproj --no-restore (Godot.NET 4.7.2): succeeded, 0 warnings, 0 errors; no automated tests or headless smoke run.",
         "remainingOwnedScope": [
           "Manual gameplay acceptance and parent review remain pending. Spirit capacity modifiers from future Equipment/loadout are intentionally not active before Part5.",
-          "Hazard-specific traversal/rescue and full possession death cleanup are completed in 4.10/4.11; current combat gate is conservative for implemented actors."
+          "Hazard-specific traversal/rescue and possession death cleanup are tracked as complete in 4.10/4.11; current combat gate is conservative for implemented actors."
         ],
         "parentReview": "pending"
       }
@@ -300,7 +312,7 @@
         "4.06",
         "4.08"
       ],
-      "status": "pending",
+      "status": "complete",
       "owner": "Code",
       "scopePaths": [
         "src/Simulation/Systems/AllySystem.cs",
@@ -346,7 +358,7 @@
         "4.05",
         "4.08"
       ],
-      "status": "pending",
+      "status": "complete",
       "owner": "Code",
       "scopePaths": [
         "src/Simulation/Systems/PossessionSystem.cs",
@@ -375,7 +387,7 @@
         "4.06",
         "4.10"
       ],
-      "status": "pending",
+      "status": "complete",
       "owner": "Code",
       "scopePaths": [
         "src/Simulation/Systems/CapabilitySystem.cs",
@@ -406,7 +418,7 @@
         "4.09",
         "4.11"
       ],
-      "status": "pending",
+      "status": "complete",
       "owner": "Code",
       "scopePaths": [
         "src/Simulation/",

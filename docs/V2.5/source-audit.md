@@ -2,7 +2,7 @@
 
 Audit date: 2026-09-08  
 Source project: `C:/ws/solo_vs_mortal_godot`  
-Canonical authority: `C:/ws/asset-production_system/game_spec`, revision `2026-09-08.closed-1`  
+Canonical authority: `C:/ws/asset-production-system/game_spec`, revision `2026-09-08.closed-1`
 Canonical content: `svm-content-2.5.1`; balance: `svm-balance-2.5.1`; save schema: `1`  
 Audit scope: source, runtime data, scenes, assets, documentation, project/build configuration, and existing test/probe dependencies.
 
@@ -87,7 +87,7 @@ The following public or visible surfaces must be mapped before deleting obsolete
 
 The source tree currently includes approximately 5,018 files under `assets` (about 210 MB), 2,562 under `spritesheets` (about 52 MB), and 1,275 under `spriteframes` (about 14 MB), including imports. `data/asset-manifest.json` is schema 1 with 121 entries and every referenced file currently exists. This is an existence check only; it does not prove V2.5 logical coverage.
 
-The current manifest/config/map dependency roots are `Arena.cs` (asset lookup and old frame synthesis), `GameApplication.cs` (animation path expansion), `AssetDefinitions.cs`, `CharacterAnimationDefinitions.cs`, `MapDefinitions.cs`, `data/configs/characterAnimations.json`, `data/configs/desert.json`, `data/configs/volcano.json`, `data/asset-manifest.json`, and `HudMinimap.cs`. The four Art static integration-ready IDs are in `C:/ws/asset-production_system/art/exports/skeleton-static-integration-v001/asset-map.json`: `soul.skeleton.rank01.pickup`, `soul.skeleton.rank01.banner.icon`, `soul.skeleton.rank01.enemy.south`, and `soul.skeleton.rank01.ally.south`. The export is incremental and does not yet satisfy the full beta asset requirement; old `needs_rework` animations must not be wired as approved replacements.
+The current manifest/config/map dependency roots are `Arena.cs` (asset lookup and old frame synthesis), `GameApplication.cs` (animation path expansion), `AssetDefinitions.cs`, `CharacterAnimationDefinitions.cs`, `MapDefinitions.cs`, `data/configs/characterAnimations.json`, `data/configs/desert.json`, `data/configs/volcano.json`, `data/asset-manifest.json`, and `HudMinimap.cs`. The four Art static integration-ready IDs are in `C:/ws/asset-production-system/art/exports/skeleton-static-integration-v001/asset-map.json`: `soul.skeleton.rank01.pickup`, `soul.skeleton.rank01.banner.icon`, `soul.skeleton.rank01.enemy.south`, and `soul.skeleton.rank01.ally.south`. The export is incremental and does not yet satisfy the full beta asset requirement; old `needs_rework` animations must not be wired as approved replacements.
 
 Before later cleanup, inventory and migrate references to old assets. Candidate obsolete content includes old `assets/images/swordsman-character`, chibi skeleton/golem/goblin sets, old map assets, generated `spritesheets`/`spriteframes`, and Kenney HUD content. Keep vendor license files and inspect the untracked Verdant/sample-pack roots (`tiles`, `sheets`, `sample_maps`, `proof`, `importers`, `store_assets`, `pack.json`, `tiles.json`, `Readme_for_Users.md`) before removal because they are currently untracked and may be an unrelated deliverable. `LICENSE`, `LICENSE.txt`, and `MIT License.txt` are legal dependencies and are excluded from gameplay-document consolidation.
 

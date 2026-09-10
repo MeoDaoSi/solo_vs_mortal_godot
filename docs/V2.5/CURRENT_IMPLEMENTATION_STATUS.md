@@ -12,7 +12,7 @@ Gameplay authority is `C:/ws/asset-production-system/Solo_vs_Mortal_Gameplay_Sys
 | Part 1 — authority, loader, save foundation | `complete` | Closed authority loader, schema-1 canonical save and durable WAL boundary are implemented. See progress journal entries through 2026-09-09. |
 | Part 2 — documentation and technical packaging | `in_progress` | V2.5 document entry point and historical-document boundary are complete. ISSUE-01 is complete: Godot .NET 4.7.2 is the official implementation baseline. Other documentation/package work remains. |
 | Part 3 — combat and control | `in_progress` | Static implementation is present and compile-valid. User manual acceptance remains open. |
-| Part 4 — gameplay/content systems | `in_progress` | Implemented work is tracked in the progress journal; dependency and user acceptance work remain. |
+| Part 4 — gameplay/content systems | `ISSUE-04 CODE_COMPLETE — READY_FOR_USER_ACCEPTANCE` | Soul drop/capture/Density/Sync/Banner/Summon/Spirit/Ally/Possession persistence and real canonical callers are closed by static/runtime-path audit. The 18 real-scene manual cases remain solely user-owned. See `ISSUE-04_SOUL_LOOP_CLOSURE_MATRIX.md`. |
 | Part 5 — presentation/runtime validation | `in_progress` | World/persistence items P01–P10 and W01–W08 are complete by static audit; W09 awaits canonical asset mapping. |
 | Part 6 — asset adapter and cleanup | `in_progress` | Inventory/contract work has started. No old asset is removed before a canonical manifest maps every live reference. |
 | Part 7 — Art production | `not_complete` | User approval and an approved versioned asset export are required before this part can close. |
@@ -22,8 +22,9 @@ Gameplay authority is `C:/ws/asset-production-system/Solo_vs_Mortal_Gameplay_Sys
 
 | Check | Result | Scope limit |
 |---|---|---|
-| `dotnet build solo_vs_mortal_godot.csproj --no-restore` | `complete` — 0 warnings, 0 errors on 2026-09-10 | Compilation only; it does not run gameplay. |
+| `dotnet build solo_vs_mortal_godot.csproj --no-restore` | `complete` — 0 errors on 2026-09-10 | Latest ISSUE-04 build has one `NU1900` warning because NuGet vulnerability metadata cannot be reached; compilation only, never gameplay acceptance. |
 | Godot .NET 4.7.2 baseline build/export | `complete` — `dotnet build solo_vs_mortal_godot.csproj --no-restore` passed with 0 warnings/0 errors; Windows release export exited 0 and produced `build/issue-01-4.7.2/SoloVsMortal.exe` and `.pck` on 2026-09-10 | This is valid baseline compile/package evidence only; it does not prove gameplay acceptance. Godot reported non-blocking root-certificate/editor-settings warnings. |
+| ISSUE-04 Godot export retry | `attempted` — Godot 4.7.2 Windows Desktop export reached packing but its internal .NET publish reported failure; direct `dotnet publish ... --no-restore --configuration Release --runtime win-x64 --self-contained false` succeeded | Packaging/toolchain follow-up only; it does not indicate a Part4 gameplay or source-code defect and does not replace user manual acceptance. |
 | Rendering configuration review | `recorded` | `project.godot` advertises C# Forward Plus, while the Windows export preset selects `gl_compatibility`. ISSUE-01 does not change either rendering setting. |
 | Manual acceptance cases 1–18 | `not_complete` | Must be exercised by the user in the real game under `AGENTS.md`; no agent gameplay runner is permitted. |
 

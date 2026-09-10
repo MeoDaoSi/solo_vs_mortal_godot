@@ -12,7 +12,7 @@ Ngày cập nhật: 10/09/2026. Người rà soát: agent chính, đối chiếu
 
 **complete**: phạm vi của phần đã hoàn tất, không còn yêu cầu triển khai chưa xử lý được biết đến. **in_progress**: đã có code nhưng còn công việc cụ thể bên dưới. **not_complete**: chưa đủ sản phẩm đầu ra hoặc chưa triển khai đầy đủ pipeline.
 
-Build/current package gần nhất: `dotnet build solo_vs_mortal_godot.csproj --no-restore` pass 0 warning/0 error; Godot .NET 4.7.2 đã export debug/package thành công. Đây chỉ là compile/package evidence. Theo quyết định user ngày 2026-09-10, Godot .NET 4.7.2 là implementation baseline chính thức; source pin `Godot.NET.Sdk/4.7.2` và project advertise 4.7 C# Forward Plus. Windows export preset hiện chọn `gl_compatibility`; khác biệt rendering này được ghi nhận riêng và không bị thay đổi bởi ISSUE-01.
+Build/current package gần nhất: `dotnet build solo_vs_mortal_godot.csproj --no-restore` pass 0 error (1 warning `NU1900` vì không truy cập được NuGet vulnerability metadata); `dotnet publish ... --no-restore --configuration Release --runtime win-x64 --self-contained false` pass cùng warning. Godot .NET 4.7.2 Windows export retry của ISSUE-04 tới bước pack nhưng internal .NET publish báo fail; đây là package/toolchain follow-up, không phải gameplay evidence hay Part4 source defect. Theo quyết định user ngày 2026-09-10, Godot .NET 4.7.2 là implementation baseline chính thức; source pin `Godot.NET.Sdk/4.7.2` và project advertise 4.7 C# Forward Plus. Windows export preset hiện chọn `gl_compatibility`; khác biệt rendering này được ghi nhận riêng và không bị thay đổi bởi ISSUE-01.
 
 Không đánh dấu cả phần complete chỉ vì có class/API, static audit hoặc build thành công. Agent tự chịu trách nhiệm audit source, sửa code/data/docs, build/export bằng toolchain 4.7.2 đã chốt, technical asset QA, dependency cleanup và chuẩn bị checklist. User giữ các gate không thể thay thế: chạy 18 manual gameplay acceptance cases trong game thật và approve/reject mỹ thuật. Không tạo/chạy automated gameplay tests, harness, parity runner, soak hay headless gameplay smoke theo policy hiện hành.
 
@@ -23,7 +23,7 @@ Số phần dưới đây là kế hoạch 8 phần đã giao trong hội thoạ
 | 1 | Audit ban đầu và lập kế hoạch migration | complete |
 | 2 | Nền tảng authority, loader, cấu trúc và tài liệu | in_progress |
 | 3 | Simulation/combat/player/AI nền tảng | in_progress |
-| 4 | Soul, Density, Sync, Banner, Summon, Spirit, Possession, capability | in_progress |
+| 4 | Soul, Density, Sync, Banner, Summon, Spirit, Possession, capability | ISSUE-04 CODE_COMPLETE — READY_FOR_USER_ACCEPTANCE |
 | 5 | Inventory, skills, mastery, quests, loot, world, save/migration | in_progress |
 | 6 | Adapter assets và dọn code/assets/docs cũ | in_progress |
 | 7 | Hoàn thiện bộ Slice assets và export | not_complete |
@@ -71,23 +71,15 @@ Các bước tiếp theo:
 
 ## 5. Phần 4 — Vòng lặp Soul
 
-Status: **in_progress**.
+Status: **ISSUE-04 CODE_COMPLETE — READY_FOR_USER_ACCEPTANCE**.
 
-Đã triển khai các hệ thống chính và nối vào Application/HUD. Phiên sửa trực tiếp đã xử lý tốc độ Spirit theo phút/tick, khóa thao tác lúc suspend, lưu trước thông báo đột phá, loadout duplicate và passive. Những thay đổi này chưa đủ để đóng toàn bộ 12 task phần 4.
+Đã hoàn tất matrix requirement→owner→producer→caller→mutation→save→validation→restore→Application/UI cho toàn bộ Soul loop. Matrix hiện hành: `docs/V2.5/ISSUE-04_SOUL_LOOP_CLOSURE_MATRIX.md`.
 
-Các bước tiếp theo, theo nhóm task gốc:
+Các gap được xác nhận và đã sửa: producer Sync cho Ally kill/possession kill/ritual giữ E; role radius và transition guard của Summon; caller SummonAll/RecallAll/focus/mode/end possession; cooldown Ally sau recall/restore; tutorial Soul chỉ Skeleton level1; durable-WAL signal cho world drop/pity/Sync progress. Legacy Devour/Essence/Bloodline còn tồn tại chỉ cho compatibility và không được construct trong canonical runtime.
 
-1. **4.01–4.02 Density/capture:** đối chiếu immutable awards, proof-only, pending/discard, consumed pickup, pity và WorldSoul region. Rà invalid capture không consume/RNG; retry cùng transaction không cấp lại reward. Hoàn thành P03/P05/P06 trước khi đóng capture/save.
-2. **4.03–4.04 facts/breakthrough/Banner:** trace boss thật → fact provenance → điều kiện nâng rank → receipt → durable save → UI. Kiểm tra cap Beta/Full; lệnh sai shrine/rank/density không thay state.
-3. **4.05 Sync:** liệt kê đủ 8 nguồn cho từng species và caller thực tế. Rà quest/landmark/kill/secret tới source đúng; fact có trước ownership vẫn claim đúng một lần. Kiểm tra nghi thức giữ E theo spec: đủ thời gian, đúng shrine, move/damage cancel, không nhận bằng lệnh tức thời. Nối producer còn thiếu, không chỉ dựa vào `ClaimAt == shrine`.
-4. **4.06 placement:** rà nearest-free và đường đi thật với collider/gate; actor không mượn capability của Player. Không-space phải giữ nguyên Soul mode, Spirit và UID.
-5. **4.07–4.09 summon/Spirit/Ally:** rà một Ally/species, SummonAll từng kết quả độc lập, recall giữ tỷ lệ HP/CD, chết sang Dispersed/recovery, focus/Guard/Assault/formation và path-fail. Đối chiếu carry Spirit mới với save cũ và đúng zero-crossing.
-6. **4.10 Possession:** rà snapshot duration/CD/stats/milestones; thu hồi đúng SourceInstance; chuyển vùng kết thúc full cooldown; restore không tính lại snapshot từ Soul đã thay đổi.
-7. **4.11 traversal:** hoàn thành audit anchor/grace/rescue và hazard ở W03–W06. Bảo đảm damage rescue nonlethal dùng CurrentHP, không chỉ MaxHP.
-8. **4.12 tích hợp/obsolete:** quét caller thực tế để chặn Devour/Essence/Bloodline/pills/cost-slot cũ trên canonical path; phần code legacy còn cần cho migration phải được cô lập và ghi lý do giữ. Việc xóa file vật lý phối hợp phần 6, không báo đã xóa khi mới ẩn HUD.
-9. Cập nhật evidence 4.01–4.12 thành bảng yêu cầu → symbol/caller → save field → manual case → phần chưa đạt. Không đóng cả nhóm khi còn “producer làm sau”.
+Tất cả 152 Sync source đã được trace (19 species × 8), gồm source event, identity/dedup, award/version, total/milestone, save/restore và UI state. Pathing Part4 dùng nearest-free South-first/clockwise và A* có blocker; no-space không mutate. Không có asset blocker: `NO_ASSET_APPROVAL_REQUIRED_FOR_ISSUE_04 — visual asset production/in-engine visual acceptance belongs to Part 6/7/W09.`
 
-**Điều kiện complete:** vòng kill → pickup → Density/Sync → Banner → Summon/recall/death → Possession → save/load hoạt động qua runtime thật, đủ nguồn tiến trình, không còn đường gameplay cũ trên canonical flow và không còn lỗi đã biết thuộc phần này.
+**Remaining Part4 gate:** user chạy 18 canonical manual cases trong Arena thật, ghi screenshot/HUD/save-reload evidence khi fail. Không có automated gameplay test/harness nào được tạo hoặc chạy.
 
 ## 6. Phần 5 — Inventory, skills, mastery, quests, world và persistence
 
@@ -260,7 +252,7 @@ User đã quyết định ngày 2026-09-10: **Godot .NET 4.7.2** là implementat
 
 Agent thực hiện liên tục, không cần user prompt từng bước:
 
-1. **Part 4 Soul loop:** hoàn tất requirement→caller→save→manual-case matrix cho Density/capture, Sync 8 nguồn/species, Banner, Summon/Spirit/Ally, Possession và placement; xác nhận các task đã static-review thật sự và liệt kê đúng manual case còn chờ user.
+1. **Part 4 Soul loop:** đã code-complete bởi ISSUE-04; giữ matrix/manual handoff và chỉ mở lại khi user báo lỗi từ real-scene acceptance.
 2. **Part 5 gameplay/content:** review nốt Inventory/skill-loadout/mastery/quest/loot/unique/boss ở runtime caller thật; không chỉ dựa vào class/API tồn tại.
 3. Rà các transaction cần durable save để không còn đường state mutation chờ autosave ngoài contract.
 4. Rà exact source/grant/cooldown ownership khi đổi equipment, passive, possession, summon/recall/death/travel.
@@ -332,7 +324,7 @@ Khi code + approved asset scope + baseline engine đều sẵn:
 ### 11.10. Thứ tự ưu tiên ngay từ current commit
 
 1. **Không thêm gameplay feature mới ngoài V2.5** cho tới khi current requirements/caller matrix được reconcile.
-2. Agent tiếp tục Part 4–5 static closure + architecture boundary cleanup có kiểm soát.
+2. Agent tiếp tục Part 5 static closure + architecture boundary cleanup có kiểm soát; Part4 chỉ nhận regression từ user acceptance.
 3. Song song Art chạy world batches; Player dependent clips chờ 4-direction Idle rework + user decision.
 4. Agent duy trì evidence executable/templates Godot .NET 4.7.2 và baseline build/export khi toolchain/package configuration thay đổi.
 5. Khi approved asset export xuất hiện: map catalog → migrate 640×360 presentation → đóng W09.
@@ -670,3 +662,14 @@ Khi code + approved asset scope + baseline engine đều sẵn:
 - **Trạng thái:** `complete`.
 - **Đã cập nhật current-state:** active workspace path là `C:/ws/asset-production-system`; policy, current status, execution plans, dependency inventory, runtime asset-catalog provenance và live helper configuration dùng form hyphen.
 - **Historical safety:** các entry cũ dưới Section 12 không bị sửa hoặc xóa; chúng giữ nguyên path được ghi tại thời điểm evidence/journal được tạo. Audit snapshots, scope locks, generated provenance và review/error records cũng được giữ nguyên để không làm sai hash hoặc provenance lịch sử.
+
+### 2026-09-10 — ISSUE-04: Closure Part 4 — Soul Loop
+
+- **Trạng thái:** `ISSUE-04 CODE_COMPLETE — READY_FOR_USER_ACCEPTANCE`.
+- **Scope/audit:** Đọc policy/repository records, authority Markdown và bundle hash-pinned. SHA-256 của toàn bộ sáu entry trong `data/v2.5/spec-lock.json` khớp `C:/ws/asset-production-system`; không đổi spec-lock hoặc gameplay authority. Matrix requirement→owner→producer→caller→mutation→persistence→validation→restore→Application/UI→manual case nằm tại `docs/V2.5/ISSUE-04_SOUL_LOOP_CLOSURE_MATRIX.md`.
+- **Confirmed gaps/fixes:** Bổ sung producer runtime `AllySpeciesKills`, `KillsWhilePossessed` và `ClaimOtherSyncSources` (hold E 3s, shrine, move/damage/death/release cancel) cho Sync; Summon dùng role body radius thay hardcode và bị chặn ở possession transition; Application/Arena có command thật cho SummonAll, RecallAll, focus/mode và end possession; Recall chuyển cooldown của Ally UID sang Ready species và restore chỉ cho phép row Ready không-empty; tutorial reward bị khóa Skeleton Level1; drop/pity và Sync progress yêu cầu WAL commit ngay thay vì đợi autosave.
+- **Runtime callers/persistence:** `GameSession.FixedStep` → Soul/Sync/Summon/Spirit/Ally/Possession; `Arena` → `GameApplication` → Simulation. Capture/validate/staged restore bao phủ ownership, Density ledger/pending/proofs, pickups/pity/receipts, Sync awards/progress/milestones, Banner receipts, Spirit carries, summon/Ally state/cooldowns, possession snapshot/cooldowns/transition. `V25SaveStore` giữ exact envelope/transaction retry.
+- **Legacy:** canonical `GameSession` không construct Devour/Essence/Bloodline; legacy files/payload giữ cho compatibility v1–v6/cleanup Part6, không có caller canonical.
+- **Build/export evidence:** `dotnet build solo_vs_mortal_godot.csproj --no-restore` succeeded, 0 errors, warning `NU1900` (NuGet vulnerability metadata unreachable). `dotnet publish solo_vs_mortal_godot.csproj --no-restore --configuration Release --runtime win-x64 --self-contained false` succeeded with the same warning. Godot `4.7.2.stable.mono.official.ed1daf0bf` Windows Desktop export was attempted twice; internal .NET publish reported failure although command-line publish succeeded. Đây là package/toolchain follow-up, không phải gameplay acceptance hay Part4 source blocker.
+- **Asset result:** `NO_ASSET_APPROVAL_REQUIRED_FOR_ISSUE_04 — visual asset production/in-engine visual acceptance belongs to Part 6/7/W09.`
+- **User handoff:** 18 canonical cases, exact actions/expected results và screenshot/save-reload evidence khi fail được map trong closure matrix. Agent không tạo/chạy gameplay test, parity runner, soak hoặc headless acceptance. User là sole gameplay tester theo `AGENTS.md`.

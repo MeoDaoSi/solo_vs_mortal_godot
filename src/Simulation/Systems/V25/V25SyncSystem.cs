@@ -1,10 +1,16 @@
 using SoloVsMortal.Core.Events;
+using SoloVsMortal.Core.Math;
 using SoloVsMortal.Data.Definitions.V25;
 using SoloVsMortal.Simulation.Events;
 using SoloVsMortal.Simulation.Rules;
 using SoloVsMortal.Simulation.State.V25;
 
 namespace SoloVsMortal.Simulation.Systems.V25;
+
+/// <summary>Transient shrine interaction for the authored eighth Sync source. No award or
+/// receipt exists until the hold completes, so an interrupted interaction is intentionally not
+/// save state.</summary>
+public sealed record V25SyncRitualProgress(bool Started, bool Completed, string? SpeciesId, int RemainingTicks, string? Failure = null);
 
 /// <summary>
 /// Historical Sync ledger. Authored source amounts and versions are recorded once; event counts
@@ -20,12 +26,20 @@ public sealed class V25SyncSystem : IDisposable
     private readonly Func<bool>? _atShrine;
     private readonly Func<string, bool>? _hasCapability;
     private readonly Func<string, bool>? _isPossessed;
+    private readonly Func<string, string?>? _sourceSoulForAlly;
+    private readonly Func<string>? _playerUid;
+    private readonly Func<Vec2>? _playerPosition;
     private readonly IDisposable _defeatSubscription;
     private readonly IDisposable _soulAcquiredSubscription;
+    private readonly IDisposable _playerDamagedSubscription;
+    private readonly IDisposable _playerDefeatedSubscription;
     private readonly List<V25SyncAwardCommittedEvent> _eventsPendingCommit = new();
+    private ActiveRitual? _activeRitual;
+    private bool _mutationPendingCommit;
 
     public V25SyncSystem(EventBus events, CanonicalContentRegistry canonical, SoulSystem souls, Func<long>? tick = null,
-        Func<bool>? atShrine = null, Func<string, bool>? hasCapability = null, Func<string, bool>? isPossessed = null)
+        Func<bool>? atShrine = null, Func<string, bool>? hasCapability = null, Func<string, bool>? isPossessed = null,
+        Func<string, string?>? sourceSoulForAlly = null, Func<string>? playerUid = null, Func<Vec2>? playerPosition = null)
     {
         _events = events ?? throw new ArgumentNullException(nameof(events));
         _canonical = canonical ?? throw new ArgumentNullException(nameof(canonical));
@@ -34,9 +48,14 @@ public sealed class V25SyncSystem : IDisposable
         _atShrine = atShrine;
         _hasCapability = hasCapability;
         _isPossessed = isPossessed;
+        _sourceSoulForAlly = sourceSoulForAlly;
+        _playerUid = playerUid;
+        _playerPosition = playerPosition;
         foreach (var species in _canonical.SpeciesForProfile(_canonical.ActiveProfileId)) _states.Add(species.Id, new SpeciesState(species.Id));
         _defeatSubscription = events.Subscribe<MonsterDefeatedEvent>(OnMonsterDefeated);
         _soulAcquiredSubscription = events.Subscribe<SoulAcquiredEvent>(_ => EvaluateAll(publishImmediately: true));
+        _playerDamagedSubscription = events.Subscribe<PlayerDamagedEvent>(_ => CancelRitual());
+        _playerDefeatedSubscription = events.Subscribe<PlayerDefeatedEvent>(_ => CancelRitual());
     }
 
     public IReadOnlyList<V25SpeciesSyncSnapshot> Snapshot() => _states.Values.OrderBy(item => item.SpeciesId, StringComparer.Ordinal).Select(item => item.Snapshot()).ToArray();
@@ -46,6 +65,59 @@ public sealed class V25SyncSystem : IDisposable
     public IReadOnlySet<string> Milestones(string speciesId) => State(speciesId).UnlockedMilestones.ToHashSet(StringComparer.Ordinal);
 
     public bool IsAwarded(string speciesId, string sourceKey) => State(speciesId).Awards.ContainsKey(sourceKey);
+    public bool HasCanonicalDurableChanges => _mutationPendingCommit;
+
+    public V25SyncRitualProgress RitualProgress
+    {
+        get
+        {
+            if (_activeRitual is not { } ritual) return new(false, false, null, 0);
+            var elapsed = checked((int)Math.Min(int.MaxValue, _tick() - ritual.StartedTick));
+            return new(true, false, ritual.SpeciesId, Math.Max(0, ritual.DurationTicks - elapsed));
+        }
+    }
+
+    /// <summary>Starts the authored hold-E ritual only when seven other immutable source awards
+    /// exist for one owned species. The caller must keep advancing it while E stays held.</summary>
+    public V25SyncRitualProgress BeginAvailableRitual()
+    {
+        if (_activeRitual is not null) return RitualProgress;
+        var source = _canonical.Content.SyncSources
+            .Where(item => item.Event == "ClaimOtherSyncSources" && item.InteractMs > 0 && IsRitualEligible(item))
+            .OrderBy(item => item.SpeciesId, StringComparer.Ordinal).ThenBy(item => item.Id, StringComparer.Ordinal)
+            .FirstOrDefault();
+        if (source is null) return new(false, false, null, 0, "NoEligibleRitual");
+        if (_atShrine?.Invoke() != true) return new(false, false, source.SpeciesId, 0, "NotAtShrine");
+        if (_playerPosition is null) return new(false, false, source.SpeciesId, 0, "MissingPlayerPosition");
+        _activeRitual = new ActiveRitual(source.Id, source.SpeciesId, _tick(), _playerPosition(), V25CombatRules.MillisecondsToTicksCeil(source.InteractMs));
+        return RitualProgress;
+    }
+
+    /// <summary>Completes only a continuous shrine hold. Damage, death, release, movement, or
+    /// a changed prerequisite cancel without creating a source event, award, or receipt.</summary>
+    public V25SyncRitualProgress AdvanceRitual(bool held)
+    {
+        if (_activeRitual is not { } ritual) return new(false, false, null, 0, "NoActiveRitual");
+        if (!held) return CancelRitual("Released");
+        var source = _canonical.Content.SyncSources.FirstOrDefault(item => item.Id == ritual.SourceId);
+        if (source is null || !IsRitualEligible(source)) return CancelRitual("RequirementsChanged");
+        if (_atShrine?.Invoke() != true || _playerPosition is null || _playerPosition().DistanceTo(ritual.StartPosition) > 1)
+            return CancelRitual("MovedOrLeftShrine");
+        var elapsed = checked((int)Math.Min(int.MaxValue, _tick() - ritual.StartedTick));
+        var remaining = Math.Max(0, ritual.DurationTicks - elapsed);
+        if (remaining > 0) return new(true, false, ritual.SpeciesId, remaining);
+
+        _activeRitual = null;
+        CompleteRitual(source, ritual);
+        return new(false, true, ritual.SpeciesId, 0);
+    }
+
+    public V25SyncRitualProgress CancelRitual(string failure = "Canceled")
+    {
+        if (_activeRitual is not { } ritual) return new(false, false, null, 0, failure);
+        _activeRitual = null;
+        return new(false, false, ritual.SpeciesId, 0, failure);
+    }
 
     /// <summary>Claims sources made eligible by a pending Soul capture before its durable save is built.</summary>
     public void PrepareOwnershipCommit() => EvaluateAll(publishImmediately: false);
@@ -56,6 +128,9 @@ public sealed class V25SyncSystem : IDisposable
         _eventsPendingCommit.Clear();
         foreach (var item in committed) _events.Publish(item);
     }
+
+    /// <summary>Clears only after the current WAL payload containing progress/awards committed.</summary>
+    public void CompleteCanonicalDurableCommit() => _mutationPendingCommit = false;
 
     /// <summary>Records one authored source event with a stable event identity.</summary>
     public void RecordEvent(string eventId, string eventName, string target, string? actorSpeciesId = null, bool currentSpeciesPossession = false, bool atShrine = false)
@@ -72,6 +147,7 @@ public sealed class V25SyncSystem : IDisposable
             progress.EventIds.Add(eventId);
             state.Progress[source.Id] = progress;
             TryClaim(source, state, atShrine, currentSpeciesPossession);
+            _mutationPendingCommit = true;
         }
     }
 
@@ -98,6 +174,8 @@ public sealed class V25SyncSystem : IDisposable
         // Every row was validated into a detached state, so replacing this map is the commit point.
         _states.Clear(); foreach (var pair in staged) _states.Add(pair.Key, pair.Value);
         _eventsPendingCommit.Clear();
+        _activeRitual = null;
+        _mutationPendingCommit = false;
     }
 
     private void OnMonsterDefeated(MonsterDefeatedEvent defeated)
@@ -107,6 +185,23 @@ public sealed class V25SyncSystem : IDisposable
         RecordEvent(eventId, "EligibleSpeciesKills", defeated.SpeciesId, defeated.SpeciesId);
         if (defeated.EncounterType is V25EncounterType.Boss or V25EncounterType.Elite)
             RecordEvent(eventId, "DefeatActor", defeated.EncounterId ?? defeated.Uid, defeated.SpeciesId);
+
+        if (defeated.SourceUid is not { } sourceUid) return;
+        if (_sourceSoulForAlly?.Invoke(sourceUid) is { } sourceSoulId && _souls.OwnedSoul(sourceSoulId) is { } sourceSoul)
+        {
+            // The owner Soul must match the species whose Ally made the lethal hit; a Player
+            // kill or a different Ally never advances this source.
+            RecordEvent(eventId, "AllySpeciesKills", defeated.SpeciesId, sourceSoul.Origin.SpeciesId);
+            return;
+        }
+        if (string.Equals(sourceUid, _playerUid?.Invoke(), StringComparison.Ordinal))
+        {
+            var possessionSpecies = _canonical.SpeciesForProfile(_canonical.ActiveProfileId)
+                .Where(species => _isPossessed?.Invoke(species.Id) == true)
+                .Select(species => species.Id).SingleOrDefault();
+            if (possessionSpecies is not null)
+                RecordEvent(eventId, "KillsWhilePossessed", defeated.SpeciesId, possessionSpecies, currentSpeciesPossession: true);
+        }
     }
 
     private void EvaluateAll(bool publishImmediately)
@@ -145,6 +240,29 @@ public sealed class V25SyncSystem : IDisposable
         else _eventsPendingCommit.Add(committedEvent);
     }
 
+    private bool IsRitualEligible(CanonicalSyncSourceDefinition source)
+    {
+        var state = State(source.SpeciesId);
+        var owned = _souls.CanonicalDensity?.GetOwnership(source.SpeciesId).IsOwned == true;
+        return source.ClaimAt == "shrine" && source.Event == "ClaimOtherSyncSources" && source.InteractMs > 0 &&
+            owned && !state.Awards.ContainsKey(source.SourceKey) &&
+            state.Awards.Keys.Count(key => !string.Equals(key, source.SourceKey, StringComparison.Ordinal)) >= source.RequiredCount;
+    }
+
+    private void CompleteRitual(CanonicalSyncSourceDefinition source, ActiveRitual ritual)
+    {
+        var state = State(source.SpeciesId);
+        var eventId = $"sync.ritual.{source.SpeciesId}.{ritual.StartedTick}";
+        var eventKey = $"{source.Id}|{eventId}";
+        if (!state.EventIds.Add(eventKey)) return;
+        var progress = state.Progress.GetValueOrDefault(source.Id) ?? new ProgressState(source.Id);
+        progress.Count = Math.Max(progress.Count, source.RequiredCount);
+        progress.EventIds.Add(eventId);
+        state.Progress[source.Id] = progress;
+        TryClaim(source, state, atShrine: true, currentSpeciesPossession: false);
+        _mutationPendingCommit = true;
+    }
+
     private SpeciesState State(string speciesId) => _states.TryGetValue(speciesId, out var state)
         ? state : throw new InvalidDataException($"Canonical Sync species '{speciesId}' is unavailable.");
 
@@ -160,7 +278,9 @@ public sealed class V25SyncSystem : IDisposable
             throw new InvalidDataException($"Invalid Sync {label} '{value}'.");
     }
 
-    public void Dispose() { _defeatSubscription.Dispose(); _soulAcquiredSubscription.Dispose(); }
+    public void Dispose() { _defeatSubscription.Dispose(); _soulAcquiredSubscription.Dispose(); _playerDamagedSubscription.Dispose(); _playerDefeatedSubscription.Dispose(); }
+
+    private sealed record ActiveRitual(string SourceId, string SpeciesId, long StartedTick, Vec2 StartPosition, int DurationTicks);
 
     private sealed class SpeciesState
     {
