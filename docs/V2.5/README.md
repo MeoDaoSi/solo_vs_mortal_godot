@@ -7,6 +7,7 @@ The closed gameplay authority is outside this checkout at `C:/ws/asset-productio
 - [Implementation progress](IMPLEMENTATION_PROGRESS_V2.5_2026-09-09.md) is append-only implementation evidence. Its original plan is preserved and later work is recorded under the append-only journal.
 - [Current implementation status](CURRENT_IMPLEMENTATION_STATUS.md) is the one-place current-state index. It points to evidence without rewriting historical plans or audit records.
 - [Asset dependency inventory](ASSET_DEPENDENCY_INVENTORY_V2.5.md) records protected groups, canonical runtime mappings, and the deletion gates for part 6.
+- [Asset Integration Trial](ASSET_INTEGRATION_TRIAL_2026-09-10.md) records the 161-ID, presentation-only Trial package, provenance checks, runtime/viewer boundaries, and user visual-review route.
 - [Slice scope reconciliation](SLICE_SCOPE_RECONCILIATION_V2.5.md) locks the 161 Slice 01 logical IDs, explains the former 158/161 mismatch, and separates workflow state from user approval.
 - [Slice output audit](SLICE_OUTPUT_AUDIT_V2.5.json) records the hash/manifest verification result for each locked ID at the audit snapshot.
 - [Slice dispatch plan](SLICE_DISPATCH_PLAN_V2.5.md) orders only the remaining independent production batches and records the Player identity approval gate.

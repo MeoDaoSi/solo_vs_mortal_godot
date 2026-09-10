@@ -1,77 +1,7951 @@
 {
   "schemaVersion": 1,
-  "catalogId": "svm-v2.5-runtime-assets",
-  "catalogVersion": "skeleton-static-integration-v001",
+  "catalogId": "v2.5.asset-integration-trial",
+  "catalogVersion": "asset-integration-trial-v001",
   "complete": false,
-  "sourceExport": "C:/ws/asset-production-system/art/exports/skeleton-static-integration-v001/asset-map.json",
+  "sourceExport": "assets/v2.5/asset-integration-trial-v001/provenance.json",
   "assets": [
     {
+      "assetId": "soul.skeleton.rank01.enemy.attack.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.enemy.attack.s.png",
+      "sha256": "2d4d884a4daee59b6269ca955e8081e9e06e90a2aae1b5bb6a5359851232b4f3",
+      "role": "actor",
+      "representation": "enemy",
+      "rank": 1,
+      "direction": "s",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 10,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.hit.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.enemy.hit.s.png",
+      "sha256": "071bed5018d134a282990f65bf97bd3edba16e09805732690703d0de175ba8d8",
+      "role": "actor",
+      "representation": "enemy",
+      "rank": 1,
+      "direction": "s",
+      "clip": "hit",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 10,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.hit.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.enemy.hit.w.png",
+      "sha256": "03fbe8b0a367b2ebcc7ff829a84fcf075dad4fc2d751cae12003eaac52a8157d",
+      "role": "actor",
+      "representation": "enemy",
+      "rank": 1,
+      "direction": "w",
+      "clip": "hit",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 10,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.hit.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.enemy.hit.e.png",
+      "sha256": "a480d357f21d75f87a657c8f061c0c7750d489685c2509f48b01af6c93f83000",
+      "role": "actor",
+      "representation": "enemy",
+      "rank": 1,
+      "direction": "e",
+      "clip": "hit",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 10,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.death.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.enemy.death.s.png",
+      "sha256": "19d8fa4105da1bf6ac3d4f42702ae08b3afac9ca5ac68f7396537ff3f1975d81",
+      "role": "actor",
+      "representation": "enemy",
+      "rank": 1,
+      "direction": "s",
+      "clip": "death",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 10,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.death.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.enemy.death.w.png",
+      "sha256": "d4076d2b3ba7d98a717cda6568f8ab97048c4498e9b49efee8ca0b2f2de49b0a",
+      "role": "actor",
+      "representation": "enemy",
+      "rank": 1,
+      "direction": "w",
+      "clip": "death",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 10,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.death.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.enemy.death.e.png",
+      "sha256": "835fb8507a87675a7bbd251dfb3c358f3076ee06e40f45461e57696bf8c92526",
+      "role": "actor",
+      "representation": "enemy",
+      "rank": 1,
+      "direction": "e",
+      "clip": "death",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 10,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.death.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.enemy.death.n.png",
+      "sha256": "74b042671fb581443e8ab98ba9283d5b732ce383ca8a43d56c4917200623953e",
+      "role": "actor",
+      "representation": "enemy",
+      "rank": 1,
+      "direction": "n",
+      "clip": "death",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 10,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.idle.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.idle.s.png",
+      "sha256": "d05860f02afad97e2a182b75f7c495cc1c3306eabfbb85a987b270590b88a7b3",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "s",
+      "clip": "idle",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.idle.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.idle.w.png",
+      "sha256": "a0c4dea957e031adfb607bdc8c4e1e454ad34058fcf5dc797d7f40dd1c9d0f2b",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "w",
+      "clip": "idle",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.idle.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.idle.e.png",
+      "sha256": "7e48ecdc06234e94c4b818e6fba30f1fcd66799507ac1d125ddc8776fdb5b741",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "e",
+      "clip": "idle",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.idle.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.idle.n.png",
+      "sha256": "a62217f058777e4b47f7cc443881fdc1f8cde2aebb63433554994770c2066df8",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "n",
+      "clip": "idle",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.move.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.move.s.png",
+      "sha256": "1025ebcf48b2bdf7a216ed36c0e651b2b42e962f6645b814549db0045c339132",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "s",
+      "clip": "move",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.move.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.move.w.png",
+      "sha256": "130f770ea091c502a67749321a7388d5d63dff0c4f4e33a1ddacad7bcc9c2e8e",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "w",
+      "clip": "move",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.move.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.move.e.png",
+      "sha256": "f8f484876d55eefb0a879a5c81c2dbbc4629d4de4ea982da2339252044665815",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "e",
+      "clip": "move",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.move.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.move.n.png",
+      "sha256": "c80be36d104de9222c0a76b23e6040907c4f1242b26e24d1344301da21985dc4",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "n",
+      "clip": "move",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.attack.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.attack.s.png",
+      "sha256": "bcd70de3d8e0bf8d685cfe530fbc1c710e3e15789e09c008ca0d218f96717f66",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "s",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.attack.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.attack.w.png",
+      "sha256": "c18b48c09702f5e1becf26718ac3d2e7cebc0e210af2707f2e90221465d7c5f3",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "w",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.attack.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.attack.e.png",
+      "sha256": "44a1a92199ad215052318e808e3a8c613572cef78af96825c26002883a80e072",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "e",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.attack.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.attack.n.png",
+      "sha256": "afde18c2b6cba6a0e3663278f2eedd9ba0461f22c06e656585bd92fcea271e3f",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "n",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.hit.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.hit.s.png",
+      "sha256": "ca77f1bf95c39eba4562f4aed4719ebd31d94bb8912a51360a4da87f80e401ef",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "s",
+      "clip": "hit",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.hit.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.hit.w.png",
+      "sha256": "7bfbf4301dd27f7b069c7bc7a06923fd15a2428a0def7f09228446b19f14b374",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "w",
+      "clip": "hit",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.hit.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.hit.e.png",
+      "sha256": "5441ba0d9411df27d47de8b8c9473eebbfbedd93db18bcad59fbfec6824784cf",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "e",
+      "clip": "hit",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.hit.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.hit.n.png",
+      "sha256": "dc37fac813e838342b5d4e8ec15375c027e03f63835ace0f999d26e4aa88aea2",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "n",
+      "clip": "hit",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.disperse.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.disperse.s.png",
+      "sha256": "65b826f7e9062d96d8030b6dbd9a55cda259e1a927a2b0b5bae62a3b5a468730",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "s",
+      "clip": "disperse",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.disperse.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.disperse.w.png",
+      "sha256": "49aeb52ad29b4c5642a423cf6365d093328784563bbe6cb64f94a4e2c35a9c22",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "w",
+      "clip": "disperse",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.disperse.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.disperse.e.png",
+      "sha256": "b3f5b95d6cae5310fdb1bb6f117228638505e41a0d14170c795898bd7a442236",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "e",
+      "clip": "disperse",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.disperse.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.disperse.n.png",
+      "sha256": "fc04f4f34fb7477c80b26f2b6c1ba0c96ea873591b924e11d0b10bf3cc8ffc49",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "n",
+      "clip": "disperse",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.summon.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.summon.s.png",
+      "sha256": "b8c68ac960b159ebacd5a2b3f706c684b923f7f10837e6df9c68e7109c8deaf7",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "s",
+      "clip": "summon",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.summon.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.summon.w.png",
+      "sha256": "ba4d02b7cd73dfd01b3331ececf9dd479f4cc32599d9bd697a257c697185a68c",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "w",
+      "clip": "summon",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.summon.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.summon.e.png",
+      "sha256": "2dd839890f42108e5ca7de3bf0b1e0cca9ca447ee6d46aeba2048c039931556e",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "e",
+      "clip": "summon",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.summon.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.summon.n.png",
+      "sha256": "cc5c83d9314fc958506944bf1f8153e1e4f3280c3141ac4c4cf1d57b8a0216d7",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "n",
+      "clip": "summon",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.recall.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.recall.s.png",
+      "sha256": "1f55bc2b79cbfcb293b860b9a0d470fe891adc3f9eee5115fb4399d33e52db14",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "s",
+      "clip": "recall",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.recall.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.recall.w.png",
+      "sha256": "9391ceacf27bdc4a74310cfb2b15e93cdc56b5a7b7c8ec749923687a69e0de71",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "w",
+      "clip": "recall",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.recall.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.recall.e.png",
+      "sha256": "65099476cc590670133bc447497970f19ea4ed02f0080fa0dad2ab9ad97681ee",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "e",
+      "clip": "recall",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.recall.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.recall.n.png",
+      "sha256": "05f76e6d78ba7bb04ac85266d37385da41fafa4914f163c5d48a13a1f9446463",
+      "role": "actor",
+      "representation": "ally",
+      "rank": 1,
+      "direction": "n",
+      "clip": "recall",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
       "assetId": "soul.skeleton.rank01.pickup",
-      "relativeFile": "assets/v2.5/skeleton-static-integration-v001/soul.skeleton.rank01.pickup.png",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.pickup.png",
       "sha256": "008a4002f74c353f9c4390ab843d7f79cc66d7e5ca36eab348991b73229d7a30",
       "role": "pickup",
       "representation": "pickup",
       "rank": 1,
       "direction": "none",
       "clip": "static",
-      "frameSize": [24, 24],
-      "frames": [{ "rect": [0, 0, 24, 24], "durationMs": 1000 }],
-      "pivot": [12, 20],
+      "frameSize": [
+        24,
+        24
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          24,
+          24
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        12,
+        20
+      ],
       "sockets": [],
-      "layering": { "zIndex": 8, "ySortEnabled": true },
-      "qa": { "technical": true, "visual": true, "inEngine": false },
+      "layering": {
+        "zIndex": 5,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": true,
+        "inEngine": false
+      },
       "approvalStatus": "user_reuse_authorized"
     },
     {
       "assetId": "soul.skeleton.rank01.banner.icon",
-      "relativeFile": "assets/v2.5/skeleton-static-integration-v001/soul.skeleton.rank01.banner.icon.png",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.banner.icon.png",
       "sha256": "cbcc3a7bf44eaf21d69b7a069aabd5a440b3872f7d7693922f8e6440037975b1",
       "role": "icon",
       "representation": "icon",
       "rank": 1,
       "direction": "none",
       "clip": "static",
-      "frameSize": [32, 32],
-      "frames": [{ "rect": [0, 0, 32, 32], "durationMs": 1000 }],
-      "pivot": [16, 16],
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        16,
+        16
+      ],
       "sockets": [],
-      "layering": { "zIndex": 30, "ySortEnabled": false },
-      "qa": { "technical": true, "visual": true, "inEngine": false },
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": true,
+        "inEngine": false
+      },
       "approvalStatus": "user_reuse_authorized"
     },
     {
       "assetId": "soul.skeleton.rank01.enemy.south",
-      "relativeFile": "assets/v2.5/skeleton-static-integration-v001/soul.skeleton.rank01.enemy.south.png",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.enemy.south.png",
       "sha256": "704f2202ed2bc61562a06a82cac35f16c2c75260a36c21ec53700c8e86d7cbca",
       "role": "actor",
       "representation": "enemy",
       "rank": 1,
       "direction": "s",
       "clip": "static",
-      "frameSize": [64, 64],
-      "frames": [{ "rect": [0, 0, 64, 64], "durationMs": 1000 }],
-      "pivot": [32, 56],
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
       "sockets": [],
-      "layering": { "zIndex": 10, "ySortEnabled": true },
-      "qa": { "technical": true, "visual": true, "inEngine": false },
+      "layering": {
+        "zIndex": 10,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": true,
+        "inEngine": false
+      },
       "approvalStatus": "user_reuse_authorized"
     },
     {
       "assetId": "soul.skeleton.rank01.ally.south",
-      "relativeFile": "assets/v2.5/skeleton-static-integration-v001/soul.skeleton.rank01.ally.south.png",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/soul.skeleton.rank01.ally.south.png",
       "sha256": "14914db945f90d0fccc4a2f2fea2e84d6cfe4c00b89f1d11caef1a03e7f3e748",
       "role": "actor",
       "representation": "ally",
       "rank": 1,
       "direction": "s",
       "clip": "static",
-      "frameSize": [64, 64],
-      "frames": [{ "rect": [0, 0, 64, 64], "durationMs": 1000 }],
-      "pivot": [32, 56],
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
       "sockets": [],
-      "layering": { "zIndex": 11, "ySortEnabled": true },
-      "qa": { "technical": true, "visual": true, "inEngine": false },
+      "layering": {
+        "zIndex": 11,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": true,
+        "inEngine": false
+      },
       "approvalStatus": "user_reuse_authorized"
+    },
+    {
+      "assetId": "equipment.sword.rank01.icon",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/equipment.sword.rank01.icon.png",
+      "sha256": "4c60fd0c380c50c2b3866c00a7bf446d6f284e677e9c91866d9c2b6c042fc2f8",
+      "role": "icon",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        16,
+        16
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "equipment.sword.rank01.attachment.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/equipment.sword.rank01.attachment.s.png",
+      "sha256": "03aae9b64e4ff23a83b890638dd0de5fa801622c9753ab51f336d75787144c1e",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "s",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "equipment.sword.rank01.weaponpose.attack.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/equipment.sword.rank01.weaponpose.attack.s.png",
+      "sha256": "069e06a326d94e5fb65b3c93b9ad200be4abc76f4487d253d807c9ce7fdc4a2d",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "s",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "equipment.sword.rank01.attachment.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/equipment.sword.rank01.attachment.w.png",
+      "sha256": "f06fe1e46f4b0609876975c5ba509db9dcbc8ecab3e5b408361795fb6b2c49c0",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "w",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "equipment.sword.rank01.weaponpose.attack.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/equipment.sword.rank01.weaponpose.attack.w.png",
+      "sha256": "6293909502f5ee0d75e990bafc98b95bb56f22546dc6cbdbaff629be544464cd",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "w",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "equipment.sword.rank01.attachment.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/equipment.sword.rank01.attachment.e.png",
+      "sha256": "909b37c7049ba43d6bf09bec5dee6c46b32aceb28e7677a0b414b944736fc1c2",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "e",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "equipment.sword.rank01.weaponpose.attack.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/equipment.sword.rank01.weaponpose.attack.e.png",
+      "sha256": "fe4dad572a423914a29ab18ee4a825d8e08aa325e3f6c236e81927152b8933da",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "e",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "equipment.sword.rank01.attachment.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/equipment.sword.rank01.attachment.n.png",
+      "sha256": "836057d4cad06ce66c1a137cd23f71e364365755cb86d6cd9af2f73ef4083a3a",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "n",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "equipment.sword.rank01.weaponpose.attack.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/equipment.sword.rank01.weaponpose.attack.n.png",
+      "sha256": "1bf58980234c4efaa017ac456c86128d84fc07f8ca7ae499dff04355cfaf2bf4",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "n",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.idle.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.idle.s.png",
+      "sha256": "27223e65f959083d729e2f784b23220806bfa4a298da6592579b7a6dd830e88b",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "s",
+      "clip": "idle",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.idle.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.idle.w.png",
+      "sha256": "68f5812c253b6dafbd39832b629d14f200459961bc126d8b8239fa73ecc0b328",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "w",
+      "clip": "idle",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.idle.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.idle.e.png",
+      "sha256": "cadf6f432ad125e572b4a8bce29f56f3dac7048439c92306b5f9c9b340268de8",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "e",
+      "clip": "idle",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.idle.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.idle.n.png",
+      "sha256": "94652cc5b8232aa7b511754f985b8d850f1ceae053e02a9017718b56ce006940",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "n",
+      "clip": "idle",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 200
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.move.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.move.s.png",
+      "sha256": "e3f6341ba889f161280005c6b989937b16cbf0408341b839f85a88f096a67a9b",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "s",
+      "clip": "move",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.move.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.move.w.png",
+      "sha256": "e3122cb2a786a3dc7c863bc83aaa81bf9f1ec64d157cbb0bad1d120ff101b6d3",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "w",
+      "clip": "move",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.move.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.move.e.png",
+      "sha256": "cdf953f8d72b7118f67fbab23908b452064e83e49afd7be1861976bb4eca0304",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "e",
+      "clip": "move",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.move.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.move.n.png",
+      "sha256": "4c9bed65c89fa48937b4b9ca6b2aacc7200b37090c6c58e8a6ed4a6ffdf171db",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "n",
+      "clip": "move",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.attack.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.attack.s.png",
+      "sha256": "61c5abf822cab982ff796f6dfac55e921d2f2ab0456b184e983275540f0c4a99",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "s",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.attack.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.attack.w.png",
+      "sha256": "033538dd4a89ec50fc19236be8f3167d66478f44c066c4081ad7cbd9d3ba15ef",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "w",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.attack.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.attack.e.png",
+      "sha256": "bffc161cde69762ae126dde58ed98f103b1d8bf263b6d7759bf251180eb282d1",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "e",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.attack.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.attack.n.png",
+      "sha256": "a59af5388fe1282afb34374f70f34c1726878ee5a4168dcd78f2d5425c1b7381",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "n",
+      "clip": "attack",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.hit.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.hit.s.png",
+      "sha256": "002e2e67011f0e886f9560eb36a77d0beefd72d79700ce05858a14ddf4bf5fe4",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "s",
+      "clip": "hit",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.hit.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.hit.w.png",
+      "sha256": "a14994d31a9e53764c823d4e6c191532f40977445bafdef2a8d0fb977543a8fb",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "w",
+      "clip": "hit",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.hit.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.hit.e.png",
+      "sha256": "0e7b9586333743045e05824007347df14854ad54d2544369170a2678ffbd615d",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "e",
+      "clip": "hit",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.hit.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.hit.n.png",
+      "sha256": "fb9b9f445675e7178609716f2819467c15a19cfce5c0421935198a0c1d9473cb",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "n",
+      "clip": "hit",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 80
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.death.s",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.death.s.png",
+      "sha256": "5dc1f97ecd5b1c32d01e2ad67e58fb737d7e9c67e8d3ceb93b67dadc396f2531",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "s",
+      "clip": "death",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.death.w",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.death.w.png",
+      "sha256": "ccfa3452f5e996acb19353f0d7b6a44af79aceef5c76283d3ab035561226c640",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "w",
+      "clip": "death",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.death.e",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.death.e.png",
+      "sha256": "161ff2a9037ae5f19e4ec0d1f99642d24f9e15b045b5c6436aa41d76e67c3661",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "e",
+      "clip": "death",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "player.base.death.n",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.death.n.png",
+      "sha256": "59840741d877fef30ab7735dd13baa85ac7f5b67b93cc7fa56cbcc4366026aff",
+      "role": "actor",
+      "representation": "ui",
+      "rank": 1,
+      "direction": "n",
+      "clip": "death",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            64,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            128,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            192,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            256,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        },
+        {
+          "rect": [
+            320,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 100
+        }
+      ],
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 12,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask00",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask00.png",
+      "sha256": "953f46aa73a59bb60df3c1f60f74c25a48413a5f44d6d1a3acd6f60cc8a0643a",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask01",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask01.png",
+      "sha256": "19e252f326530fe1bb8ed348821c3e0f744efbf94ba9c9d5f9d45a1360ecc939",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask02",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask02.png",
+      "sha256": "a53ed3bc13c96a82935da8fd3e8c48e61ca3175ffd6ac7f3874eda387d31ba83",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask03",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask03.png",
+      "sha256": "e720fa99abd8b038504a664d0bd05b7ffd79252604869bbd1640db071dd72b6a",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask04",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask04.png",
+      "sha256": "9981551a24dbf6803df2b3e3bbf1daf3c27bb24f859bd02e03d934244b755925",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask05",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask05.png",
+      "sha256": "178487fbf3792396acfd5d945eb23e5007680055c581dedcaec2cd0f7c830eb2",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask06",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask06.png",
+      "sha256": "cf604d0bb458796f6d7b261c339322ae14e6f99718a27f5a47ec63ef5ca43175",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask07",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask07.png",
+      "sha256": "5b9a0421700d394f1401aa4ee62248cb1049d1150b89ecfeb0c4a904dd0b2dd1",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask08",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask08.png",
+      "sha256": "ef52495941573af01668528b25bdd9aa992406e8d0341db60283749cc9ba6490",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask09",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask09.png",
+      "sha256": "7ce2e5940398bc01b37b279ac06e691905917eb06e277371ae3d9cbd860491fd",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask10",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask10.png",
+      "sha256": "c6a80495901220a227226660c4493cd75a3bd0ff043467b046158bae8f8fd27c",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask11",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask11.png",
+      "sha256": "8e6819857d2c85ff56ca55389279bb3c2af7e94b850ca437b3b716064aed524c",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask12",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask12.png",
+      "sha256": "328b850bfef4089f5d375698449c0d055e7928a34f357817d7e69a69b94740ba",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask13",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask13.png",
+      "sha256": "14bc40a7a819418ffb62d66dcccddf5a2bf4a587d5a5d770b826830ca00d8620",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask14",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask14.png",
+      "sha256": "829c7f91f428e73eee367acb974eceaa939eaf6a880c1f4d8e4f176aefed08d9",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask15",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ground.mask15.png",
+      "sha256": "867fdafe79f6f9517fc3fe860287b42079e0c2fb3a2da87e1850833d930ee936",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask00",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask00.png",
+      "sha256": "926414475f22f6231aa8e770cc67b05ff5c565b636f68ee8323172114e08424f",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask01",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask01.png",
+      "sha256": "e5a2d29b18aeba3f0f8b0336d74301fcc530de333bd9e58516cddefee2994a03",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask02",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask02.png",
+      "sha256": "eaf76d40d8efa0465eab298f9f5f87b6b04f4b315319834d702914981f426883",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask03",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask03.png",
+      "sha256": "1128d2b3d76f9c65b4c89d3c29d5f3e4b7ecdde326d67bec590cea73550db345",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask04",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask04.png",
+      "sha256": "e3608db528ee3a79aedb92ae65a42b924489631b93847de414a42aee0acfb63b",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask05",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask05.png",
+      "sha256": "b59727ddbf4584c53d183b55adb0f4676d957013b342eac14fd386924da97c8b",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask06",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask06.png",
+      "sha256": "cea712a918db90f579da40088c024d57e470a1a6432dc1e04228605979bb45e3",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask07",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask07.png",
+      "sha256": "1f4b19cb04b66803f8410ab93d313fd7274a10ac2ac1365309923376cec8a545",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask08",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask08.png",
+      "sha256": "117403f13e20e66848ab6fa33713446bf2f8dd06ed61c9805ca8b2738fdf8744",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask09",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask09.png",
+      "sha256": "b7680ff9706be7f4ffd76e5166853443d31d82fd4da3f82be457bc1c536b6cd3",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask10",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask10.png",
+      "sha256": "fcabc2df1740b23d99e529bc91f35a9d573dc83bbaaca8ca113a52ddea1b18ec",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask11",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask11.png",
+      "sha256": "4ea274f9fcda87b4c2ae19de92c24e8e581602f18fda16d900cdbefcec5bd364",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask12",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask12.png",
+      "sha256": "2f85b64f6743535b74fc36004cd11510e3f738d424872964687618a65c55d40f",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask13",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask13.png",
+      "sha256": "7239c0e0790155d1748444002d43b3ddb33e969943fa4b96f931195f6486b049",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask14",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask14.png",
+      "sha256": "dfb0a7b6cad21f18c5c66d8845758b2966a735b1ac707d6f623ca449d934af0d",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.path.mask15",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.path.mask15.png",
+      "sha256": "f77689d45b5a24cd43bf120ad105323d89f4297165f19be4d9ae7de775ac8db3",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask00",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask00.png",
+      "sha256": "a91e36cfb5f7e834db9ab5db00216d3b52d6377aeae37fca4ee18b07e2334e1a",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask01",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask01.png",
+      "sha256": "b867dea0f11dd3c8be8319c2d9d23da66a76e5aabcbca1b15f9fea645493b98b",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask02",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask02.png",
+      "sha256": "cef772c959270f3b91f4a55d38bbdc9e7b07760e2ea4170bba9c801e3ac57051",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask03",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask03.png",
+      "sha256": "fff7a4cd6d9841be2139e6e2062e9b3a9b2ac85fb05b6268dd7d950213fc02f6",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask04",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask04.png",
+      "sha256": "507fa3b6e1ea96687883b879fe1bb32257c841fe1120b72f24584e0677c3783b",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask05",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask05.png",
+      "sha256": "c36922d549b68b9030ff957e946937c117531432d337a2a302359e161bd26ecb",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask06",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask06.png",
+      "sha256": "8fa2cd8443a72f87e99c59868bc78ae6d942e64b859d1986d598cc555537fe8d",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask07",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask07.png",
+      "sha256": "8a137121d514b021e235942132bf9f7ea25aa9e6f08f79e5d77e1bd0fc415355",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask08",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask08.png",
+      "sha256": "c37fc709c9ab63192b19c05ae6ea63ec94c412674880ae737e010a7a336a383c",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask09",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask09.png",
+      "sha256": "3fedc4bee324aed8e4c2f742c3a3e4d2bee3a894e08c083ee250e6f1403c4b27",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask10",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask10.png",
+      "sha256": "f51b2deb578ee64295ec174c27391dfa13d3eeffdc34c0e5918367c2140f9365",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask11",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask11.png",
+      "sha256": "20db44adcac37608a347c3c209ba1d3ff2648d4710e608b81a4724e0c0fab866",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask12",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask12.png",
+      "sha256": "e5e392c9094494a91bddcbb3a5a805f7e25c8ecd74d1ed52a14c406bd3c000eb",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask13",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask13.png",
+      "sha256": "fe8ade9f316599dfe0b2636bb4c9705c510af00e9d4978e7c6be7de42955aa6d",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask14",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask14.png",
+      "sha256": "585b4aad22646d9e2040ce35e478a19c7b5b924afd0dbc5e6bfd270493800d24",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask15",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.ruin.mask15.png",
+      "sha256": "37e47b416a9acd98c1ed1d1fbaf08a03fa15882a9abc7eb5f7cb887a637fc90a",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask00",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask00.png",
+      "sha256": "22dc3e5b3b8787e4c79cff736b11e5b55817488b6d6c3b9c4741557da051c2cd",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask01",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask01.png",
+      "sha256": "4c6665c994295ed997c221b48d7f451a9605d9e66b727920352cf0cd74dc9e4e",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask02",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask02.png",
+      "sha256": "0b9feb6e583dae32f241270ec8d00b9419d60b523ba2f66e655198f52705df6d",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask03",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask03.png",
+      "sha256": "6c35dfdfaea6653f19d1b13a903c94438207a89f3b80138afa53a2c5d558448b",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask04",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask04.png",
+      "sha256": "7e4a6f025d11be6aff5bf5a2f3c6aa464cf2b8c9a6810dc057bb0a119ec8d84a",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask05",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask05.png",
+      "sha256": "9abd205740478ae402b85a1dd6734881ef0e9d17dff1662750becd89cb7d251c",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask06",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask06.png",
+      "sha256": "643c8db7129462851464d1369177edee6fb62205eee0d48aa4eb0ce426afd3a0",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask07",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask07.png",
+      "sha256": "ae6b16b454c918409bfafb7bd9caad01463975447c61965b167ec1c734beafec",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask08",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask08.png",
+      "sha256": "d3746f8fcca16adc18d19b8713b911ab005f2443b5a88f9d886d804bab28a37e",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask09",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask09.png",
+      "sha256": "be5cb2850ab817ac4d747e2042d025380f5c40575fc7e416f819b3b693de13b1",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask10",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask10.png",
+      "sha256": "85bad7f1c821eaa94b8569987b77caaf76474d23a3ce2d61edfaa2c3d008a094",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask11",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask11.png",
+      "sha256": "e3480fe5343370ada7f2c15ae4fe29c7f72151ba91a9ce11136a2f9a5ab4f852",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask12",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask12.png",
+      "sha256": "cca288a263d891ac707bbacde9dd455de034cd8bcb47d141f45d62421667afd8",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask13",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask13.png",
+      "sha256": "9fb6ea8852bf28595d6737881d21cd6e28094a0b220365222305c377fb2e5add",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask14",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask14.png",
+      "sha256": "ee174c6df7a2733fbd3a66693fb7909ba42266147aafcdfb7920f070888af96e",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask15",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.mask15.png",
+      "sha256": "905a0b59006f8fa4b4c6f72e8cd2a96c4a226bcbc1015645a08c263938cb5365",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.cap.nw",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.cap.nw.png",
+      "sha256": "09b76be4c113eec7911ce9faa028e58662ea56f28b92d2fa59aa5ba848a66fde",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.cap.ne",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.cap.ne.png",
+      "sha256": "cfd010a9c02e3ed8f22200b1283d9b25930ed1fff5f78bd255ed2c401a5674c2",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.cap.se",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.cap.se.png",
+      "sha256": "cfa527802e3de405be7c7e9ef98926340f15bb1dcafc67696c787562193443ff",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.wall.cap.sw",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.wall.cap.sw.png",
+      "sha256": "a9ab936a966071c686cae5658f678cace3c604300d5ef5662f4c0aa7ee47da4e",
+      "role": "tile",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        32,
+        32
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        0,
+        0
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": -10,
+        "ySortEnabled": false
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.shrine",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.shrine.png",
+      "sha256": "b111a547d531415b3f215b950f72ae43575676c1ca8d28555518027dbd39210f",
+      "role": "prop",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 0,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.chest",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.chest.png",
+      "sha256": "21801699a763783bd815bcd2727cdb470ce621fdff676934757ea869fe84c3b5",
+      "role": "prop",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 0,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.portal",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.portal.png",
+      "sha256": "730ab78d1bce00e97c3d3454314a0dade6afe3f1261193da9610f6c382f19b88",
+      "role": "prop",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 0,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.seal",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.seal.png",
+      "sha256": "c0c50ee956e7650fefddb6a565cb3f29abf1d4a01aadab89bb1614e669745e2d",
+      "role": "prop",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 0,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.landmark",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.landmark.png",
+      "sha256": "ac083f2c85751c5e8161e24c9491b987f58a16370e89fc04efb98f8fbaf315c1",
+      "role": "prop",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 0,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.pillar",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.pillar.png",
+      "sha256": "55303d402c4af203978afa325f5f31ab1f5aa621dc41a5e35c66761efb12a1bb",
+      "role": "prop",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 0,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.rock",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.rock.png",
+      "sha256": "f00683920548ec51ca39bddaef6bab36058e24d1c61d637f51a45f4226df595a",
+      "role": "prop",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 0,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.tree_or_spire",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.tree_or_spire.png",
+      "sha256": "bcdcc1c0c28b5e3efde7ea9d81e4b7966f90d5170ed3aaa99e580d0eea696c1a",
+      "role": "prop",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 0,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.banner",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.banner.png",
+      "sha256": "94ad48109146c77024f6e844091e2b96287bc59ab4865d960b9a47b5e946a38a",
+      "role": "prop",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 0,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.bridge_segment",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.bridge_segment.png",
+      "sha256": "38e7509bd1f4c3db2174e4fade30c6734129b273139b94e00137c7a313475340",
+      "role": "prop",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 0,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.torch",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.torch.png",
+      "sha256": "ab2c2c7d010d9110c698f74a41d30542223ce55b5f1104bc4a464788b608c88f",
+      "role": "prop",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 0,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
+    },
+    {
+      "assetId": "world.ash_graves.debris",
+      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/world.ash_graves.debris.png",
+      "sha256": "01c4ac1766755333fefce88fe9e298eb102e6fdd4a25cf0afeaf055cd244046f",
+      "role": "prop",
+      "representation": "environment",
+      "rank": 1,
+      "direction": "none",
+      "clip": "static",
+      "frameSize": [
+        64,
+        64
+      ],
+      "frames": {
+        "rect": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "durationMs": 1000
+      },
+      "pivot": [
+        32,
+        56
+      ],
+      "sockets": [],
+      "layering": {
+        "zIndex": 0,
+        "ySortEnabled": true
+      },
+      "qa": {
+        "technical": true,
+        "visual": false,
+        "inEngine": false
+      },
+      "approvalStatus": "integration_trial_authorized"
     }
   ]
 }

@@ -57,3 +57,9 @@ The imported Skeleton art is deliberately static. It may render only `soul.skele
 1. No old image, sprite sheet, resource, import file, sample root, or license is deleted in this phase.
 2. Missing V2.5 art is observable in the running presentation instead of silently substituted with prototype art or a Skeleton from another role.
 3. The next step is to extend `asset-catalog.v2.5.json` from an approved Art export and verify every new file hash, frame rect, duration, pivot, socket and layering value at load time. Then migrate each current missing marker one ID at a time.
+
+## 2026-09-10 Asset Integration Trial overlay
+
+The original snapshot above is retained as historical dependency evidence. The later Trial import adds `assets/v2.5/asset-integration-trial-v001/` with 149 project-local, source/copy-hash-verified PNGs and `provenance.json`. Its catalog has the exact 161-ID source matrix: 145 Trial-eligible outputs, four reuse-authorized Skeleton static outputs, and twelve unavailable Skeleton Enemy IDs. It remains `complete=false` and preserves explicit `MISSING:<AssetId>` behavior.
+
+The Trial maps Player, the eligible Skeleton/Ally clips, pickup, Banner icon, selected Ash Graves props, and declared NESW mask rendering in Presentation. Sword socket coordinates are absent, so weapon attachments/poses remain viewer-only; no offset is fabricated. This is not a cleanup authorization, an Art approval, W09 acceptance, or Part 6/7 completion. See `ASSET_INTEGRATION_TRIAL_2026-09-10.md` for exact provenance and user visual-review boundaries.

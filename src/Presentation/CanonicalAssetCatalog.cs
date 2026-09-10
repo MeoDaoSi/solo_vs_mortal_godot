@@ -121,6 +121,29 @@ public sealed class CanonicalAssetCatalog
         return frames;
     }
 
+    /// <summary>
+    /// Composes explicitly named canonical clips into one presentation-only actor timeline.
+    /// Every frame still comes through the same hash-validated catalog entry; this is not a
+    /// fallback loader and callers must request the exact AssetIds they need.
+    /// </summary>
+    public SpriteFrames BuildFrames(IReadOnlyDictionary<string, CanonicalAssetEntry> animations)
+    {
+        if (animations.Count == 0) throw new ArgumentException("At least one canonical animation is required.", nameof(animations));
+        var frames = new SpriteFrames();
+        frames.RemoveAnimation("default");
+        foreach (var (animationName, entry) in animations.OrderBy(item => item.Key, StringComparer.Ordinal))
+        {
+            var name = new StringName(animationName);
+            frames.AddAnimation(name);
+            frames.SetAnimationSpeed(name, 1000.0);
+            frames.SetAnimationLoopMode(name, entry.Clip is "idle" or "move" ? SpriteFrames.LoopMode.Linear : SpriteFrames.LoopMode.None);
+            var texture = Texture(entry);
+            foreach (var frame in entry.Frames)
+                frames.AddFrame(name, new AtlasTexture { Atlas = texture, Region = frame.Region, FilterClip = true }, frame.DurationMs);
+        }
+        return frames;
+    }
+
     private static IReadOnlyList<CanonicalAssetFrame> ParseFrames(JsonElement values, Vector2I frameSize, string assetId)
     {
         if (values.GetArrayLength() == 0) throw new InvalidDataException($"Asset '{assetId}' must declare at least one frame.");

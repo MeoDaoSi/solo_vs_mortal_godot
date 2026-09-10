@@ -4,6 +4,7 @@ using SoloVsMortal.Simulation.Systems;
 using SoloVsMortal.Simulation.Systems.V25;
 using SoloVsMortal.Simulation.Rules;
 using SoloVsMortal.Data.Definitions;
+using SoloVsMortal.Data.Definitions.V25;
 using SoloVsMortal.Simulation.State;
 using SoloVsMortal.Application.Persistence.V25;
 using SimVec2 = SoloVsMortal.Core.Math.Vec2;
@@ -42,7 +43,10 @@ public partial class Arena : Node2D
     private readonly Dictionary<string, AnimatedSprite2D> _monsterSprites = new(StringComparer.Ordinal);
     private readonly Dictionary<string, AnimatedSprite2D> _allySprites = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Texture2D> _mapTextures = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, Texture2D> _trialTileTextures = new(StringComparer.Ordinal);
     private readonly Dictionary<string, double> _dyingMonsters = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, Vector2> _actorVisualPositions = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> _actorVisualDirections = new(StringComparer.Ordinal);
     private string _facing = "front";
     private string _lastSoulSignature = "";
     private string _lastFeatureSignature = "";
@@ -259,7 +263,9 @@ public partial class Arena : Node2D
         var world = _snapshot?.World; var width = (float)(world?.Width ?? 1536); var height = (float)(world?.Height ?? 768);
         DrawRect(new Rect2(0, 0, width, height), new Color("#c99b5b")); if (_ground is not null) DrawTextureRect(_ground, new Rect2(0, 0, width, height), true, new Color(1, 1, 1, 0.45f));
         if (_snapshot is null) return;
-        foreach (var road in _application.CanonicalRoads()) DrawLine(ToGodot(road.Start), ToGodot(road.End), new Color("#756755"), (float)road.Width);
+        var hasTrialWorldTiles = DrawAshGravesTrialTiles();
+        if (!hasTrialWorldTiles)
+            foreach (var road in _application.CanonicalRoads()) DrawLine(ToGodot(road.Start), ToGodot(road.End), new Color("#756755"), (float)road.Width);
         foreach (var area in _application.CanonicalTerrain()) DrawRect(new Rect2((float)area.Bounds.X, (float)area.Bounds.Y, (float)area.Bounds.Width, (float)area.Bounds.Height), area.Terrain switch { V25TerrainTag.FireField => new Color("#9d472b"), V25TerrainTag.ToxicPool => new Color("#526a39"), V25TerrainTag.FrostFloor => new Color("#819ca6"), V25TerrainTag.Gap => new Color("#201d26"), _ => new Color("#4b5363") });
         foreach (var obj in _application.WorldObjects().Where(item => !item.Destroyed).OrderBy(item => item.ZIndex).ThenBy(item => item.Position.Y))
         {
@@ -276,18 +282,18 @@ public partial class Arena : Node2D
             if (_assetCatalog.TryGet(assetId, out var asset)) DrawCanonicalFrame(asset, p);
             else DrawMissingAssetMarker(p, assetId, 10);
         }
-        if (!HasCanonicalPlayerVisual()) DrawMissingAssetMarker(ToGodot(_snapshot.Player.Position), "player.base.idle.s", 12);
+        if (MissingAssetId(_playerSprite) is { } playerMissing) DrawMissingAssetMarker(ToGodot(_snapshot.Player.Position), playerMissing, 12);
         foreach (var monster in _snapshot.Monsters)
         {
             var p = ToGodot(monster.Position);
-            if (!HasCanonicalActorVisual(monster.SpeciesId, monster.Rank, "enemy")) { DrawMissingAssetMarker(p, ActorAssetId(monster.SpeciesId, monster.Rank, "enemy"), 18); DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(monster.SpeciesId), fontSize: 12); }
+            if (_monsterSprites.TryGetValue(monster.Uid, out var sprite) && MissingAssetId(sprite) is { } missing) { DrawMissingAssetMarker(p, missing, 18); DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(monster.SpeciesId), fontSize: 12); }
             DrawRect(new Rect2(p.X - 22, p.Y - 31, 44, 5), new Color("#3f0d0d"));
             DrawRect(new Rect2(p.X - 22, p.Y - 31, (float)(44 * monster.CurrentHp / monster.MaximumHp), 5), new Color("#22c55e"));
         }
         foreach (var ally in _snapshot.Allies)
         {
             var p = ToGodot(ally.Position);
-            if (!HasCanonicalActorVisual(ally.SpeciesId, ally.Rank, "ally")) { DrawMissingAssetMarker(p, ActorAssetId(ally.SpeciesId, ally.Rank, "ally"), 18); DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(ally.SpeciesId), fontSize: 12); }
+            if (_allySprites.TryGetValue(ally.Uid, out var sprite) && MissingAssetId(sprite) is { } missing) { DrawMissingAssetMarker(p, missing, 18); DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(ally.SpeciesId), fontSize: 12); }
             DrawRect(new Rect2(p.X - 22, p.Y - 31, 44, 5), new Color("#123b25"));
             DrawRect(new Rect2(p.X - 22, p.Y - 31, (float)(44 * ally.CurrentHp / ally.MaximumHp), 5), new Color("#86efac"));
         }
@@ -475,6 +481,10 @@ public partial class Arena : Node2D
         {
             inventory.AddChild(new Label { Text = $"Coin: {canonicalInventory.Coins} · Mang theo {canonicalInventory.Items.Count}/60 · Stash {canonicalInventory.Overflow.Count}" });
             inventory.AddChild(new Label { Text = canonicalInventory.Equipped.Count == 0 ? "Trang bị: trống" : "Trang bị: " + string.Join(", ", canonicalInventory.Equipped.Select(item => $"{item.Slot}={item.DefinitionId}")) });
+            if (canonicalInventory.Equipped.Any(item => item.DefinitionId == "equipment.sword.rank01") && TryBuildCanonicalIcon("equipment.sword.rank01.icon", 32) is { } swordIcon)
+            {
+                var swordRow = new HBoxContainer(); swordRow.AddChild(swordIcon); swordRow.AddChild(new Label { Text = "Kiếm Rank 01 — icon Trial", VerticalAlignment = VerticalAlignment.Center }); inventory.AddChild(swordRow);
+            }
             var actions = new HBoxContainer();
             foreach (var potionId in new[] { "hp_potion", "spirit_potion" })
             {
@@ -511,6 +521,10 @@ public partial class Arena : Node2D
         if (_application.CanonicalContent is not null)
         {
             bannerPage.AddChild(new Label { Text = $"Hồn Phiên canonical · Rank {_application.CanonicalBannerRank}\nMỗi Species tối đa một Soul; không dùng bind/slot prototype.", ThemeTypeVariation = "HeaderMedium" });
+            if (banner is not null && TryBuildCanonicalIcon("soul.skeleton.rank01.banner.icon", 32) is { } bannerIcon)
+            {
+                var bannerIconRow = new HBoxContainer(); bannerIconRow.AddChild(bannerIcon); bannerIconRow.AddChild(new Label { Text = "Biểu tượng Skeleton Rank 01", VerticalAlignment = VerticalAlignment.Center }); bannerPage.AddChild(bannerIconRow);
+            }
             bannerPage.AddChild(new Label { Text = snapshot.OwnedSouls.Count == 0 ? "Chưa có Species Soul." : string.Join('\n', snapshot.OwnedSouls.Select(soul => $"• {soul.DisplayName} — Lv.{soul.Level}")), SizeFlagsVertical = Control.SizeFlags.ExpandFill });
             var upgrade = new Button { Text = "Nâng Hồn Phiên tại shrine" }; StyleActionButton(upgrade);
             upgrade.Pressed += () => { if (GameplayCommandsBlocked) return; var result = _application.AttemptCanonicalBannerUpgrade(); var durable = !result.Success || result.AlreadyApplied || Save(showMessage: false); Toast(result.Success && durable ? $"Hồn Phiên Rank {result.BannerRank}." : result.Success ? "Nâng Hồn Phiên đang chờ lưu bền vững." : $"Không thể nâng: {result.Failure}"); RefreshSnapshot(); }; bannerPage.AddChild(upgrade);
@@ -589,6 +603,46 @@ public partial class Arena : Node2D
         Rebuild(); window.PopupCentered();
     }
 
+    // A deliberately narrow, development-only viewer for clips that have no safe gameplay event
+    // yet. It reads the catalog only; it never dispatches Simulation commands or touches saves.
+    private void OpenAssetTrialViewer()
+    {
+        var entries = _assetCatalog.Assets.Values.OrderBy(asset => asset.AssetId, StringComparer.Ordinal).ToArray();
+        if (entries.Length == 0) return;
+        var window = new Window { Title = "Asset Integration Trial v001", Size = new Vector2I(980, 670) };
+        AddChild(window); window.CloseRequested += () => window.QueueFree();
+        var root = new VBoxContainer(); root.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect); root.OffsetLeft = 18; root.OffsetTop = 16; root.OffsetRight = -18; root.OffsetBottom = -16; window.AddChild(root);
+        root.AddChild(new Label { Text = "149 authorized assets • animation timing is source metadata • no visual, motion, or in-engine approval is implied.", AutowrapMode = TextServer.AutowrapMode.WordSmart });
+        root.AddChild(new Label { Text = "12 Skeleton Enemy clips remain MISSING because their source state is integration_ready, outside the Trial authorization base states. Sword overlay is intentionally disabled: WEAPON_ALIGNMENT_METADATA_GAP.", AutowrapMode = TextServer.AutowrapMode.WordSmart, Modulate = new Color("#f2d795") });
+        var selector = new OptionButton { CustomMinimumSize = new Vector2(0, 36) };
+        foreach (var entry in entries) selector.AddItem(entry.AssetId);
+        root.AddChild(selector);
+        var metadata = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(0, 54) }; root.AddChild(metadata);
+        var stage = new Control { CustomMinimumSize = new Vector2(0, 440), SizeFlagsVertical = Control.SizeFlags.ExpandFill }; root.AddChild(stage);
+        var selected = new AnimatedSprite2D { Position = new Vector2(760, 210), Centered = false, Scale = Vector2.One * 2, ZIndex = 2 }; stage.AddChild(selected);
+        var selectedCaption = new Label { Text = "Selected asset • 2× display only", Position = new Vector2(650, 350), Size = new Vector2(280, 30), HorizontalAlignment = HorizontalAlignment.Center }; stage.AddChild(selectedCaption);
+
+        void AddScaleComparison(string assetId, string caption, Vector2 origin)
+        {
+            if (!_assetCatalog.TryGet(assetId, out var entry)) return;
+            var actor = new AnimatedSprite2D { SpriteFrames = _assetCatalog.BuildFrames(entry, "trial"), Position = origin, Centered = false, Offset = -entry.Pivot, Scale = Vector2.One * 2 };
+            actor.Play("trial"); stage.AddChild(actor);
+            stage.AddChild(new Label { Text = caption, Position = origin + new Vector2(-70, 84), Size = new Vector2(140, 24), HorizontalAlignment = HorizontalAlignment.Center });
+        }
+        AddScaleComparison("player.base.idle.s", "Player", new Vector2(150, 210));
+        AddScaleComparison("soul.skeleton.rank01.enemy.south", "Enemy static compatibility", new Vector2(350, 210));
+        AddScaleComparison("soul.skeleton.rank01.ally.idle.s", "Ally", new Vector2(550, 210));
+
+        void ShowEntry(long index)
+        {
+            var entry = entries[checked((int)index)];
+            selected.SpriteFrames = _assetCatalog.BuildFrames(entry, "trial"); selected.Offset = -entry.Pivot; selected.Play("trial");
+            metadata.Text = $"{entry.AssetId}\nrole={entry.Role}; representation={entry.Representation}; clip={entry.Clip}; direction={entry.Direction}; frames={entry.Frames.Count}; durations={string.Join(", ", entry.Frames.Select(frame => frame.DurationMs + "ms"))}; pivot=({entry.Pivot.X}, {entry.Pivot.Y}); technical={entry.TechnicalQa}; visual={entry.VisualQa}; inEngine={entry.InEngineQa}; approval={entry.ApprovalStatus}";
+        }
+        selector.ItemSelected += ShowEntry; selector.Select(0); ShowEntry(0);
+        window.PopupCentered();
+    }
+
     private static string inventorySignature(IReadOnlyList<InventoryItem> items) => string.Join(';', items.Select(item => $"{item.StableId}:{item.Count}"));
 
     private void RebuildFeaturePanel(GameSnapshot snapshot)
@@ -597,6 +651,10 @@ public partial class Arena : Node2D
         if (_application.CanonicalContent is not null)
         {
             _featureList.AddChild(new Label { Text = $"Hồn Phiên canonical · Rank {_application.CanonicalBannerRank}\nSpecies Soul: {snapshot.OwnedSouls.Count} · Mỗi species một Ally", ThemeTypeVariation = "HeaderMedium" });
+            if (_assetCatalog.CatalogVersion == "asset-integration-trial-v001")
+            {
+                var openTrial = new Button { Text = "Mở Asset Integration Trial (149 assets)" }; StyleActionButton(openTrial); openTrial.Pressed += OpenAssetTrialViewer; _featureList.AddChild(openTrial);
+            }
             var canonicalPossession = new Label { Text = _application.ActivePossessionSoulId is { } canonicalActiveId ? $"Phụ hồn: {canonicalActiveId} ({Math.Ceiling(_application.PossessionRemainingSeconds())}s)" : "Phụ hồn: không hoạt động" };
             _featureList.AddChild(canonicalPossession);
             if (_application.ActivePossessionSoulId is not null)
@@ -764,6 +822,12 @@ public partial class Arena : Node2D
         return asset.Frames.Count == 1 ? new AtlasTexture { Atlas = texture, Region = asset.Frames[0].Region, FilterClip = true } : texture;
     }
 
+    private TextureRect? TryBuildCanonicalIcon(string assetId, int size)
+    {
+        if (!_assetCatalog.TryGet(assetId, out var asset)) return null;
+        return new TextureRect { Texture = LoadMapTexture(asset), CustomMinimumSize = new Vector2(size, size), TooltipText = assetId };
+    }
+
     private RegionTravelResult TravelToRegion(string regionId)
     {
         if (GameplayCommandsBlocked) return new RegionTravelResult(false, Failure: RegionTravelFailure.TravelConditionFailed, FailedConditionId: "save_recovery_required");
@@ -809,7 +873,7 @@ public partial class Arena : Node2D
 
         foreach (var sprite in _monsterSprites.Values) sprite.QueueFree();
         foreach (var sprite in _allySprites.Values) sprite.QueueFree();
-        _monsterSprites.Clear(); _allySprites.Clear(); _dyingMonsters.Clear();
+        _monsterSprites.Clear(); _allySprites.Clear(); _dyingMonsters.Clear(); _actorVisualPositions.Clear(); _actorVisualDirections.Clear();
         RebuildMapTextures();
         _ground = LoadCanonicalAssetTexture(_application.CurrentMapBackgroundAssetId() ?? "tiles.arena.ground");
         _lastSoulSignature = ""; _lastFeatureSignature = ""; _lastScreenSignature = "";
@@ -821,52 +885,57 @@ public partial class Arena : Node2D
     private AnimatedSprite2D BuildPlayerSprite(int rank)
     {
         _ = rank;
-        return BuildMissingActorSprite(20);
+        var sprite = BuildCanonicalActorSprite("player.base", 20);
+        PlayActorAnimation(sprite, PlayerAnimationName("idle", _facing), PlayerAssetId("idle", FacingToDirection(_facing)));
+        return sprite;
     }
 
     private void SyncMonsters(IReadOnlyList<MonsterSnapshot> monsters)
     {
         var alive = monsters.Select(item => item.Uid).ToHashSet(StringComparer.Ordinal);
-        foreach (var stale in _monsterSprites.Keys.Where(id => !alive.Contains(id) && !_dyingMonsters.ContainsKey(id)).ToArray()) { _monsterSprites[stale].QueueFree(); _monsterSprites.Remove(stale); }
+        foreach (var stale in _monsterSprites.Keys.Where(id => !alive.Contains(id) && !_dyingMonsters.ContainsKey(id)).ToArray()) { _monsterSprites[stale].QueueFree(); _monsterSprites.Remove(stale); ForgetActorVisual("enemy", stale); }
         foreach (var monster in monsters)
         {
             if (!_monsterSprites.TryGetValue(monster.Uid, out var sprite)) { sprite = BuildMonsterSprite(monster); _monsterSprites.Add(monster.Uid, sprite); AddChild(sprite); }
-            sprite.Position = ToGodot(monster.Position);
+            var position = ToGodot(monster.Position); var direction = ResolveVisualDirection("enemy", monster.Uid, position); sprite.Position = position;
             var monsterAction = monster.AiState switch { Simulation.State.MonsterAiState.Chase => "walk", Simulation.State.MonsterAiState.Attack => "attack", Simulation.State.MonsterAiState.Hit => "hit", _ => "idle" };
-            PlayActorAnimation(sprite, monsterAction);
+            var clip = CanonicalClip(monsterAction); PlayActorAnimation(sprite, ActorAnimationName(clip, direction), ActorAssetId(monster.SpeciesId, monster.Rank, "enemy", clip, direction));
         }
         var move = Input.GetVector("move_left", "move_right", "move_up", "move_down"); if (move != Vector2.Zero) _facing = System.Math.Abs(move.X) > System.Math.Abs(move.Y) ? move.X < 0 ? "left" : "right" : move.Y < 0 ? "back" : "front";
-        var action = Input.IsActionPressed("attack") ? "attack" : move != Vector2.Zero ? "walk" : "idle"; var desired = $"{action}_{_facing}";
-        PlayActorAnimation(_playerSprite, desired);
+        var action = Input.IsActionPressed("attack") ? "attack" : move != Vector2.Zero ? "move" : "idle";
+        PlayActorAnimation(_playerSprite, PlayerAnimationName(action, _facing), PlayerAssetId(action, FacingToDirection(_facing)));
     }
 
     private void SyncAllies(IReadOnlyList<AllySnapshot> allies)
     {
         var alive = allies.Select(item => item.Uid).ToHashSet(StringComparer.Ordinal);
-        foreach (var stale in _allySprites.Keys.Where(id => !alive.Contains(id)).ToArray()) { _allySprites[stale].QueueFree(); _allySprites.Remove(stale); }
+        foreach (var stale in _allySprites.Keys.Where(id => !alive.Contains(id)).ToArray()) { _allySprites[stale].QueueFree(); _allySprites.Remove(stale); ForgetActorVisual("ally", stale); }
         foreach (var ally in allies)
         {
             if (!_allySprites.TryGetValue(ally.Uid, out var sprite))
             {
                 sprite = BuildMonsterSprite(new MonsterSnapshot(ally.Uid, ally.DefinitionId, ally.SpeciesId, ally.Position, ally.CurrentHp, ally.MaximumHp, true, MonsterAiState.Idle, ally.Level, ally.Rank), "ally");
-                sprite.Modulate = new Color("#86efac"); sprite.ZIndex = 11; _allySprites.Add(ally.Uid, sprite); AddChild(sprite);
+                sprite.ZIndex = 11; _allySprites.Add(ally.Uid, sprite); AddChild(sprite);
             }
-            sprite.Position = ToGodot(ally.Position);
+            var position = ToGodot(ally.Position); var direction = ResolveVisualDirection("ally", ally.Uid, position); sprite.Position = position;
             var action = ally.AiState switch { AllyAiState.Chase => "walk", AllyAiState.Attack => "attack", _ => "idle" };
-            PlayActorAnimation(sprite, action);
+            var clip = CanonicalClip(action); PlayActorAnimation(sprite, ActorAnimationName(clip, direction), ActorAssetId(ally.SpeciesId, ally.Rank, "ally", clip, direction));
         }
     }
 
     private AnimatedSprite2D BuildMonsterSprite(MonsterSnapshot monster, string representation = "enemy")
     {
-        return _assetCatalog.TryGet(ActorAssetId(monster.SpeciesId, monster.Rank, representation), out var asset)
-            ? BuildCanonicalStaticSprite(asset)
-            : BuildMissingActorSprite(representation == "ally" ? 11 : 10);
+        return BuildCanonicalActorSprite($"soul.{monster.SpeciesId}.rank{monster.Rank:D2}.{representation}", representation == "ally" ? 11 : 10);
     }
 
     private void BeginMonsterDeaths()
     {
-        foreach (var defeated in _application.DrainDefeatedMonsterVisuals()) if (_monsterSprites.TryGetValue(defeated.Uid, out var sprite)) { sprite.Position = ToGodot(defeated.Position); PlayActorAnimation(sprite, "death"); _dyingMonsters[defeated.Uid] = defeated.DurationSeconds; }
+        foreach (var defeated in _application.DrainDefeatedMonsterVisuals()) if (_monsterSprites.TryGetValue(defeated.Uid, out var sprite))
+        {
+            var position = ToGodot(defeated.Position); var direction = ResolveVisualDirection("enemy", defeated.Uid, position); sprite.Position = position;
+            PlayActorAnimation(sprite, ActorAnimationName("death", direction), ActorAssetId(defeated.SpeciesId, defeated.Rank, "enemy", "death", direction));
+            _dyingMonsters[defeated.Uid] = defeated.DurationSeconds;
+        }
     }
 
     private void UpdateMonsterDeaths(double delta)
@@ -874,20 +943,25 @@ public partial class Arena : Node2D
         foreach (var entry in _dyingMonsters.ToArray())
         {
             var remaining = entry.Value - delta; if (remaining > 0) { _dyingMonsters[entry.Key] = remaining; continue; }
-            if (_monsterSprites.Remove(entry.Key, out var sprite)) sprite.QueueFree(); _dyingMonsters.Remove(entry.Key);
+            if (_monsterSprites.Remove(entry.Key, out var sprite)) sprite.QueueFree(); ForgetActorVisual("enemy", entry.Key); _dyingMonsters.Remove(entry.Key);
         }
     }
 
-    private static string ActorAssetId(string speciesId, int rank, string representation) => $"soul.{speciesId}.rank{rank:D2}.{representation}.south";
+    private static string ActorAssetId(string speciesId, int rank, string representation, string clip, string direction) => $"soul.{speciesId}.rank{rank:D2}.{representation}.{clip}.{direction}";
+    private static string PlayerAssetId(string clip, string direction) => $"player.base.{clip}.{direction}";
     private static string SoulPickupAssetId(string speciesId, int rank) => $"soul.{speciesId}.rank{rank:D2}.pickup";
-    private bool HasCanonicalPlayerVisual() => _assetCatalog.TryGet("player.base.idle.s", out _);
-    private bool HasCanonicalActorVisual(string speciesId, int rank, string representation) => _assetCatalog.TryGet(ActorAssetId(speciesId, rank, representation), out _);
 
-    private AnimatedSprite2D BuildCanonicalStaticSprite(CanonicalAssetEntry asset)
+    private AnimatedSprite2D BuildCanonicalActorSprite(string assetIdPrefix, int missingZIndex)
     {
-        var sprite = new AnimatedSprite2D { SpriteFrames = _assetCatalog.BuildFrames(asset), Centered = false, Offset = -asset.Pivot, ZIndex = asset.Layering.ZIndex, YSortEnabled = asset.Layering.YSortEnabled };
-        sprite.Play("static");
-        return sprite;
+        var animations = _assetCatalog.Assets.Values
+            .Where(asset => asset.AssetId.StartsWith(assetIdPrefix + ".", StringComparison.Ordinal) && asset.Direction is "s" or "w" or "e" or "n" && asset.Clip is "idle" or "move" or "attack" or "hit" or "death" or "disperse" or "summon" or "recall")
+            .ToDictionary(asset => ActorAnimationName(asset.Clip, asset.Direction), asset => asset, StringComparer.Ordinal);
+        if (animations.Count == 0) return BuildMissingActorSprite(missingZIndex);
+        var anchor = animations.Values.First();
+        if (animations.Values.Any(asset => asset.FrameSize != anchor.FrameSize || asset.Pivot != anchor.Pivot)) return BuildMissingActorSprite(missingZIndex);
+        var frames = _assetCatalog.BuildFrames(animations);
+        frames.AddAnimation("missing");
+        return new AnimatedSprite2D { SpriteFrames = frames, Centered = false, Offset = -anchor.Pivot, ZIndex = anchor.Layering.ZIndex, YSortEnabled = anchor.Layering.YSortEnabled };
     }
 
     private static AnimatedSprite2D BuildMissingActorSprite(int zIndex)
@@ -896,11 +970,107 @@ public partial class Arena : Node2D
         return new AnimatedSprite2D { SpriteFrames = frames, ZIndex = zIndex, YSortEnabled = true };
     }
 
-    private static void PlayActorAnimation(AnimatedSprite2D sprite, string requested)
+    private static void PlayActorAnimation(AnimatedSprite2D sprite, string requested, string requiredAssetId)
     {
         var frames = sprite.SpriteFrames;
-        var resolved = frames.HasAnimation("static") ? "static" : frames.HasAnimation(requested) ? requested : "missing";
+        var resolved = frames.HasAnimation(requested) ? requested : "missing";
+        if (resolved == "missing") sprite.SetMeta("trial_missing_asset_id", requiredAssetId);
+        else if (sprite.HasMeta("trial_missing_asset_id")) sprite.RemoveMeta("trial_missing_asset_id");
         if (frames.HasAnimation(resolved) && (sprite.Animation != resolved || !sprite.IsPlaying())) sprite.Play(resolved);
+    }
+
+    private static string CanonicalClip(string action) => action == "walk" ? "move" : action;
+    private static string ActorAnimationName(string clip, string direction) => $"{clip}_{direction}";
+    private static string PlayerAnimationName(string clip, string facing) => ActorAnimationName(clip, FacingToDirection(facing));
+    private static string FacingToDirection(string facing) => facing switch { "back" => "n", "left" => "w", "right" => "e", _ => "s" };
+
+    // Facing is deliberately transient Presentation state. It is inferred from the snapshot's
+    // observable position delta and is never written into Simulation or a save payload.
+    private string ResolveVisualDirection(string representation, string uid, Vector2 position)
+    {
+        var key = representation + ":" + uid;
+        if (_actorVisualPositions.TryGetValue(key, out var previous))
+        {
+            var delta = position - previous;
+            if (delta.LengthSquared() > 0.001f)
+                _actorVisualDirections[key] = Mathf.Abs(delta.X) > Mathf.Abs(delta.Y) ? delta.X < 0 ? "w" : "e" : delta.Y < 0 ? "n" : "s";
+        }
+        _actorVisualPositions[key] = position;
+        return _actorVisualDirections.TryGetValue(key, out var direction) ? direction : "s";
+    }
+
+    private void ForgetActorVisual(string representation, string uid)
+    {
+        var key = representation + ":" + uid;
+        _actorVisualPositions.Remove(key); _actorVisualDirections.Remove(key);
+    }
+
+    private static string? MissingAssetId(AnimatedSprite2D sprite) => sprite.HasMeta("trial_missing_asset_id") ? sprite.GetMeta("trial_missing_asset_id").AsString() : null;
+
+    /// <summary>
+    /// The source package defines mask00..mask15 as NESW Wang bits. This renderer derives those
+    /// bits only from the already-authoritative visual layout (roads, Ruins chunk, outer wall),
+    /// never from collision or gameplay state. It draws only the camera-local tile neighborhood.
+    /// </summary>
+    private bool DrawAshGravesTrialTiles()
+    {
+        if (_snapshot?.CurrentRegionId != "ash_graves" || _application.CanonicalContent is null || !_assetCatalog.TryGet("world.ash_graves.ground.mask15", out var ground)) return false;
+        var layout = _application.CanonicalContent.Content.LayoutBlueprint;
+        var tileSize = layout.TileSize;
+        if (tileSize != ground.FrameSize.X || tileSize != ground.FrameSize.Y) return false;
+        var player = ToGodot(_snapshot.Player.Position);
+        var maxTileX = Math.Max(0, (int)Math.Ceiling(_snapshot.World.Width / tileSize));
+        var maxTileY = Math.Max(0, (int)Math.Ceiling(_snapshot.World.Height / tileSize));
+        var minX = Math.Max(0, (int)MathF.Floor((player.X - 720) / tileSize)); var maxX = Math.Min(maxTileX - 1, (int)MathF.Ceiling((player.X + 720) / tileSize));
+        var minY = Math.Max(0, (int)MathF.Floor((player.Y - 480) / tileSize)); var maxY = Math.Min(maxTileY - 1, (int)MathF.Ceiling((player.Y + 480) / tileSize));
+        if (maxX < minX || maxY < minY) return false;
+
+        for (var y = minY; y <= maxY; y++)
+        for (var x = minX; x <= maxX; x++)
+            DrawTrialTile(ground, x, y, tileSize);
+
+        bool Road(int x, int y) => IsRoadTile(x, y, tileSize);
+        bool Ruin(int x, int y) => IsRuinTile(layout, x, y);
+        bool Wall(int x, int y) => x < layout.OuterWallThicknessTiles || y < layout.OuterWallThicknessTiles || x >= maxTileX - layout.OuterWallThicknessTiles || y >= maxTileY - layout.OuterWallThicknessTiles;
+        for (var y = minY; y <= maxY; y++)
+        for (var x = minX; x <= maxX; x++)
+        {
+            if (Ruin(x, y) && TryGetMaskAsset("ruin", WangMask(Ruin, x, y), out var ruin)) DrawTrialTile(ruin, x, y, tileSize);
+            if (Road(x, y) && TryGetMaskAsset("path", WangMask(Road, x, y), out var path)) DrawTrialTile(path, x, y, tileSize);
+            if (Wall(x, y) && TryGetMaskAsset("wall", WangMask(Wall, x, y), out var wall)) DrawTrialTile(wall, x, y, tileSize);
+        }
+        DrawTrialWallCap("nw", 0, 0, minX, maxX, minY, maxY, tileSize);
+        DrawTrialWallCap("ne", maxTileX - 1, 0, minX, maxX, minY, maxY, tileSize);
+        DrawTrialWallCap("se", maxTileX - 1, maxTileY - 1, minX, maxX, minY, maxY, tileSize);
+        DrawTrialWallCap("sw", 0, maxTileY - 1, minX, maxX, minY, maxY, tileSize);
+        return true;
+    }
+
+    private bool TryGetMaskAsset(string family, int mask, out CanonicalAssetEntry asset) => _assetCatalog.TryGet($"world.ash_graves.{family}.mask{mask:D2}", out asset!);
+    private void DrawTrialWallCap(string direction, int x, int y, int minX, int maxX, int minY, int maxY, int tileSize)
+    {
+        if (x >= minX && x <= maxX && y >= minY && y <= maxY && _assetCatalog.TryGet($"world.ash_graves.wall.cap.{direction}", out var cap)) DrawTrialTile(cap, x, y, tileSize);
+    }
+    private void DrawTrialTile(CanonicalAssetEntry asset, int x, int y, int tileSize)
+    {
+        if (!_trialTileTextures.TryGetValue(asset.AssetId, out var texture)) { texture = LoadMapTexture(asset)!; _trialTileTextures.Add(asset.AssetId, texture); }
+        DrawTextureRect(texture, new Rect2(x * tileSize, y * tileSize, tileSize, tileSize), false);
+    }
+    private bool IsRoadTile(int tileX, int tileY, int tileSize)
+    {
+        var center = new Vector2((tileX + 0.5f) * tileSize, (tileY + 0.5f) * tileSize);
+        return _application.CanonicalRoads().Any(road => DistanceToSegment(center, ToGodot(road.Start), ToGodot(road.End)) <= road.Width * 0.5);
+    }
+    private static bool IsRuinTile(CanonicalLayoutBlueprintDefinition layout, int x, int y)
+    {
+        if (!layout.ChunkGrid.TryGetValue("Ruins", out var chunk)) return false;
+        return x >= chunk[0] * layout.ChunkTiles[0] && x < (chunk[0] + 1) * layout.ChunkTiles[0] && y >= chunk[1] * layout.ChunkTiles[1] && y < (chunk[1] + 1) * layout.ChunkTiles[1];
+    }
+    private static int WangMask(Func<int, int, bool> occupied, int x, int y) => (occupied(x, y - 1) ? 1 : 0) | (occupied(x + 1, y) ? 2 : 0) | (occupied(x, y + 1) ? 4 : 0) | (occupied(x - 1, y) ? 8 : 0);
+    private static float DistanceToSegment(Vector2 point, Vector2 start, Vector2 end)
+    {
+        var delta = end - start; var lengthSquared = delta.LengthSquared();
+        return point.DistanceTo(start + delta * (lengthSquared == 0 ? 0 : Mathf.Clamp((point - start).Dot(delta) / lengthSquared, 0, 1)));
     }
 
     private void DrawCanonicalFrame(CanonicalAssetEntry asset, Vector2 origin)
