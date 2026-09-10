@@ -68,6 +68,7 @@ public partial class Arena : Node2D
         _application.Start();
         _worldMap = new WorldMapUI(); AddChild(_worldMap); _worldMap.Initialize(_application, TravelToRegion);
         _minimap = new HudMinimap { Position = new Vector2(1060, 24), Size = new Vector2(184, 164) }; GetNode<CanvasLayer>("Hud").AddChild(_minimap);
+        AddAssetTrialAccessButton();
         _ground = LoadCanonicalAssetTexture(_application.CurrentMapBackgroundAssetId() ?? "tiles.arena.ground"); RebuildMapTextures();
         _visualRank = 1; _playerSprite = BuildPlayerSprite(_visualRank); AddChild(_playerSprite);
         _bossTelegraphs = new BossTelegraphLayer { ZIndex = 15 }; AddChild(_bossTelegraphs);
@@ -248,6 +249,14 @@ public partial class Arena : Node2D
 
     public override void _UnhandledInput(InputEvent @event)
     {
+        // This development-only route is deliberately independent of the gameplay UI and
+        // remains available while gameplay commands are paused or save writes are blocked.
+        if (@event is InputEventKey trialKey && trialKey.Pressed && !trialKey.Echo && trialKey.Keycode == Key.F10 && _assetCatalog.CatalogVersion == "asset-integration-trial-v001")
+        {
+            OpenAssetTrialViewer();
+            GetViewport().SetInputAsHandled();
+            return;
+        }
         if (GameplayCommandsBlocked) return;
         if (@event is InputEventKey key && key.Pressed && !key.Echo && key.Keycode == Key.M)
         {
@@ -605,6 +614,25 @@ public partial class Arena : Node2D
 
     // A deliberately narrow, development-only viewer for clips that have no safe gameplay event
     // yet. It reads the catalog only; it never dispatches Simulation commands or touches saves.
+    private void AddAssetTrialAccessButton()
+    {
+        if (_assetCatalog.CatalogVersion != "asset-integration-trial-v001") return;
+
+        // The Feature panel has a fixed-height, non-scrolling content area. Keep the Trial
+        // route outside it so the review surface is always visible and clickable.
+        var openTrial = new Button
+        {
+            Text = "Mở Asset Integration Trial (F10)",
+            TooltipText = "Trình xem phát triển chỉ đọc cho 149 asset Trial đã được ủy quyền.",
+            Position = new Vector2(16, 236),
+            Size = new Vector2(414, 38),
+            ZIndex = 10
+        };
+        StyleActionButton(openTrial);
+        openTrial.Pressed += OpenAssetTrialViewer;
+        GetNode<CanvasLayer>("Hud").AddChild(openTrial);
+    }
+
     private void OpenAssetTrialViewer()
     {
         var entries = _assetCatalog.Assets.Values.OrderBy(asset => asset.AssetId, StringComparer.Ordinal).ToArray();

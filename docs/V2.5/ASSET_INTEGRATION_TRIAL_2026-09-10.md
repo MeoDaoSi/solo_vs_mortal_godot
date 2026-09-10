@@ -97,7 +97,7 @@ The captured export log ends with `[ DONE ] savepack`, stderr is empty, and the 
 ## Manual visual-review route
 
 1. Open `C:/ws/solo_vs_mortal_godot` with Godot .NET `4.7.2.stable.mono.official.ed1daf0bf`, then Run Project (`F6`/the Arena scene or `F5` from the project).
-2. In the Arena Feature panel, select **Mở Asset Integration Trial (149 assets)**. Choose any AssetId in the selector; it plays at source millisecond timing and includes Player / Skeleton Enemy static / Skeleton Ally native-scale comparison. This is the route for all viewer-only assets, world variants, and sword frames.
+2. Select the HUD button **Mở Asset Integration Trial (F10)** immediately below the status panel, or press **F10**. This route is independent of the fixed-height Feature panel. Choose any AssetId in the selector; it plays at source millisecond timing and includes Player / Skeleton Enemy static / Skeleton Ally native-scale comparison. This is the route for all viewer-only assets, world variants, and sword frames.
 3. Move with WASD and hold primary attack to inspect Player idle/move/attack direction mapping. Do not infer gameplay timing from the animation.
 4. In a normal current-runtime flow, defeat a Skeleton, press `E` near a Soul pickup, then use **Triệu hồi tất cả (Shift+Q)** or the existing Soul controls after the Soul is available. Observe the Ally's real idle/move/attack presentation; summon/recall/disperse clips remain viewer-only by design.
 5. Use the normal Hồn Phiên flow to create/own a banner, then open the Hồn Phiên tab to see the Skeleton banner icon. Soul pickup remains visible at the existing world pickup location before acquisition.
@@ -105,6 +105,14 @@ The captured export log ends with `[ DONE ] savepack`, stderr is empty, and the 
 7. Walk Ash Graves normally to inspect canonical ground/path/ruin/wall rendering and the mapped props. The viewer exposes every mask and non-emitted prop variant directly.
 
 Judge only scale, palette, directions, extraction, timing, pivot/jitter, weapon/body alignment, pickup/prop readability, and Ash Graves cohesion. Do not use this Trial as the 18-case canonical gameplay acceptance checklist.
+
+### Access correction — 2026-09-11
+
+The original Feature-panel route was not reliably usable because that panel has a fixed-height, non-scrolling content area. The Trial now also creates a standalone HUD button below the status panel and accepts `F10`; both paths only open the existing read-only viewer and do not change Simulation, input commands, or saves.
+
+### Catalog structural correction — 2026-09-11
+
+The first real Arena startup exposed a catalog-serialization defect: 89 static assets had `frames` serialized as an object rather than the strict loader's required one-element array. The correction wraps only those existing frame records as `frames: [ { ... } ]` in the canonical catalog and package provenance; frame rectangles, duration (1000 ms), pivot, source/copied SHA-256, QA, authorization, and approval data are unchanged. Structural revalidation now finds 149 catalog assets and 149 copied provenance entries with array `frames`; a five-frame headless Godot startup completed with exit `0`. This is startup/package evidence only, not gameplay or visual approval.
 
 ## Scope safety
 
