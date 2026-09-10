@@ -828,7 +828,7 @@
     "validation": {
       "compile": "dotnet build solo_vs_mortal_godot.csproj --no-restore: succeeded, 1 NU1900 network-vulnerability-data warning, 0 errors",
       "publish": "dotnet publish solo_vs_mortal_godot.csproj --no-restore --configuration Release --runtime win-x64 --self-contained false: succeeded, 1 NU1900 warning, 0 errors",
-      "godotExport": "Godot 4.7.2 Windows Desktop export was attempted twice; its internal .NET publish reported failure while command-line publish succeeded. This is packaging/toolchain evidence only and does not block Part4 code closure or claim gameplay acceptance.",
+      "godotExport": "Godot 4.7.2 Windows Desktop export completed on 2026-09-10: its actual process exited 0 after `ExportRelease`, `win-x64`, and `--self-contained true`, producing the Windows .exe and .pck. The first reproduction's MSB1029 was a sandbox/AppData build-log permission failure; the normal toolchain run has no MSBuild errors, only NU1900 feed-metadata warnings. This is packaging evidence only and does not claim gameplay acceptance.",
       "automatedTestsRun": false,
       "gameplayAcceptance": "User-owned; all 18 canonical cases are mapped but not run by the agent."
     },

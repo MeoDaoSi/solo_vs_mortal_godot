@@ -673,3 +673,11 @@ Khi code + approved asset scope + baseline engine đều sẵn:
 - **Build/export evidence:** `dotnet build solo_vs_mortal_godot.csproj --no-restore` succeeded, 0 errors, warning `NU1900` (NuGet vulnerability metadata unreachable). `dotnet publish solo_vs_mortal_godot.csproj --no-restore --configuration Release --runtime win-x64 --self-contained false` succeeded with the same warning. Godot `4.7.2.stable.mono.official.ed1daf0bf` Windows Desktop export was attempted twice; internal .NET publish reported failure although command-line publish succeeded. Đây là package/toolchain follow-up, không phải gameplay acceptance hay Part4 source blocker.
 - **Asset result:** `NO_ASSET_APPROVAL_REQUIRED_FOR_ISSUE_04 — visual asset production/in-engine visual acceptance belongs to Part 6/7/W09.`
 - **User handoff:** 18 canonical cases, exact actions/expected results và screenshot/save-reload evidence khi fail được map trong closure matrix. Agent không tạo/chạy gameplay test, parity runner, soak hoặc headless acceptance. User là sole gameplay tester theo `AGENTS.md`.
+
+### 2026-09-10 — Godot self-contained Windows export verification
+
+- **Trạng thái:** `complete` (compile/package evidence only; không phải gameplay acceptance).
+- **Reproduction:** Godot 4.7.2 verbose export cho thấy exact publish command là `dotnet publish solo_vs_mortal_godot.csproj -c ExportRelease -r win-x64 --self-contained true -v normal`, kèm `GodotTargetPlatform=windows`, Godot build logger, và temp publish output.
+- **First real MSBuild error:** `MSB1029`, logger không thể tạo `msbuild_log.txt` khi export process bị sandbox chặn quyền ghi AppData. Đây là permission boundary của toolchain host, không phải source hoặc project configuration error. Export destination cũng phải được tạo trước theo CLI contract.
+- **Resolution/verification:** chạy Godot ngoài sandbox với AppData logging bình thường, chờ process thực kết thúc. Process exit `0`; log có publish và packing hoàn tất, không có MSBuild errors (chỉ hai warning `NU1900` về NuGet vulnerability metadata). Artifacts: `build/issue-04-export-verified/solo_vs_mortal_godot.exe` (109,513,728 bytes) và `.pck` (278,758,156 bytes).
+- **Scope safety:** không thay gameplay code, authority, renderer hoặc asset mapping; không chạy gameplay scene, automated runner, parity hay soak test.
