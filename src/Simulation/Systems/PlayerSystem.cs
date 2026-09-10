@@ -46,14 +46,15 @@ public sealed class PlayerSystem
     public Func<IReadOnlyList<Rect>>? NonPlayerTerrainBarriers { get; set; }
     public Func<bool>? TerrainCombatAllowed { get; set; }
     private IReadOnlyList<Rect> NonPlayerColliders => _colliders.Concat(NonPlayerTerrainBarriers?.Invoke() ?? Array.Empty<Rect>()).ToArray();
-    public Vec2 NonPlayerSweptPosition(Vec2 start, Vec2 direction, double distance)
+    public Vec2 NonPlayerSweptPosition(Vec2 start, Vec2 direction, double distance, double bodyRadius = V25ActorBodyRadii.LargeActor)
     {
+        if (!double.IsFinite(bodyRadius) || bodyRadius <= 0) return start;
         var result = start; var unit = direction.Normalized(); var steps = Math.Max(1, (int)Math.Ceiling(distance / 4));
         var colliders = NonPlayerColliders;
         for (var i = 1; i <= steps; i++)
         {
             var point = new Vec2(start.X + unit.X * distance * i / steps, start.Y + unit.Y * distance * i / steps);
-            if (!V25Navigation.IsFree(point, new V25WorldBounds(_bounds.Width, _bounds.Height), colliders, 18)) break;
+            if (!V25Navigation.IsFree(point, new V25WorldBounds(_bounds.Width, _bounds.Height), colliders, bodyRadius)) break;
             result = point;
         }
         return result;
@@ -71,6 +72,15 @@ public sealed class PlayerSystem
         SetPosition(State.Position);
     }
     public void SetPosition(Vec2 position) => State.Position = new Vec2(Vec2.Clamp(position.X, 0, _bounds.Width), Vec2.Clamp(position.Y, 0, _bounds.Height));
+    /// <summary>Save restoration must reject an impossible body position rather than silently clamping it into a different world state.</summary>
+    public void RestoreCanonicalPosition(Vec2 position)
+    {
+        if (!CanonicalMode) { SetPosition(position); return; }
+        if (!double.IsFinite(position.X) || !double.IsFinite(position.Y) ||
+            !V25Navigation.IsFree(position, new V25WorldBounds(_bounds.Width, _bounds.Height), _colliders, CanonicalBodyRadius))
+            throw new InvalidDataException("Saved canonical player position is outside the walkmesh or overlaps a collider.");
+        State.Position = position;
+    }
     public bool IsPositionFree(Vec2 position) => CanStand(Vec2.Clamp(position.X, 0, _bounds.Width), Vec2.Clamp(position.Y, 0, _bounds.Height));
     public bool IsPositionFree(Vec2 position, double radius) => V25Navigation.IsFree(new Vec2(Vec2.Clamp(position.X, 0, _bounds.Width), Vec2.Clamp(position.Y, 0, _bounds.Height)), new V25WorldBounds(_bounds.Width, _bounds.Height), _colliders, radius);
 
@@ -176,6 +186,13 @@ public sealed class PlayerSystem
     {
         _canonicalModifiers = modifiers?.ToArray() ?? throw new ArgumentNullException(nameof(modifiers));
         RecomputeStats();
+    }
+
+    internal void SetCanonicalCombatStyle(string combatStyleId)
+    {
+        if (!CanonicalMode || string.IsNullOrWhiteSpace(combatStyleId) || !_canonical!.Content.CombatStyles.Any(style => style.Id == combatStyleId))
+            throw new InvalidDataException("Canonical player combat style is invalid.");
+        State.CombatStyleId = combatStyleId;
     }
 
     private static (double Hp, double Atk, double Def, double Speed) ApplyCanonicalModifiers(V25StatBlock baseStats, IReadOnlyList<StatModifiers> modifiers)

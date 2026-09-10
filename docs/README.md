@@ -12,6 +12,7 @@ The bundled, hash-pinned machine-readable inputs are under `data/v2.5/` and are 
 
 ## Source records
 
+* `docs/V2.5/README.md` is the entry point for current V2.5 implementation records and the historical-document boundary.
 * `docs/V2.5/source-audit.md` records the complete source/data/assets/docs/build comparison and manual acceptance checklist.
 * `docs/V2.5/work-items.json` is the machine-readable implementation order, dependencies, deletion risks, and acceptance mapping.
 

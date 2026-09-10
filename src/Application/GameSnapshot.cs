@@ -95,9 +95,6 @@ public sealed record V25ActorRuntimeSnapshot(
     int BossPatternIndex = 0,
     string? BossStoryInstanceId = null);
 public sealed record WorldObjectSnapshot(string Id, string Type, string AssetId, Vec2 Position, bool Blocking, bool Destroyed, string? ZoneId = null, double PresentationScale = 1, int ZIndex = 0);
-public sealed record AssetSnapshot(string Id, string File, int? FrameWidth, int? FrameHeight);
-public sealed record AnimationClipSnapshot(string Id, double FrameRate, int Repeat, IReadOnlyList<string> Files);
-public sealed record PlayerAnimationClipSnapshot(string Id, AssetSnapshot Asset, int DirectionRow, int FrameCount, double FrameRate, int Repeat, double Scale);
 public sealed record DefeatedMonsterVisualSnapshot(string Uid, string SpeciesId, int Rank, Vec2 Position, double DurationSeconds);
 public sealed record WorldMapRegionSnapshot(
     string Id,

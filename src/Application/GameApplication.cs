@@ -91,7 +91,7 @@ public sealed class GameApplication
     }
     public StartPossessionResult StartPossession(string soulId) => _session.Possession.Start(soulId);
     public bool EndPossession() => _session.Possession.End();
-    public bool RestAtCanonicalShrine(double seconds = 1) => _session.TryRestAtCanonicalShrine(seconds);
+    public bool RestAtCanonicalShrine(double seconds = 1) => MarkIfTrue(_session.TryRestAtCanonicalShrine(seconds));
     public bool RestResetCanonicalEncounters() => _session.TryCanonicalRestReset();
     public bool DiscoverCanonicalLandmark(string landmarkId) { var result = _session.TryDiscoverCanonicalLandmark(landmarkId); if (result) _session.RequireCanonicalDurableCommit(); return result; }
     public bool OpenCanonicalChest(string chestId) { var result = _session.TryOpenCanonicalChest(chestId); if (result) _session.RequireCanonicalDurableCommit(); return result; }
@@ -105,15 +105,27 @@ public sealed class GameApplication
     public bool WasCanonicalTileVisited(Vec2 position) => CanonicalContent is null || _session.WasVisited(position);
     public IReadOnlyList<V25TerrainArea> CanonicalTerrain() => _session.CanonicalTerrain;
     public IReadOnlyList<V25RoadSegment> CanonicalRoads() => CanonicalContent is null ? Array.Empty<V25RoadSegment>() : V25WorldLayout.Roads(CanonicalContent.Content.LayoutBlueprint);
-    public bool HasSpeciesAnimation(string speciesId) => _session.Definitions.CharacterAnimations.MonstersBySpecies.Keys.Any(id => id.Equals(speciesId, StringComparison.OrdinalIgnoreCase));
     public string SpeciesDisplayName(string speciesId) => CanonicalContent?.Content.Species.FirstOrDefault(s => s.Id == speciesId)?.Name ?? speciesId;
-    public bool HasAsset(string id) => _session.Definitions.Assets.Assets.ContainsKey(id);
     public bool UpgradeCanonicalProfile()
     {
         if (CanonicalContent?.ActiveProfileId != "beta_01" || !_session.IsAtCanonicalShrine() || _session.IsCanonicalCombatActive()) return false;
         RestoreCanonicalSave(CaptureCanonicalSave(), upgradeToFull: true);
         _session.RequireCanonicalDurableCommit(); return true;
     }
+
+    /// <summary>Returns only a portal that is physically reachable by the Player. The presentation owner performs the durable transition.</summary>
+    public string? NearbyCanonicalPortalTarget()
+    {
+        if (CanonicalContent is null) return null;
+        var portal = _session.World.CurrentMap.Objects.Values.Where(item => item.Type == "portal" && _session.IsNearCanonicalObject(item.Id))
+            .OrderBy(item => item.Position.DistanceTo(_session.Player.State.Position)).ThenBy(item => item.Id, StringComparer.Ordinal).FirstOrDefault();
+        if (portal is null) return null;
+        var current = CanonicalContent.Content.Regions.First(region => region.Id == _session.CanonicalRegionId);
+        return portal.Id.StartsWith("entry.", StringComparison.Ordinal)
+            ? CanonicalContent.Content.Regions.FirstOrDefault(region => region.NextRegionId == current.Id)?.Id
+            : current.NextRegionId;
+    }
+
     public string? InteractNearestCanonical()
     {
         if (CanonicalContent is null) return null;
@@ -127,10 +139,7 @@ public sealed class GameApplication
             case "chest": return OpenCanonicalChest(item.Id) ? "Đã nhận vật phẩm và coin từ rương." : "Rương đã mở hoặc chưa thể nhận thưởng.";
             case "secret": return _session.TryInteractCanonicalSecret(item.Id) ? "Đã nhận Sync bí mật." : "Cần phụ hồn đúng loài, Sync 40 và capability tương ứng; hoặc đã nhận thưởng.";
             case "shrine": return "Shrine: dùng Nghỉ / Nhận thưởng / Nghi thức trong bảng chức năng.";
-            case "portal":
-                var current = CanonicalContent.Content.Regions.First(r => r.Id == _session.CanonicalRegionId);
-                var target = item.Id.StartsWith("entry.", StringComparison.Ordinal) ? CanonicalContent.Content.Regions.FirstOrDefault(r => r.NextRegionId == current.Id)?.Id : current.NextRegionId;
-                return target is not null && _session.TravelToCanonicalRegion(target).Success ? "Đã chuyển vùng." : "Cổng chưa mở hoặc đã tới giới hạn profile.";
+            case "portal": return "Cổng đang chờ giao dịch chuyển vùng bền vững.";
         }
         return null;
     }
@@ -184,12 +193,30 @@ public sealed class GameApplication
     public V25MasterySnapshot? CanonicalMastery() => _session.MasteryV25?.Snapshot();
     public bool PromoteCanonicalMastery(string skillId) => _session.MasteryV25?.TryPromote(skillId) == true;
     public IReadOnlyList<V25QuestState> CanonicalQuests() => _session.QuestsV25?.Quests ?? Array.Empty<V25QuestState>();
+    public bool IsAtCanonicalShrine() => CanonicalContent is not null && _session.IsAtCanonicalShrine();
+    public bool HasNearbyCanonicalPickup() => CanonicalContent is not null && _session.Souls.WorldSouls().Any(soul => soul.Position.DistanceTo(_session.Player.State.Position) <= 48);
+    public string? NearbyCanonicalNpcId(bool requirePendingQuest)
+    {
+        if (CanonicalContent is null) return null;
+        return _session.World.CurrentMap.Objects.Values.Where(item => item.Type == "npc" && _session.IsNearCanonicalObject(item.Id))
+            .Select(item => new { Item = item, NpcId = item.Id[4..] })
+            .Where(item => !requirePendingQuest || _session.QuestsV25?.HasPendingNpcObjective(item.NpcId) == true)
+            .OrderBy(item => item.Item.Position.DistanceTo(_session.Player.State.Position)).ThenBy(item => item.NpcId, StringComparer.Ordinal)
+            .Select(item => item.NpcId).FirstOrDefault();
+    }
     public V25QuestInteractionResult InteractCanonicalNpc(string npcId) { var result = !_session.CanUseCanonicalNpc(npcId) ? new V25QuestInteractionResult(false, Message: "Hãy đến gần NPC (48 units), ngoài giao tranh.") : _session.QuestsV25?.InteractNpc(npcId) ?? new(false, Message: "Canonical quests are not enabled."); if (result.Success || result.HintShown) _session.RequireCanonicalDurableCommit(); return result; }
     public bool RecordCanonicalQuestObjective(string eventName, string target, string eventId) => MarkIfTrue(_session.QuestsV25?.RecordObjective(eventName, target, eventId) == true);
     public V25QuestRewardResult ClaimCanonicalQuestReward(string questId) { var result = _session.QuestsV25?.ClaimReward(questId) ?? new(false, QuestId: questId, Failure: "Canonical quests are not enabled."); if (result.Success && !result.AlreadyClaimed) _session.RequireCanonicalDurableCommit(); return result; }
     public IReadOnlyList<V25LootAward> CanonicalLootAwards() => _session.LootV25?.Awards ?? Array.Empty<V25LootAward>();
     public IReadOnlyList<V25UniquePowerState> CanonicalUniquePowers() => _session.UniquePowersV25?.Powers ?? Array.Empty<V25UniquePowerState>();
     public bool ClaimCanonicalUniquePower(string powerId) => MarkIfTrue(_session.UniquePowersV25?.Claim(powerId) == true);
+    public V25RitualProgress BeginCanonicalUniqueRitual() => _session.UniquePowersV25?.BeginAvailableRitual() ?? new(false, false, null, 0, "Canonical unique powers are not enabled.");
+    public V25RitualProgress AdvanceCanonicalUniqueRitual(bool held)
+    {
+        var result = _session.UniquePowersV25?.AdvanceRitual(held) ?? new(false, false, null, 0, "Canonical unique powers are not enabled.");
+        if (result.Completed) _session.RequireCanonicalDurableCommit();
+        return result;
+    }
     public string? CurrentMapBackgroundAssetId() => _session.World.CurrentMap.BackgroundAssetId;
     public IReadOnlyList<WorldMapRegionSnapshot> WorldMapRegions() => _session.WorldMap.Regions.Select(BuildRegionSnapshot).ToArray();
     public WorldMapRegionSnapshot? RegionDetails(string regionId) => _session.WorldMap.Regions.FirstOrDefault(region => region.Id == regionId) is { } region ? BuildRegionSnapshot(region) : null;
@@ -233,7 +260,7 @@ public sealed class GameApplication
             var linked = banner is not null && bound.Contains(soul.Id);
             var cost = _session.Souls.Cost(soul.Id) ?? 0;
             var canPossess = linked && runtime.Status == SoulRuntimeStatus.Ready && _session.Definitions.SoulNatures.Natures.TryGetValue(soul.SoulNatureId, out var nature) && nature.PossessionProfileId is not null;
-            var canDevour = !linked && runtime.Status == SoulRuntimeStatus.Ready && _session.Devouring.Previews(soul.Id).Count > 0;
+            var canDevour = !linked && runtime.Status == SoulRuntimeStatus.Ready && _session.Devouring!.Previews(soul.Id).Count > 0;
             var canSummon = linked && runtime.Status == SoulRuntimeStatus.Ready && banner is not null && activeCount < banner.Computed.ActiveLimit;
             return new SoulLinkView(soul.Id, soul.Origin.DisplayName, linked ? banner!.Id : null, state, cost, runtime.Stability, canSummon, canPossess, canDevour);
         }).ToArray();
@@ -241,26 +268,6 @@ public sealed class GameApplication
     public IReadOnlyList<WorldObjectSnapshot> WorldObjects() => _session.World.CurrentMap.Objects.Values
         .Select(item => new WorldObjectSnapshot(item.Id, item.Type, item.AssetId, item.Position, item.Blocking, _session.World.IsDestroyed(item.Id), item.ZoneId, item.PresentationScale, _session.World.CurrentMap.Layers[item.LayerId].ZIndex))
         .ToArray();
-    public AssetSnapshot Asset(string logicalId) { var asset = _session.Definitions.Assets.Get(logicalId); return new(asset.Id, asset.File, asset.FrameWidth, asset.FrameHeight); }
-    public AnimationClipSnapshot MonsterAnimation(string speciesId, int rank, string actionId)
-    {
-        var animations = _session.Definitions.CharacterAnimations.MonstersBySpecies;
-        var descriptor = animations.GetValueOrDefault(speciesId) ?? animations.GetValueOrDefault(speciesId.ToUpperInvariant());
-        var action = _session.Definitions.CharacterAnimations.MonsterActions[actionId];
-        // Canonical IDs are lower-case while the legacy animation manifest uses Pascal/upper-case
-        // species keys. Missing art is a presentation warning; it must not abort the simulation boot.
-        if (descriptor is null) return new(action.Id, action.FrameRate, action.Repeat, Array.Empty<string>());
-        var form = descriptor.Forms[SpriteStageRules.GetSpriteStage(speciesId.ToUpperInvariant(), rank) - 1];
-        var files = Enumerable.Range(0, action.FrameCount).Select(frame => descriptor.FramePathPattern.Replace("{rootDir}", descriptor.RootDirectory, StringComparison.Ordinal).Replace("{formDirectory}", form.Directory, StringComparison.Ordinal).Replace("{actionDirectory}", action.Directory, StringComparison.Ordinal).Replace("{filePrefix}", form.FilePrefix, StringComparison.Ordinal).Replace("{frame}", frame.ToString("D3", System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal).Replace("assets/", "", StringComparison.Ordinal)).ToArray();
-        return new(action.Id, action.FrameRate, action.Repeat, files);
-    }
-    public PlayerAnimationClipSnapshot PlayerAnimation(string actionId, string directionId, int rank)
-    {
-        var descriptor = _session.Definitions.CharacterAnimations.Player; var action = descriptor.Actions[actionId]; var form = System.Math.Clamp((rank - 1) / descriptor.RanksPerForm + 1, 1, descriptor.FormCount);
-        var asset = Asset(descriptor.AssetIdPattern.Replace("{form}", form.ToString(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal).Replace("{action}", action.AssetAction, StringComparison.Ordinal));
-        var count = action.FramesByDirection.GetValueOrDefault(directionId, action.Columns);
-        return new($"{actionId}_{directionId}", asset, descriptor.Directions[directionId], count, action.FrameRate, action.Repeat, descriptor.Scale);
-    }
     public IReadOnlyList<DefeatedMonsterVisualSnapshot> DrainDefeatedMonsterVisuals() { var result = _defeatedVisuals.ToArray(); _defeatedVisuals.Clear(); return result; }
 
     public GameSaveData CaptureSave() => new(
@@ -270,7 +277,7 @@ public sealed class GameApplication
         _session.SoulBanners.Banners().Select(banner => new SoulBannerSaveData(banner.Id, TierId(banner.Tier), banner.Level, banner.BoundSoulIds.ToArray())).ToArray(),
         CaptureProgressionSave(),
         _session.Summons.DispersedSnapshot().Select(item => new SoulRuntimeSaveData(item.SoulId, item.RecoverySeconds, item.RecoveryDurationSeconds)).ToArray(),
-        new(_session.Essence.Snapshot()), new(_session.Bloodline.Snapshot()),
+        new(_session.Essence!.Snapshot()), new(_session.Bloodline!.Snapshot()),
         _session.Possession.Snapshot() is { } possession ? new(possession.SoulId, possession.ProfileId, possession.RemainingSeconds) : null,
         new(_session.World.DestroyedObjectIds(), _session.WorldMap.CurrentRegionId));
 
@@ -346,13 +353,14 @@ public sealed class GameApplication
             _session.Progression.CanonicalFactSnapshot().Select(fact => new V25FactSaveRecord(fact.FactId, fact.ProducerId, fact.SourceId, fact.SourceVersion, fact.ProducedTick)).ToArray(),
             _session.SoulBanners.CanonicalBannerRank,
             _session.SoulBanners.CanonicalUpgradeReceipts.Select(receipt => new V25BannerGateSaveRecord(receipt.GateId, receipt.GateVersion, receipt.ReceiptId, receipt.FromRank, receipt.ToRank)).ToArray(),
-            summonStates.Values.Select(state => new V25SummonSaveState(state.SpeciesId, state.RecoveryTicks, state.HpRatio, state.AttackCooldown)).ToArray(),
+            summonStates.Values.Select(state => new V25SummonSaveState(state.SpeciesId, state.RecoveryTicks, state.HpRatio, 0)).ToArray(),
             _session.Spirit?.RemainderMicro ?? 0,
             _session.Spirit?.RateRemainderMicro ?? 0,
             _session.Possession.CanonicalSnapshot is { } possession ? new V25PossessionSaveState(possession.SourceInstanceId, possession.SoulId, possession.SpeciesId, possession.SoulLevel, possession.SoulRank, possession.SyncMicro,
                 possession.MilestoneIds, possession.SoulBaseHp, possession.SoulBaseAttack, possession.SoulBaseDefense, possession.SoulBaseMoveSpeed, possession.TransferHp, possession.TransferAttack, possession.TransferDefense, possession.TransferMoveSpeed,
                 possession.SignatureSkillId, possession.CapabilityId, possession.DurationSeconds, possession.RemainingSeconds, possession.CooldownSeconds, possession.StartedTick) : null,
             _session.Possession.CanonicalCooldowns.Select(cooldown => new V25PossessionCooldownSaveState(cooldown.SpeciesId, cooldown.RemainingSeconds)).ToArray(),
+            _session.Possession.CanonicalTransitionLockTicks,
             _session.Traversal?.Snapshot() is { } traversal ? new V25TraversalSaveState(
                 traversal.SafeAnchor is { } anchor ? new V25SafeAnchorSaveState(anchor.PositionX, anchor.PositionY, anchor.ConfirmedTick, anchor.GateStateId, anchor.SafeWalkmesh) : null,
                 traversal.AnchorCandidateTicks, traversal.CandidatePositionX, traversal.CandidatePositionY, traversal.CandidateGateStateId,
@@ -424,6 +432,7 @@ public sealed class GameApplication
         ValidateCanonicalRuntimeBeforeSwap(save, runtime);
         if (!ulong.TryParse(save.Payload.UidNext, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var uidNext) || uidNext > long.MaxValue)
             throw new InvalidDataException("V2.5 UID allocator value cannot be represented by the runtime.");
+        ValidateUidAllocatorFloor(save, runtime, (long)uidNext);
         var player = runtime.Actors.Single(actor => actor.Kind == V25EntityKind.Player);
         var casts = runtime.Casts.Select(cast => new V25CastView(cast.CastId, cast.CasterUid, cast.SkillId, cast.AcceptedTick, cast.ReleaseTick, cast.EndTick, cast.Phase,
             new Vec2(cast.AimX, cast.AimY), cast.TargetUid, cast.SourceKind,
@@ -448,28 +457,27 @@ public sealed class GameApplication
         _session.Combat.ClearCanonicalRuntime();
         _session.Summons.ClearActiveForMapChange();
         _session.Monsters.Clear(); _session.Allies.Clear();
-        _session.Monsters.RestoreDormantRegions(save.Payload.WorldLifecycle?.DormantRegions, save.Payload.CurrentRegionId, runtime.SimulationTick);
+        _session.Monsters.RestoreDormantRegions(save.Payload.WorldLifecycle?.DormantRegions, save.Payload.CurrentRegionId, runtime.SimulationTick,
+            runtime.Actors.Select(actor => actor.Uid).ToHashSet(StringComparer.Ordinal));
         _session.Player.RestoreCanonicalRuntime(player.Uid, save.Payload.Player.Level, player.Rank, save.Payload.Player.Xp,
             V25FixedPoint.FromMilli(player.CurrentHpMilli), V25FixedPoint.FromMilli(player.MaxHpMilli), V25FixedPoint.FromMilli(player.CurrentSpiritMilli), V25FixedPoint.FromMilli(player.MaxSpiritMilli), player.CombatStyleId,
-            V25FixedPoint.FromMilli(player.AttackCooldownMilli), player.BreakthroughReady, player.DodgeCooldownTicks, player.DodgeRemainingTicks, player.DodgeInvulnerabilityTicks,
+            0, player.BreakthroughReady, player.DodgeCooldownTicks, player.DodgeRemainingTicks, player.DodgeInvulnerabilityTicks,
             new Vec2(player.DodgeDirectionX, player.DodgeDirectionY), V25FixedPoint.FromMilli(player.DodgeDistanceRemainingMilli), V25FixedPoint.FromMilli(player.DodgeStepDistanceMilli), player.Statuses, player.Shields, runtime.SimulationTick,
             new Vec2(player.FacingX, player.FacingY));
-        _session.Player.SetPosition(new Vec2(player.PositionX, player.PositionY));
+        _session.Player.RestoreCanonicalPosition(new Vec2(player.PositionX, player.PositionY));
         _session.Spirit?.RestoreRemainder(save.Payload.SpiritRemainderMicro);
-        // Before world clocks were serialized, this carry used denominator 60; retain its fractional value.
-        _session.Spirit?.RestoreRateRemainder(save.Payload.WorldLifecycle?.HazardTicks is null
-            ? checked(save.Payload.SpiritRateRemainderMicro * 60) : save.Payload.SpiritRateRemainderMicro);
+        _session.Spirit?.RestoreRateRemainder(save.Payload.SpiritRateRemainderMicro);
         _session.RestoreRespawnTicks(runtime.RespawnTicks ?? (player.Alive ? 0 : throw new InvalidDataException("Older dead-player save lacks its respawn timer; preserved without guessing.")));
         foreach (var actor in runtime.Actors.Where(actor => actor.Kind == V25EntityKind.Monster))
             _session.Monsters.RestoreCanonicalRuntime(actor.Uid, actor.DefinitionId, actor.SpeciesId, actor.Level, actor.Rank, actor.PowerTier, actor.Archetype, actor.CombatStyleId, actor.SignatureSkillId,
                 actor.PositionX, actor.PositionY, V25FixedPoint.FromMilli(actor.CurrentHpMilli), V25FixedPoint.FromMilli(actor.MaxHpMilli), actor.Alive, actor.AiState,
-                V25FixedPoint.FromMilli(actor.AttackCooldownMilli), actor.EncounterId, actor.EncounterType, actor.RewardEligible, actor.Statuses, actor.Shields, runtime.SimulationTick,
+                0, actor.EncounterId, actor.EncounterType, actor.RewardEligible, actor.Statuses, actor.Shields, runtime.SimulationTick,
                 actor.StaggerPoints, actor.StaggerImmuneTicks, actor.StaggerRecoveryTicks, actor.BossPatternIndex, actor.BossStoryInstanceId);
         foreach (var actor in runtime.Actors.Where(actor => actor.Kind == V25EntityKind.Ally))
         {
             _session.Allies.RestoreCanonicalRuntime(actor.Uid, actor.DefinitionId, actor.SpeciesId, actor.DisplayName!, actor.SourceSoulId!, actor.Level, actor.Rank, actor.PowerTier, actor.Archetype,
                 actor.CombatStyleId, actor.SignatureSkillId, actor.PositionX, actor.PositionY, V25FixedPoint.FromMilli(actor.CurrentHpMilli), V25FixedPoint.FromMilli(actor.MaxHpMilli), actor.Alive, actor.AiState,
-                V25FixedPoint.FromMilli(actor.AttackCooldownMilli), actor.TargetUid, V25FixedPoint.FromMicro(actor.VitalityMicro), actor.RecoveryTicks, actor.Statuses, actor.Shields, runtime.SimulationTick,
+                0, actor.TargetUid, V25FixedPoint.FromMicro(actor.VitalityMicro), actor.RecoveryTicks, actor.Statuses, actor.Shields, runtime.SimulationTick,
                 Enum.Parse<AllyAiMode>(actor.AiMode, ignoreCase: false), actor.ThinkTicks, actor.FocusTargetUid, actor.FocusRemainingTicks, actor.PathFailTicks, actor.RecentAttackerUid, actor.RecentAttackerAgeTicks);
             _session.Summons.RestoreCanonicalActiveLink(actor.SourceSoulId!, actor.Uid);
         }
@@ -494,7 +502,7 @@ public sealed class GameApplication
             var mode = Enum.Parse<V25SoulRuntimeMode>(owned.Mode, ignoreCase: false);
             var detail = summonBySpecies.GetValueOrDefault(owned.SpeciesId);
             return new V25SummonStateSnapshot(owned.SpeciesId, mode, owned.ActiveAllyUid, owned.VitalityMicro,
-                detail?.RecoveryTicks ?? 0, detail?.HpRatio ?? 1, detail?.AttackCooldown ?? 0);
+                detail?.RecoveryTicks ?? 0, detail?.HpRatio ?? 1, 0);
         }).ToArray();
         _session.Summons.RestoreCanonicalState(summonSnapshots);
         _session.Progression.RestoreCanonicalRewardReceipts(save.Payload.Receipts.Where(receipt => receipt.Kind == "combatReward").Select(receipt => receipt.ReceiptId));
@@ -520,7 +528,8 @@ public sealed class GameApplication
             savedPossession.SoulBaseDefense, savedPossession.SoulBaseMoveSpeed, savedPossession.TransferHp, savedPossession.TransferAttack, savedPossession.TransferDefense,
             savedPossession.TransferMoveSpeed, savedPossession.SignatureSkillId, savedPossession.CapabilityId, savedPossession.DurationSeconds, savedPossession.RemainingSeconds,
             savedPossession.CooldownSeconds, savedPossession.StartedTick) : null;
-        _session.Possession.RestoreCanonical(possession, (save.Payload.PossessionCooldowns ?? Array.Empty<V25PossessionCooldownSaveState>()).Select(cooldown => new V25PossessionCooldownState(cooldown.SpeciesId, cooldown.RemainingSeconds)));
+        _session.Possession.RestoreCanonical(possession, (save.Payload.PossessionCooldowns ?? Array.Empty<V25PossessionCooldownSaveState>()).Select(cooldown => new V25PossessionCooldownState(cooldown.SpeciesId, cooldown.RemainingSeconds)),
+            save.Payload.PossessionTransitionLockTicks ?? throw new InvalidDataException("V2.5 save lacks possession transition-lock state."));
         if (_session.Traversal is { } traversalSystem)
         {
             if (save.Payload.Traversal is { } traversal)
@@ -529,6 +538,12 @@ public sealed class GameApplication
                     ? new V25SafeAnchorSnapshot(savedAnchor.PositionX, savedAnchor.PositionY, savedAnchor.ConfirmedTick, savedAnchor.GateStateId, savedAnchor.SafeWalkmesh)
                     : null;
                 var activeTerrain = traversal.ActiveTerrain is { } active ? (V25TerrainTag?)Enum.Parse<V25TerrainTag>(active, ignoreCase: false) : null;
+                var currentArea = _session.CanonicalTerrain.FirstOrDefault(area => V25WorldLayout.Contains(area.Bounds, _session.Player.State.Position));
+                var currentTerrain = currentArea?.Terrain ?? V25TerrainTag.Ground;
+                if (activeTerrain is not null && (activeTerrain != currentTerrain || !string.Equals(traversal.ActiveGateStateId, _session.CanonicalRegionId, StringComparison.Ordinal)) ||
+                    anchor is not null && !string.Equals(anchor.GateStateId, _session.CanonicalRegionId, StringComparison.Ordinal) ||
+                    traversal.CandidateGateStateId is not null && !string.Equals(traversal.CandidateGateStateId, _session.CanonicalRegionId, StringComparison.Ordinal))
+                    throw new InvalidDataException("Saved traversal state does not match the active region terrain/gate context.");
                 traversalSystem.Restore(new V25TraversalSnapshot(anchor, traversal.AnchorCandidateTicks, traversal.CandidatePositionX, traversal.CandidatePositionY,
                     traversal.CandidateGateStateId, traversal.FlightGraceTicks, traversal.BreathingGraceTicks, activeTerrain, traversal.ActiveWidthUnits,
                     traversal.ActiveGateStateId, traversal.ActiveStartedTick, traversal.CrumblingTicks), runtime.SimulationTick);
@@ -589,6 +604,8 @@ public sealed class GameApplication
         _session.RestoreVisitedTiles(save.Payload.WorldLifecycle?.VisitedTiles);
         _session.RestoreHazardTicks(save.Payload.WorldLifecycle?.HazardTicks);
         _session.Player.RecomputeStats();
+        if (!string.Equals(_session.Player.State.CombatStyleId, player.CombatStyleId, StringComparison.Ordinal))
+            throw new InvalidDataException("Saved player combat style does not match restored main-hand equipment.");
         // Keep absolute resource amounts; intermediate modifier application may temporarily clamp them.
         // Historical balance versions may legitimately have different derived maxima.
         if (save.BalanceVersion == V25SaveFormat.BalanceVersion &&
@@ -618,7 +635,7 @@ public sealed class GameApplication
         }
         _session.Souls.RestoreOwned(restoredSouls);
         RestoreProgressionSave(save.Progression);
-        _session.Essence.Restore(save.Essence?.Points); _session.Summons.RestoreDispersed(save.SoulRuntime?.Select(item => new DispersedSoulSaveData(item.SoulId, item.RecoverySeconds, item.RecoveryDurationSeconds))); _session.Bloodline.Restore(save.Bloodline?.Points);
+        _session.Essence!.Restore(save.Essence?.Points); _session.Summons.RestoreDispersed(save.SoulRuntime?.Select(item => new DispersedSoulSaveData(item.SoulId, item.RecoverySeconds, item.RecoveryDurationSeconds))); _session.Bloodline!.Restore(save.Bloodline?.Points);
         foreach (var savedBanner in save.SoulBanner)
         {
             if (!TryTier(savedBanner.Tier, out var tier)) throw new InvalidDataException($"Unsupported Soul Banner tier '{savedBanner.Tier}'.");
@@ -676,32 +693,33 @@ public sealed class GameApplication
     /// <summary>Typed live combat/timing state reserved for the V2.5 save writer; no legacy v6 wrapper is emitted.</summary>
     public V25RuntimeSnapshot CanonicalRuntimeSnapshot()
     {
+        var tick = _session.SimulationTick;
         var actors = new List<V25ActorRuntimeSnapshot>
         {
             new(_session.Player.State.Uid, V25EntityKind.Player, "player", "player", _session.Player.State.Position,
                 _session.Player.State.CurrentHp, _session.Player.State.MaxHp, _session.Player.State.Shield, _session.Player.State.Alive,
                 _session.Player.State.Level, _session.Player.State.Rank, null, null, _session.Player.State.CombatStyleId,
-                _session.Player.State.Statuses.Snapshot(_session.Player.State.Uid), _session.Player.State.Shields.Snapshot(_session.Player.State.Uid), _session.Player.State.DodgeCooldownTicks,
+                _session.Player.State.Statuses.Snapshot(_session.Player.State.Uid).Where(status => status.ExpireTick > tick).ToArray(), _session.Player.State.Shields.Snapshot(_session.Player.State.Uid).Where(shield => shield.ExpireTick > tick).ToArray(), _session.Player.State.DodgeCooldownTicks,
                 _session.Player.State.DodgeRemainingTicks, _session.Player.State.DodgeInvulnerabilityTicks, 1, "Balanced",
                 _session.Player.State.CurrentSpirit, _session.Player.State.MaxSpirit,
                 DodgeDirection: _session.Player.State.DodgeDirection, DodgeDistanceRemaining: _session.Player.State.DodgeDistanceRemaining,
-                DodgeStepDistance: _session.Player.State.DodgeStepDistance, AttackCooldown: _session.Player.State.AttackCooldown,
+                DodgeStepDistance: _session.Player.State.DodgeStepDistance, AttackCooldown: 0,
                 AiState: _session.Player.State.Alive ? "Idle" : "Dead", BreakthroughReady: _session.Player.State.BreakthroughReady, Facing: _session.Player.State.Facing)
         };
         actors.AddRange(_session.Monsters.AllMonsters().Select(monster => new V25ActorRuntimeSnapshot(
             monster.Uid, V25EntityKind.Monster, monster.DefinitionId, monster.SpeciesId, monster.Position, monster.CurrentHp, monster.MaxHp,
             monster.Shield, monster.Alive, monster.Level, monster.Rank, null, monster.EncounterId, monster.CombatStyleId,
-            monster.Statuses.Snapshot(monster.Uid), monster.Shields.Snapshot(monster.Uid), PowerTier: monster.PowerTier, Archetype: monster.Archetype,
+            monster.Statuses.Snapshot(monster.Uid).Where(status => status.ExpireTick > tick).ToArray(), monster.Shields.Snapshot(monster.Uid).Where(shield => shield.ExpireTick > tick).ToArray(), PowerTier: monster.PowerTier, Archetype: monster.Archetype,
             SignatureSkillId: monster.SignatureSkillId, EncounterType: monster.EncounterType, RewardEligible: monster.RewardEligible,
-            AttackCooldown: monster.AttackCooldown, AiState: monster.AiState.ToString(), StaggerPoints: monster.StaggerPoints,
+            AttackCooldown: 0, AiState: monster.AiState.ToString(), StaggerPoints: monster.StaggerPoints,
             StaggerImmuneTicks: monster.StaggerImmuneTicks, StaggerRecoveryTicks: monster.StaggerRecoveryTicks,
             BossPatternIndex: monster.BossPatternIndex, BossStoryInstanceId: monster.BossStoryInstanceId)));
         actors.AddRange(_session.Allies.AliveAllies().Select(ally => new V25ActorRuntimeSnapshot(
             ally.Uid, V25EntityKind.Ally, ally.DefinitionId, ally.SpeciesId, ally.Position, ally.CurrentHp, ally.MaxHp, ally.Shield,
-            ally.Alive, ally.Level, ally.Rank, ally.TargetUid, null, ally.CombatStyleId, ally.Statuses.Snapshot(ally.Uid), ally.Shields.Snapshot(ally.Uid),
+            ally.Alive, ally.Level, ally.Rank, ally.TargetUid, null, ally.CombatStyleId, ally.Statuses.Snapshot(ally.Uid).Where(status => status.ExpireTick > tick).ToArray(), ally.Shields.Snapshot(ally.Uid).Where(shield => shield.ExpireTick > tick).ToArray(),
             PowerTier: ally.PowerTier, Archetype: ally.Archetype, Vitality: ally.Vitality, RecoveryTicks: ally.RecoveryTicks,
             SignatureSkillId: ally.SignatureSkillId, SourceSoulId: ally.SourceSoulId, DisplayName: ally.DisplayName,
-            AttackCooldown: ally.AttackCooldown, AiState: ally.AiState.ToString(), AiMode: ally.AiMode,
+            AttackCooldown: 0, AiState: ally.AiState.ToString(), AiMode: ally.AiMode,
             ThinkTicks: ally.ThinkTicks, FocusTargetUid: ally.FocusTargetUid, FocusRemainingTicks: ally.FocusRemainingTicks,
             PathFailTicks: ally.PathFailTicks, RecentAttackerUid: ally.RecentAttackerUid,
             RecentAttackerAgeTicks: ally.RecentAttackerTick < 0 ? 0 : checked((int)Math.Max(0, _session.SimulationTick - ally.RecentAttackerTick)))));
@@ -803,11 +821,56 @@ public sealed class GameApplication
         foreach (var actor in runtime.Actors)
         {
             if (actor.TargetUid is not null && !actors.ContainsKey(actor.TargetUid)) throw new InvalidDataException($"Actor '{actor.Uid}' target '{actor.TargetUid}' is missing.");
+            if (actor.Kind == V25EntityKind.Player && actor.TargetUid is not null)
+                throw new InvalidDataException("Canonical player cannot own an AI target link.");
+            if (actor.Kind == V25EntityKind.Monster && actor.TargetUid is { } monsterTarget &&
+                (!actors.TryGetValue(monsterTarget, out var monsterTargetActor) || monsterTargetActor.Kind is not (V25EntityKind.Player or V25EntityKind.Ally) || !monsterTargetActor.Alive))
+                throw new InvalidDataException($"Monster '{actor.Uid}' target is not a live hostile actor.");
+            if (actor.Kind == V25EntityKind.Ally && actor.TargetUid is { } allyTarget &&
+                (!actors.TryGetValue(allyTarget, out var allyTargetActor) || allyTargetActor.Kind != V25EntityKind.Monster || !allyTargetActor.Alive))
+                throw new InvalidDataException($"Ally '{actor.Uid}' target is not a live Monster.");
+            if (actor.Kind == V25EntityKind.Ally && (actor.FocusTargetUid is null) != (actor.FocusRemainingTicks == 0))
+                throw new InvalidDataException($"Ally '{actor.Uid}' focus target and remaining duration disagree.");
+            if (actor.Kind == V25EntityKind.Ally && actor.FocusTargetUid is { } focusTarget &&
+                (!actors.TryGetValue(focusTarget, out var focusTargetActor) || focusTargetActor.Kind != V25EntityKind.Monster || !focusTargetActor.Alive))
+                throw new InvalidDataException($"Ally '{actor.Uid}' focus target is not a live Monster.");
+            if (actor.Kind == V25EntityKind.Ally && actor.RecentAttackerUid is { } recentAttacker &&
+                (!actors.TryGetValue(recentAttacker, out var recentAttackerActor) || recentAttackerActor.Kind != V25EntityKind.Monster))
+                throw new InvalidDataException($"Ally '{actor.Uid}' recent attacker is not a Monster actor.");
             if (actor.Kind == V25EntityKind.Player && actor.BreakthroughReady && actor.Level % 10 != 0) throw new InvalidDataException("Breakthrough can only be pending at a rank boundary.");
         }
         var allySources = new HashSet<string>(StringComparer.Ordinal);
         foreach (var ally in runtime.Actors.Where(actor => actor.Kind == V25EntityKind.Ally))
             if (ally.SourceSoulId is null || !allySources.Add(ally.SourceSoulId)) throw new InvalidDataException("V2.5 runtime contains duplicate or missing ally Soul source identity.");
+    }
+
+    /// <summary>UidGenerator stores the last issued numeric suffix. A save may contain gaps,
+    /// but its allocator may never move behind a persisted runtime identity after restore.</summary>
+    private static void ValidateUidAllocatorFloor(V25SaveEnvelope save, V25RuntimeSaveState runtime, long uidNext)
+    {
+        var ids = runtime.Actors.Select(actor => actor.Uid)
+            .Concat(runtime.Casts.Select(cast => cast.CastId))
+            .Concat(runtime.Casts.Select(cast => cast.CasterUid))
+            .Concat(runtime.Projectiles.Select(projectile => projectile.CastId))
+            .Concat(runtime.Projectiles.Select(projectile => projectile.CasterUid))
+            .Concat(runtime.Cooldowns.Select(cooldown => cooldown.SourceUid))
+            .Concat(runtime.HitKeys.Select(hit => hit.CastId))
+            .Concat(runtime.HitKeys.Select(hit => hit.TargetLifeUid))
+            .Concat((runtime.Knockbacks ?? Array.Empty<V25KnockbackSaveState>()).Select(knockback => knockback.TargetUid))
+            .Concat((save.Payload.WorldSouls ?? Array.Empty<V25WorldSoulSaveState>()).Select(soul => soul.PickupId))
+            .Concat((save.Payload.WorldSouls ?? Array.Empty<V25WorldSoulSaveState>()).Select(soul => soul.MonsterUid))
+            .Concat((save.Payload.WorldLifecycle?.DormantRegions?.Values ?? Array.Empty<IReadOnlyList<V25RegionMonster>>()).SelectMany(rows => rows ?? Array.Empty<V25RegionMonster>()).Select(row => row.Uid))
+            .Concat(save.Payload.Possession is { } possession ? new[] { possession.SourceInstanceId } : Array.Empty<string>());
+        var greatestObserved = 0L;
+        foreach (var id in ids)
+        {
+            if (string.IsNullOrWhiteSpace(id)) continue;
+            var separator = id.LastIndexOf('_');
+            if (separator < 0 || !long.TryParse(id.AsSpan(separator + 1), System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var suffix)) continue;
+            greatestObserved = Math.Max(greatestObserved, suffix);
+        }
+        if (uidNext < greatestObserved)
+            throw new InvalidDataException("V2.5 UID allocator precedes a persisted runtime identity; original save is preserved.");
     }
 
     private V25DensityEngineSnapshot BuildCanonicalDensitySnapshot(V25SaveDocument payload)
@@ -844,6 +907,13 @@ public sealed class GameApplication
             throw new InvalidDataException("V2.5 save contains a receipt kind outside the implemented combat reward ledger; the original must be preserved.");
         if (payload.Player.RegionId != payload.CurrentRegionId)
             throw new InvalidDataException("V2.5 player region and save region disagree.");
+        var world = payload.WorldLifecycle ?? throw new InvalidDataException("V2.5 save lacks canonical world state; the original must be preserved rather than recreating encounters.");
+        // These fields identify progress that cannot be inferred safely from a position or a
+        // default clock. A pre-field save remains checksum-valid but is unsupported here; it is
+        // rejected before session mutation instead of relocating Souls, resetting fog or
+        // replaying a hazard phase.
+        if (world.HazardTicks is null || world.DormantRegions is null || world.PickupRegions is null || world.VisitedTiles is null)
+            throw new InvalidDataException("V2.5 save predates required world persistence fields; the original must be preserved rather than guessed.");
     }
 
     private double V25PlayerSpirit(int level, int rank) => System.Math.Round((120 + 12 * (level - 1)) * (1 + 0.08 * (rank - 1)), MidpointRounding.AwayFromZero);

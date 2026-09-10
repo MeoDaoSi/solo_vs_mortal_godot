@@ -344,7 +344,7 @@ public sealed class V25ShieldStore
         var sourceIds = new HashSet<string>(StringComparer.Ordinal);
         foreach (var shield in staged)
         {
-            if (shield is null || shield.TargetUid != targetUid || string.IsNullOrWhiteSpace(shield.SourceId) || !sourceIds.Add(shield.SourceId) || shield.ExpireTick < currentTick || !double.IsFinite(shield.Amount) || shield.Amount <= 0)
+            if (shield is null || shield.TargetUid != targetUid || string.IsNullOrWhiteSpace(shield.SourceId) || !sourceIds.Add(shield.SourceId) || shield.ExpireTick <= currentTick || !double.IsFinite(shield.Amount) || shield.Amount <= 0)
                 throw new InvalidDataException($"Invalid canonical shield snapshot for '{targetUid}'.");
         }
         foreach (var old in _shields.Values.Where(item => item.TargetUid == targetUid).ToArray()) _shields.Remove((old.TargetUid, old.SourceId));
@@ -403,7 +403,7 @@ public sealed class V25StatusStore
 
     public void Tick(long currentTick, Action<V25StatusInstance> dot)
     {
-        foreach (var status in _statuses.Values.ToArray())
+        foreach (var status in _statuses.Values.OrderBy(status => status.TargetUid, StringComparer.Ordinal).ThenBy(status => status.EffectId, StringComparer.Ordinal).ThenBy(status => status.SourceId, StringComparer.Ordinal).ToArray())
         {
             var current = status;
             while (current.NextDotTick <= currentTick && current.NextDotTick <= current.ExpireTick)
@@ -426,7 +426,7 @@ public sealed class V25StatusStore
         var keys = new HashSet<(string Effect, string Source)>();
         foreach (var status in staged)
         {
-            if (status is null || status.TargetUid != targetUid || string.IsNullOrWhiteSpace(status.SourceId) || string.IsNullOrWhiteSpace(status.EffectId) || !keys.Add((status.EffectId, status.SourceId)) || status.ExpireTick < currentTick || status.NextDotTick < 0 || status.Stacks is < 1 or > 3 || !double.IsFinite(status.Potency) || !double.IsFinite(status.SnapshotAttack))
+            if (status is null || status.TargetUid != targetUid || string.IsNullOrWhiteSpace(status.SourceId) || string.IsNullOrWhiteSpace(status.EffectId) || !keys.Add((status.EffectId, status.SourceId)) || status.ExpireTick <= currentTick || status.NextDotTick < 0 || status.Stacks is < 1 or > 3 || !double.IsFinite(status.Potency) || !double.IsFinite(status.SnapshotAttack))
                 throw new InvalidDataException($"Invalid canonical status snapshot for '{targetUid}'.");
         }
         foreach (var old in _statuses.Values.Where(item => item.TargetUid == targetUid).ToArray()) _statuses.Remove((old.TargetUid, old.EffectId, old.SourceId));

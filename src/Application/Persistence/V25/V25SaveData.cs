@@ -381,6 +381,7 @@ public sealed record V25SaveDocument(
     long SpiritRateRemainderMicro = 0,
     V25PossessionSaveState? Possession = null,
     IReadOnlyList<V25PossessionCooldownSaveState>? PossessionCooldowns = null,
+    int? PossessionTransitionLockTicks = null,
     V25TraversalSaveState? Traversal = null,
     V25InventorySaveState? Inventory = null,
     V25SkillGrantSaveState? SkillGrants = null,
@@ -581,6 +582,8 @@ public static class V25SaveCodec
             RequireRecord(cooldown, "possessionCooldown"); RequireId(cooldown.SpeciesId, "possessionCooldown.speciesId");
             if (!double.IsFinite(cooldown.RemainingSeconds) || cooldown.RemainingSeconds <= 0 || cooldown.RemainingSeconds > 90) throw new InvalidDataException("Canonical possession cooldown is invalid.");
         }
+        if (payload.PossessionTransitionLockTicks is not { } transitionLockTicks || transitionLockTicks is < 0 or > 18)
+            throw new InvalidDataException("V2.5 save lacks a valid possession transition-lock timer; original preserved rather than clearing a pending transition.");
         if (payload.Possession is { } possession)
         {
             RequireRecord(possession, "possession"); RequireId(possession.SourceInstanceId, "possession.sourceInstanceId"); RequireId(possession.SoulId, "possession.soulId"); RequireId(possession.SpeciesId, "possession.speciesId");

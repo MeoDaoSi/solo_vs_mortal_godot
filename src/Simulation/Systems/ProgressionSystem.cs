@@ -100,6 +100,7 @@ public sealed class ProgressionSystem : IDisposable
 
     public bool Craft(PillId pillId, int amount = 1)
     {
+        if (_canonical is not null) return false;
         var count = System.Math.Max(1, amount); var pill = BalanceDefinition.Pills[pillId];
         if (pill.Recipe.Any(entry => Count(MaterialStableId(entry.Key)) < entry.Value * count)) return false;
         foreach (var entry in pill.Recipe) Consume(MaterialStableId(entry.Key), entry.Value * count);
@@ -108,6 +109,7 @@ public sealed class ProgressionSystem : IDisposable
 
     public bool UsePlayerStatPill(PillId pillId)
     {
+        if (_canonical is not null) return false;
         var pill = BalanceDefinition.Pills[pillId];
         if (pill.Modifiers is null || pill.DurationSeconds is null || !Consume(pill.StableId, 1)) return false;
         var index = _playerBuffs.FindIndex(buff => buff.PillId == pillId);

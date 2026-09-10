@@ -1,4 +1,5 @@
 using SoloVsMortal.Core.Events;
+using SoloVsMortal.Core.Math;
 using SoloVsMortal.Core.Rng;
 using SoloVsMortal.Data.Definitions.V25;
 using SoloVsMortal.Simulation.Events;
@@ -90,6 +91,7 @@ public sealed class V25LootSystem : IDisposable
 
 public sealed record V25UniquePowerState(string PowerId, string ReceiptId, long UnlockedTick, string HostBossId, int PowerRank);
 public sealed record V25UniquePowerSnapshot(IReadOnlyList<V25UniquePowerState> Powers);
+public sealed record V25RitualProgress(bool Started, bool Completed, string? PowerId, int RemainingTicks, string? Failure = null);
 
 /// <summary>Owns unique Fragment/Entity collection independently from Species Soul ownership.
 /// Only authored facts unlock a power; there is no capture roll and no implicit Sync requirement.
@@ -100,19 +102,35 @@ public sealed class V25UniquePowerSystem : IDisposable
     private readonly EventBus _events;
     private readonly Func<string, bool> _hasFact;
     private readonly Func<bool> _atShrine;
+    private readonly Func<Vec2> _playerPosition;
     private readonly Func<long> _tick;
     private readonly Dictionary<string, V25UniquePowerState> _owned = new(StringComparer.Ordinal);
     private readonly IDisposable _factSubscription;
     private readonly IDisposable _defeatSubscription;
+    private readonly IDisposable _playerDamagedSubscription;
+    private readonly IDisposable _playerDefeatedSubscription;
+    private ActiveRitual? _activeRitual;
 
-    public V25UniquePowerSystem(CanonicalContentRegistry canonical, EventBus events, Func<string, bool> hasFact, Func<bool> atShrine, Func<long> tick)
+    public V25UniquePowerSystem(CanonicalContentRegistry canonical, EventBus events, Func<string, bool> hasFact, Func<bool> atShrine, Func<Vec2> playerPosition, Func<long> tick)
     {
         _canonical = canonical ?? throw new ArgumentNullException(nameof(canonical)); _events = events ?? throw new ArgumentNullException(nameof(events)); _hasFact = hasFact ?? throw new ArgumentNullException(nameof(hasFact)); _atShrine = atShrine ?? throw new ArgumentNullException(nameof(atShrine)); _tick = tick ?? throw new ArgumentNullException(nameof(tick));
+        _playerPosition = playerPosition ?? throw new ArgumentNullException(nameof(playerPosition));
         _factSubscription = events.Subscribe<V25FactCommittedEvent>(_ => EvaluateEligible());
         _defeatSubscription = events.Subscribe<MonsterDefeatedEvent>(_ => EvaluateEligible());
+        _playerDamagedSubscription = events.Subscribe<PlayerDamagedEvent>(_ => CancelRitual());
+        _playerDefeatedSubscription = events.Subscribe<PlayerDefeatedEvent>(_ => CancelRitual());
     }
 
     public IReadOnlyList<V25UniquePowerState> Powers => _owned.Values.OrderBy(item => item.PowerId, StringComparer.Ordinal).ToArray();
+    public V25RitualProgress RitualProgress
+    {
+        get
+        {
+            if (_activeRitual is not { } ritual) return new(false, false, null, 0);
+            var elapsed = checked((int)Math.Min(int.MaxValue, _tick() - ritual.StartedTick));
+            return new(true, false, ritual.PowerId, Math.Max(0, ritual.DurationTicks - elapsed));
+        }
+    }
     public bool IsOwned(string powerId) => _owned.ContainsKey(powerId);
     public bool IsSkillGranted(string skillId) => _canonical.UniqueSkillsForProfile(_canonical.ActiveProfileId).Any(skill => skill.Id == skillId && _owned.Values.Any(power => power.PowerId == _canonical.Content.UniquePowers.First(item => item.SkillId == skillId).Id));
     public int PowerRank(string skillId) => _owned.Values.Where(power => _canonical.Content.UniquePowers.FirstOrDefault(item => item.Id == power.PowerId)?.SkillId == skillId).Select(power => power.PowerRank).DefaultIfEmpty(1).Max();
@@ -123,9 +141,46 @@ public sealed class V25UniquePowerSystem : IDisposable
     public bool Claim(string powerId)
     {
         var definition = _canonical.Content.UniquePowers.FirstOrDefault(item => item.Id == powerId);
-        if (definition is null || !definition.Profiles.Contains(_canonical.ActiveProfileId, StringComparer.Ordinal) || _owned.ContainsKey(powerId) || !_atShrine() && definition.RitualMs > 0 || !RequirementsMet(definition)) return false;
+        if (definition is null || definition.RitualMs > 0 || !definition.Profiles.Contains(_canonical.ActiveProfileId, StringComparer.Ordinal) || _owned.ContainsKey(powerId) || !RequirementsMet(definition)) return false;
         Commit(definition);
         return true;
+    }
+
+    /// <summary>Starts the one authored hold ritual. It is transient by design: no award exists until completion.</summary>
+    public V25RitualProgress BeginAvailableRitual()
+    {
+        if (_activeRitual is { } active) return RitualProgress;
+        var definition = _canonical.Content.UniquePowers.Where(power => power.RitualMs > 0 && power.Profiles.Contains(_canonical.ActiveProfileId, StringComparer.Ordinal) && !_owned.ContainsKey(power.Id) && RequirementsMet(power))
+            .OrderBy(power => power.Id, StringComparer.Ordinal).FirstOrDefault();
+        if (definition is null) return new(false, false, null, 0, "NoEligibleRitual");
+        if (!_atShrine()) return new(false, false, definition.Id, 0, "NotAtShrine");
+        var durationTicks = V25CombatRules.MillisecondsToTicksCeil(definition.RitualMs);
+        _activeRitual = new ActiveRitual(definition.Id, _tick(), _playerPosition(), durationTicks);
+        return RitualProgress;
+    }
+
+    /// <summary>Advances only while E remains held. Moving, damage, failed facts, or leaving the shrine cancels without a receipt.</summary>
+    public V25RitualProgress AdvanceRitual(bool held)
+    {
+        if (_activeRitual is not { } ritual) return new(false, false, null, 0, "NoActiveRitual");
+        if (!held) return CancelRitual("Released");
+        var definition = _canonical.Content.UniquePowers.FirstOrDefault(power => power.Id == ritual.PowerId);
+        if (definition is null || !definition.Profiles.Contains(_canonical.ActiveProfileId, StringComparer.Ordinal) || _owned.ContainsKey(ritual.PowerId) || !RequirementsMet(definition))
+            return CancelRitual("RequirementsChanged");
+        if (!_atShrine() || _playerPosition().DistanceTo(ritual.StartPosition) > 1) return CancelRitual("MovedOrLeftShrine");
+        var elapsed = checked((int)Math.Min(int.MaxValue, _tick() - ritual.StartedTick));
+        var remaining = Math.Max(0, ritual.DurationTicks - elapsed);
+        if (remaining > 0) return new(true, false, ritual.PowerId, remaining);
+        _activeRitual = null;
+        Commit(definition);
+        return new(false, true, definition.Id, 0);
+    }
+
+    public V25RitualProgress CancelRitual(string failure = "Canceled")
+    {
+        if (_activeRitual is not { } ritual) return new(false, false, null, 0, failure);
+        _activeRitual = null;
+        return new(false, false, ritual.PowerId, 0, failure);
     }
 
     public V25UniquePowerSnapshot Snapshot() => new(Powers);
@@ -159,5 +214,7 @@ public sealed class V25UniquePowerSystem : IDisposable
         _events.Publish(new V25UniquePowerUnlockedEvent(definition.Id, definition.ReceiptId, definition.HostBossId, definition.PowerRank));
     }
 
-    public void Dispose() { _factSubscription.Dispose(); _defeatSubscription.Dispose(); }
+    public void Dispose() { _factSubscription.Dispose(); _defeatSubscription.Dispose(); _playerDamagedSubscription.Dispose(); _playerDefeatedSubscription.Dispose(); }
+
+    private sealed record ActiveRitual(string PowerId, long StartedTick, Vec2 StartPosition, int DurationTicks);
 }

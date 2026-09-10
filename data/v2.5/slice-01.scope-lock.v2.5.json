@@ -1,0 +1,1806 @@
+{
+  "schemaVersion": 2,
+  "scopeVersion": "slice-01.reconciled.2026-09-10",
+  "createdAt": "2026-09-09T18:11:27.7921633Z",
+  "source": {
+    "catalogPath": "C:/ws/asset-production_system/art/production/catalog.json",
+    "catalogSnapshotSha256": "8fca0adb8a4cc3432a8e094f7ac6dbe271c1132a2486a9fa9b2d47eb198e46b0",
+    "catalogScopeVersion": "2.5.1-closed",
+    "catalogUpdatedAt": "2026-09-10T01:07:23.143466+07:00",
+    "scopeMembershipSha256": "994ebfd3d946d506a085452da40523ce141cd5b22ab020bdd95d301f15143df6",
+    "worklistPath": "C:/ws/asset-production_system/art/production/slice-parts.json",
+    "worklistSha256": "62fe4258096a27bdb9ddcd3ddfc29badb0e6440e12400a697abf8951376603a5"
+  },
+  "rules": [
+    "Membership is exactly the ordered AssetId list in entries; scopeMembershipSha256 protects that membership independently of generated catalog timestamps.",
+    "generated, technical QA, and a reusable-source authorization do not equal user aesthetic approval or in-engine acceptance.",
+    "Only a user decision may move an asset to approved; rework output returns to pending user review.",
+    "No asset absent from this lock may be counted as Slice 01 without a new reconciled scope lock."
+  ],
+  "counts": {
+    "catalogLogicalAssets": 161,
+    "productionWorklistUniqueAssets": 158,
+    "catalogOnlyAssets": 3,
+    "generated": 101,
+    "needsRework": 4,
+    "notGenerated": 56
+  },
+  "reconciliation": {
+    "productionWorklistAssets": "158 unique IDs, all present in the catalog scope.",
+    "catalogOnlyAssets": [
+      {
+        "assetId": "player.base.idle.s",
+        "reason": "Existing beta-slice-v002 candidate is needs_rework; it is deliberately excluded from ART production worklist pending a new candidate and user decision."
+      },
+      {
+        "assetId": "soul.skeleton.rank01.enemy.south",
+        "reason": "User-authorized reuse of a static south-facing actor visual; this is not an animation-generation task."
+      },
+      {
+        "assetId": "soul.skeleton.rank01.ally.south",
+        "reason": "User-authorized reuse of a static south-facing actor visual; this is not an animation-generation task."
+      }
+    ]
+  },
+  "entries": [
+    {
+      "assetId": "equipment.sword.rank01.attachment.e",
+      "group": "equipment",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-35",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "equipment.sword.rank01.attachment.n",
+      "group": "equipment",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-35",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "equipment.sword.rank01.attachment.s",
+      "group": "equipment",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-35",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "equipment.sword.rank01.attachment.w",
+      "group": "equipment",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-35",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "equipment.sword.rank01.icon",
+      "group": "equipment",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-35",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "equipment.sword.rank01.weaponpose.attack.e",
+      "group": "equipment",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-37",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "equipment.sword.rank01.weaponpose.attack.n",
+      "group": "equipment",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-37",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "equipment.sword.rank01.weaponpose.attack.s",
+      "group": "equipment",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-36",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "equipment.sword.rank01.weaponpose.attack.w",
+      "group": "equipment",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-36",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.attack.e",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-05",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.attack.n",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-05",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.attack.s",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-04",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.attack.w",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-04",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.death.e",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-09",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.death.n",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-09",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.death.s",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-08",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.death.w",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-08",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.hit.e",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-07",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.hit.n",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-07",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.hit.s",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-06",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.hit.w",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-06",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.idle.e",
+      "group": "player",
+      "currentCatalogStatus": "needs_rework",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-01",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.idle.n",
+      "group": "player",
+      "currentCatalogStatus": "needs_rework",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-01",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.idle.s",
+      "group": "player",
+      "currentCatalogStatus": "needs_rework",
+      "scopeRole": "existing_candidate_needs_rework_and_user_decision",
+      "worklist": null
+    },
+    {
+      "assetId": "player.base.idle.w",
+      "group": "player",
+      "currentCatalogStatus": "needs_rework",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-01",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.move.e",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-03",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.move.n",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-03",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.move.s",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-02",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "player.base.move.w",
+      "group": "player",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-02",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.attack.e",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-25",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.attack.n",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-25",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.attack.s",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-24",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.attack.w",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-24",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.disperse.e",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-29",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.disperse.n",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-29",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.disperse.s",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-28",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.disperse.w",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-28",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.hit.e",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-27",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.hit.n",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-27",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.hit.s",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-26",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.hit.w",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-26",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.idle.e",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-21",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.idle.n",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-21",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.idle.s",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-20",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.idle.w",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-20",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.move.e",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-23",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.move.n",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-23",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.move.s",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-22",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.move.w",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-22",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.recall.e",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-33",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.recall.n",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-33",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.recall.s",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-32",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.recall.w",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-32",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.south",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "user_authorized_reused_static_actor",
+      "worklist": null
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.summon.e",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-31",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.summon.n",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-31",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.summon.s",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-30",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.ally.summon.w",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-30",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.banner.icon",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "user_authorized_reused_static_artwork",
+      "worklist": {
+        "partId": "ART-34",
+        "partStatus": "reuse_existing",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.attack.e",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-15",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.attack.n",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-15",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.attack.s",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-14",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.attack.w",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-14",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.death.e",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-19",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.death.n",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-19",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.death.s",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-18",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.death.w",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-18",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.hit.e",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-17",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.hit.n",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-17",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.hit.s",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-16",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.hit.w",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-16",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.idle.e",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-11",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.idle.n",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-11",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.idle.s",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-10",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.idle.w",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-10",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.move.e",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-13",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.move.n",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-13",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.move.s",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-12",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.move.w",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-12",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "soul.skeleton.rank01.enemy.south",
+      "group": "monsters",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "user_authorized_reused_static_actor",
+      "worklist": null
+    },
+    {
+      "assetId": "soul.skeleton.rank01.pickup",
+      "group": "souls",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "user_authorized_reused_static_artwork",
+      "worklist": {
+        "partId": "ART-34",
+        "partStatus": "reuse_existing",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.banner",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-49",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.bridge_segment",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-49",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.chest",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-47",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.debris",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-49",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask00",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-38",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask01",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-38",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask02",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-38",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask03",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-38",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask04",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-38",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask05",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-38",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask06",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-38",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask07",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-38",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask08",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-39",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask09",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-39",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask10",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-39",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask11",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-39",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask12",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-39",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask13",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-39",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask14",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-39",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ground.mask15",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-39",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.landmark",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-48",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask00",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-40",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask01",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-40",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask02",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-40",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask03",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-40",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask04",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-40",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask05",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-40",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask06",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-40",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask07",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-40",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask08",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-41",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask09",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-41",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask10",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-41",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask11",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-41",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask12",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-41",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask13",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-41",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask14",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-41",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.path.mask15",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-41",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.pillar",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-48",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.portal",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-47",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.rock",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-48",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask00",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-42",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask01",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-42",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask02",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-42",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask03",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-42",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask04",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-42",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask05",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-42",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask06",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-42",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask07",
+      "group": "world",
+      "currentCatalogStatus": "generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-42",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask08",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-43",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask09",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-43",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask10",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-43",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask11",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-43",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask12",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-43",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask13",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-43",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask14",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-43",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.ruin.mask15",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-43",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.seal",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-47",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.shrine",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-47",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.torch",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-49",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.tree_or_spire",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-48",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.cap.ne",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-46",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.cap.nw",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-46",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.cap.se",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-46",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.cap.sw",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-46",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask00",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-44",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask01",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-44",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask02",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-44",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask03",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-44",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask04",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-44",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask05",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-44",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask06",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-44",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask07",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-44",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask08",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-45",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask09",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-45",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask10",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-45",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask11",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-45",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask12",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-45",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask13",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-45",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask14",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-45",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    },
+    {
+      "assetId": "world.ash_graves.wall.mask15",
+      "group": "world",
+      "currentCatalogStatus": "not_generated",
+      "scopeRole": "production_worklist",
+      "worklist": {
+        "partId": "ART-45",
+        "partStatus": "pending",
+        "userReview": "pending"
+      }
+    }
+  ]
+}

@@ -39,7 +39,10 @@ public sealed class PossessionSystem
 {
     private PossessionSaveData? _active;
     private V25PossessionSnapshot? _canonicalActive;
-    private readonly Dictionary<string, double> _canonicalCooldowns = new(StringComparer.Ordinal);
+    // Canonical gameplay time is expressed in 60 Hz domain ticks.  Seconds remain at the
+    // application boundary for HUD/save compatibility, always derived from these integers.
+    private readonly Dictionary<string, int> _canonicalCooldowns = new(StringComparer.Ordinal);
+    private int _canonicalActiveRemainingTicks;
     private CanonicalContentRegistry? _canonical;
     private Func<string, long>? _canonicalSync;
     private Func<string, IReadOnlySet<string>>? _canonicalMilestones;
@@ -51,11 +54,17 @@ public sealed class PossessionSystem
     private readonly EventBus _events; private readonly SoulNatureDefinitions _definitions; private readonly SoulSystem _souls; private readonly SoulBannerSystem _banners; private readonly SummonSystem _runtime; private readonly PlayerModifierSystem _modifiers; private readonly CapabilitySystem _capabilities; private readonly PlayerSystem _player;
     public PossessionSystem(EventBus events, SoulNatureDefinitions definitions, SoulSystem souls, SoulBannerSystem banners, SummonSystem runtime, PlayerModifierSystem modifiers, CapabilitySystem capabilities, PlayerSystem? player = null) { _events = events; _definitions = definitions; _souls = souls; _banners = banners; _runtime = runtime; _modifiers = modifiers; _capabilities = capabilities; _player = player ?? throw new ArgumentNullException(nameof(player)); }
     public string? ActiveSoulId => _canonicalActive?.SoulId ?? _active?.SoulId;
-    public double RemainingSeconds => _canonicalActive?.RemainingSeconds ?? _active?.RemainingSeconds ?? 0;
+    public double RemainingSeconds => _canonicalActive is null ? _active?.RemainingSeconds ?? 0 : SecondsFromTicks(_canonicalActiveRemainingTicks);
     public bool CanonicalTransitionLocked => _canonicalTransitionTicks > 0;
+    /// <summary>Remaining fixed ticks of the post-possession action lock. This is save state,
+    /// not a presentation debounce: suspend must not clear the 300 ms transition boundary.</summary>
+    public int CanonicalTransitionLockTicks => _canonicalTransitionTicks;
     public PossessionSaveData? Snapshot() => _active;
-    public V25PossessionSnapshot? CanonicalSnapshot => _canonicalActive;
-    public IReadOnlyList<V25PossessionCooldownState> CanonicalCooldowns => _canonicalCooldowns.OrderBy(item => item.Key, StringComparer.Ordinal).Select(item => new V25PossessionCooldownState(item.Key, item.Value)).ToArray();
+    public V25PossessionSnapshot? CanonicalSnapshot => _canonicalActive is { } active
+        ? active with { RemainingSeconds = SecondsFromTicks(_canonicalActiveRemainingTicks) }
+        : null;
+    public IReadOnlyList<V25PossessionCooldownState> CanonicalCooldowns => _canonicalCooldowns.OrderBy(item => item.Key, StringComparer.Ordinal)
+        .Select(item => new V25PossessionCooldownState(item.Key, SecondsFromTicks(item.Value))).ToArray();
 
     public void ConfigureCanonical(CanonicalContentRegistry canonical, Func<string, long> sync, Func<string, IReadOnlySet<string>> milestones, Func<bool> actionLocked, Func<long>? tick = null, Action<string>? cancelUnreleased = null, Action<string>? capabilityRevoked = null)
     {
@@ -91,18 +100,23 @@ public sealed class PossessionSystem
     public void Update(double deltaSeconds)
     {
         if (!double.IsFinite(deltaSeconds) || deltaSeconds <= 0) return;
-        _canonicalTransitionTicks = Math.Max(0, _canonicalTransitionTicks - Math.Max(1, (int)Math.Round(deltaSeconds * 60, MidpointRounding.AwayFromZero)));
-        foreach (var key in _canonicalCooldowns.Keys.ToArray())
+        if (_canonical is not null)
         {
-            var remaining = Math.Max(0, _canonicalCooldowns[key] - deltaSeconds);
-            if (remaining <= 0) _canonicalCooldowns.Remove(key); else _canonicalCooldowns[key] = remaining;
+            var elapsedTicks = ElapsedCanonicalTicks(deltaSeconds);
+            _canonicalTransitionTicks = Math.Max(0, _canonicalTransitionTicks - elapsedTicks);
+            foreach (var key in _canonicalCooldowns.Keys.ToArray())
+            {
+                var remaining = Math.Max(0, _canonicalCooldowns[key] - elapsedTicks);
+                if (remaining == 0) _canonicalCooldowns.Remove(key); else _canonicalCooldowns[key] = remaining;
+            }
+            if (_canonicalActive is not null)
+            {
+                _canonicalActiveRemainingTicks = Math.Max(0, _canonicalActiveRemainingTicks - elapsedTicks);
+                if (_canonicalActiveRemainingTicks == 0) EndCanonical(false);
+            }
+            return;
         }
-        if (_canonicalActive is { } canonical)
-        {
-            _canonicalActive = canonical with { RemainingSeconds = Math.Max(0, canonical.RemainingSeconds - deltaSeconds) };
-            if (_canonicalActive.RemainingSeconds <= 0) EndCanonical(false);
-        }
-        else if (_active is { } legacy)
+        if (_active is { } legacy)
         {
             _active = legacy with { RemainingSeconds = Math.Max(0, legacy.RemainingSeconds - deltaSeconds) };
             if (_active.RemainingSeconds == 0) End();
@@ -116,14 +130,15 @@ public sealed class PossessionSystem
         if (!_definitions.PossessionProfiles.TryGetValue(data.ProfileId, out var profile) || _definitions.Natures[soul.SoulNatureId].PossessionProfileId != data.ProfileId || !_runtime.BeginPossession(data.SoulId)) return;
         _active = data with { RemainingSeconds = System.Math.Min(profile.DurationSeconds, data.RemainingSeconds) }; Apply(profile);
     }
-    public void RestoreCanonical(V25PossessionSnapshot? data, IEnumerable<V25PossessionCooldownState> cooldowns)
+    public void RestoreCanonical(V25PossessionSnapshot? data, IEnumerable<V25PossessionCooldownState> cooldowns, int transitionLockTicks = 0)
     {
         if (_canonical is null || _canonicalSync is null || _canonicalMilestones is null) throw new InvalidOperationException("Canonical possession is not configured.");
         ArgumentNullException.ThrowIfNull(cooldowns);
-        var stagedCooldowns = new Dictionary<string, double>(StringComparer.Ordinal);
+        if (transitionLockTicks is < 0 or > 18) throw new InvalidDataException("Canonical possession transition lock is invalid.");
+        var stagedCooldowns = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var row in cooldowns)
         {
-            if (row is null || !_canonical.SpeciesForProfile(_canonical.ActiveProfileId).Any(species => species.Id == row.SpeciesId) || !double.IsFinite(row.RemainingSeconds) || row.RemainingSeconds <= 0 || !stagedCooldowns.TryAdd(row.SpeciesId, row.RemainingSeconds))
+            if (row is null || !_canonical.SpeciesForProfile(_canonical.ActiveProfileId).Any(species => species.Id == row.SpeciesId) || !double.IsFinite(row.RemainingSeconds) || row.RemainingSeconds <= 0 || !stagedCooldowns.TryAdd(row.SpeciesId, CanonicalTimerTicks(row.RemainingSeconds)))
                 throw new InvalidDataException("Canonical possession cooldown snapshot is invalid.");
         }
         V25PossessionSnapshot? staged = null;
@@ -136,11 +151,13 @@ public sealed class PossessionSystem
             staged = data;
         }
         _canonicalCooldowns.Clear(); foreach (var row in stagedCooldowns) _canonicalCooldowns.Add(row.Key, row.Value);
-        _canonicalActive = null; ClearCanonical();
+        _canonicalTransitionTicks = transitionLockTicks;
+        _canonicalActive = null; _canonicalActiveRemainingTicks = 0; ClearCanonical();
         if (staged is not null)
         {
             if (_runtime.Runtime(staged.SoulId).Status != SoulRuntimeStatus.Possessed && !_runtime.BeginPossession(staged.SoulId)) throw new InvalidDataException("Canonical possession source is not Ready during restore.");
             _canonicalActive = staged;
+            _canonicalActiveRemainingTicks = CanonicalTimerTicks(staged.RemainingSeconds);
             ApplyCanonical(staged);
         }
     }
@@ -171,6 +188,10 @@ public sealed class PossessionSystem
         var duration = Math.Clamp(_canonical.Balance.Possession.DurationBaseSeconds * durationMultiplier / burden, _canonical.Balance.Possession.DurationRange[0], _canonical.Balance.Possession.DurationRange[1]);
         var cooldownMultiplier = 1 - _canonical.Balance.Possession.CooldownSync * sync;
         var cooldown = Math.Clamp(_canonical.Balance.Possession.CooldownBaseSeconds * burden * cooldownMultiplier * (milestones.Contains($"sync.{species.Id}.60") ? 0.95 : 1), _canonical.Balance.Possession.CooldownRange[0], _canonical.Balance.Possession.CooldownRange[1]);
+        var durationTicks = CanonicalTimerTicks(duration);
+        var cooldownTicks = CanonicalTimerTicks(cooldown);
+        duration = SecondsFromTicks(durationTicks);
+        cooldown = SecondsFromTicks(cooldownTicks);
         var baseStats = V25CombatRules.ComputeStats(V25EntityKind.Ally, species.PowerTier, species.Archetype, soulRank, soul.Level, balance: _canonical.Balance);
         var playerStats = _canonicalPlayerStats();
         var transferMultiplier = 1 + (milestones.Contains($"sync.{species.Id}.40") ? 0.05 : 0) + (milestones.Contains($"sync.{species.Id}.80") ? 0.05 : 0);
@@ -184,6 +205,7 @@ public sealed class PossessionSystem
         var snapshot = new V25PossessionSnapshot(sourceInstance, soul.Id, species.Id, soul.Level, soulRank, syncMicro, milestones.Order(StringComparer.Ordinal).ToArray(), baseStats.MaxHp, baseStats.Attack, baseStats.Defense, baseStats.MoveSpeed,
             transferHp, transferAtk, transferDef, transferSpeed, signature, species.CapabilityId, duration, duration, cooldown, _canonicalTick());
         _canonicalActive = snapshot;
+        _canonicalActiveRemainingTicks = durationTicks;
         ApplyCanonical(snapshot);
         _events.Publish(new PossessionStartedEvent(soul.Id, sourceInstance, species.Name, duration));
         return new(true, soul.Id, sourceInstance);
@@ -194,10 +216,10 @@ public sealed class PossessionSystem
         if (_canonicalActive is not { } active) return false;
         _canonicalCancelUnreleased?.Invoke(_player.State.Uid);
         _player.State.Statuses.RemoveSource(_player.State.Uid, active.SourceInstanceId);
-        _canonicalActive = null; ClearCanonical(active.SourceInstanceId);
+        _canonicalActive = null; _canonicalActiveRemainingTicks = 0; ClearCanonical(active.SourceInstanceId);
         if (active.SyncMicro >= 40 * V25FixedPoint.DensitySyncScale) _canonicalCapabilityRevoked?.Invoke(active.CapabilityId);
         _runtime.EndPossession(active.SoulId, 0);
-        _canonicalCooldowns[active.SpeciesId] = active.CooldownSeconds;
+        _canonicalCooldowns[active.SpeciesId] = CanonicalTimerTicks(active.CooldownSeconds);
         _canonicalTransitionTicks = Math.Max(_canonicalTransitionTicks, V25CombatRules.MillisecondsToTicksCeil(300));
         _events.Publish(new PossessionEndedEvent(active.SoulId, active.SourceInstanceId, active.CooldownSeconds));
         return true;
@@ -222,6 +244,15 @@ public sealed class PossessionSystem
 
     private (double Hp, double Atk, double Def, double Speed) _canonicalPlayerStats() => (_player.State.MaxHp, _player.State.Stats.Atk, _player.State.Stats.DefRaw, _player.State.Stats.SpeedRaw);
     private long _canonicalTick() => _canonicalTickProvider?.Invoke() ?? 0;
+    private static int ElapsedCanonicalTicks(double deltaSeconds) => Math.Max(1, checked((int)Math.Round(deltaSeconds * 60, MidpointRounding.AwayFromZero)));
+    private static int CanonicalTimerTicks(double seconds)
+    {
+        if (!double.IsFinite(seconds) || seconds <= 0) throw new InvalidDataException("Canonical timer seconds are invalid.");
+        // Gameplay timers originate in milliseconds/formula output and are rounded up once
+        // when they enter the 60 Hz domain.  A tiny epsilon preserves exact 1/60 save values.
+        return Math.Max(1, checked((int)Math.Ceiling(seconds * 60 - 1e-9)));
+    }
+    private static double SecondsFromTicks(int ticks) => ticks / 60.0;
 
     private void ValidateCanonicalSnapshot(V25PossessionSnapshot active)
     {

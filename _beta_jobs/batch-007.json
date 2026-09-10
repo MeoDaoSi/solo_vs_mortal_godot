@@ -1,0 +1,194 @@
+[
+  {
+    "assetId": "player.staff.attack.s",
+    "clip": "attack",
+    "direction": "s",
+    "family": "staff",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-fa8592d2-4ff5-47f7-8869-5f35eaef6fad.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-fa8592d2-4ff5-47f7-8869-5f35eaef6fad.png",
+    "localJobId": "exec-fa8592d2-4ff5-47f7-8869-5f35eaef6fad",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.staff.attack.s, the south-facing key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable staff attack key pose: the Player holds one simple long staff with both hands, staff angled or raised through the facing direction but fully inside the safe canvas, grounded stance; no spell orb, projectile, rune, glow, trail, spark, particles or other VFX. Preserve the existing Player silhouette, visible hand grip and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.staff.attack.w",
+    "clip": "attack",
+    "direction": "w",
+    "family": "staff",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-f36ac8c1-7c58-49bd-bb88-372c8af81a2e.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-f36ac8c1-7c58-49bd-bb88-372c8af81a2e.png",
+    "localJobId": "exec-f36ac8c1-7c58-49bd-bb88-372c8af81a2e",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.staff.attack.w, the west-facing/left key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable staff attack key pose: the Player holds one simple long staff with both hands, staff angled or raised through the facing direction but fully inside the safe canvas, grounded stance; no spell orb, projectile, rune, glow, trail, spark, particles or other VFX. Preserve the existing Player silhouette, visible hand grip and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.staff.attack.e",
+    "clip": "attack",
+    "direction": "e",
+    "family": "staff",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-2eaa8bbf-fd26-44e6-bb6d-0ff367457328.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-2eaa8bbf-fd26-44e6-bb6d-0ff367457328.png",
+    "localJobId": "exec-2eaa8bbf-fd26-44e6-bb6d-0ff367457328",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.staff.attack.e, the east-facing/right key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable staff attack key pose: the Player holds one simple long staff with both hands, staff angled or raised through the facing direction but fully inside the safe canvas, grounded stance; no spell orb, projectile, rune, glow, trail, spark, particles or other VFX. Preserve the existing Player silhouette, visible hand grip and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.staff.attack.n",
+    "clip": "attack",
+    "direction": "n",
+    "family": "staff",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-e1e96230-4e1f-476b-95fa-7f5e45e9b0ae.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-e1e96230-4e1f-476b-95fa-7f5e45e9b0ae.png",
+    "localJobId": "exec-e1e96230-4e1f-476b-95fa-7f5e45e9b0ae",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.staff.attack.n, the north-facing/up key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable staff attack key pose: the Player holds one simple long staff with both hands, staff angled or raised through the facing direction but fully inside the safe canvas, grounded stance; no spell orb, projectile, rune, glow, trail, spark, particles or other VFX. Preserve the existing Player silhouette, visible hand grip and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.dagger.attack.s",
+    "clip": "attack",
+    "direction": "s",
+    "family": "dagger",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-2ee760df-39e8-4624-8be1-683ee35bb12f.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-2ee760df-39e8-4624-8be1-683ee35bb12f.png",
+    "localJobId": "exec-2ee760df-39e8-4624-8be1-683ee35bb12f",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.dagger.attack.s, the south-facing key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable close-range dagger attack key pose: the Player holds one short dagger in a clear hand grip, compact quick slash posture with the blade fully inside the safe canvas; no second weapon, projectile, slash trail, spark, blood, particles or other VFX. Preserve the existing Player silhouette, visible hand grip and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.dagger.attack.w",
+    "clip": "attack",
+    "direction": "w",
+    "family": "dagger",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-7a8c57ba-bc19-40b7-a577-360813dea9bd.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-7a8c57ba-bc19-40b7-a577-360813dea9bd.png",
+    "localJobId": "exec-7a8c57ba-bc19-40b7-a577-360813dea9bd",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.dagger.attack.w, the west-facing/left key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable close-range dagger attack key pose: the Player holds one short dagger in a clear hand grip, compact quick slash posture with the blade fully inside the safe canvas; no second weapon, projectile, slash trail, spark, blood, particles or other VFX. Preserve the existing Player silhouette, visible hand grip and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.dagger.attack.e",
+    "clip": "attack",
+    "direction": "e",
+    "family": "dagger",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-5afdf158-380e-4941-8ae1-e6e0338837c8.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-5afdf158-380e-4941-8ae1-e6e0338837c8.png",
+    "localJobId": "exec-5afdf158-380e-4941-8ae1-e6e0338837c8",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.dagger.attack.e, the east-facing/right key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable close-range dagger attack key pose: the Player holds one short dagger in a clear hand grip, compact quick slash posture with the blade fully inside the safe canvas; no second weapon, projectile, slash trail, spark, blood, particles or other VFX. Preserve the existing Player silhouette, visible hand grip and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.dagger.attack.n",
+    "clip": "attack",
+    "direction": "n",
+    "family": "dagger",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-047c2ec2-57cd-4e45-afeb-6682635db2de.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-047c2ec2-57cd-4e45-afeb-6682635db2de.png",
+    "localJobId": "exec-047c2ec2-57cd-4e45-afeb-6682635db2de",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.dagger.attack.n, the north-facing/up key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable close-range dagger attack key pose: the Player holds one short dagger in a clear hand grip, compact quick slash posture with the blade fully inside the safe canvas; no second weapon, projectile, slash trail, spark, blood, particles or other VFX. Preserve the existing Player silhouette, visible hand grip and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  }
+]

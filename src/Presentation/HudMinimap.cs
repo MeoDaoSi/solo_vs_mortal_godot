@@ -6,8 +6,6 @@ namespace SoloVsMortal.Presentation;
 /// <summary>Presentation-only tactical overview. It reads snapshots and never owns world state.</summary>
 public partial class HudMinimap : Control
 {
-    private const string UiRoot = "res://assets/third_party/kenney-ui-adventure/PNG/Default/";
-    private readonly Texture2D _ring = GD.Load<Texture2D>(UiRoot + "minimap_ring_brown_detail.png");
     private Func<SoloVsMortal.Core.Math.Vec2, bool>? _visited;
     private GameSnapshot? _snapshot;
     private IReadOnlyList<WorldObjectSnapshot> _objects = Array.Empty<WorldObjectSnapshot>();
@@ -31,6 +29,7 @@ public partial class HudMinimap : Control
         var center = Size / 2;
         var radius = Mathf.Min(Size.X, Size.Y) * 0.42f;
         DrawCircle(center, radius, new Color("#24170d"));
+        DrawCircle(center, radius, new Color("#e9b94a"), false, 2);
 
         foreach (var item in _objects.Where(item => !item.Destroyed && (_visited?.Invoke(item.Position) ?? true)))
         {
@@ -55,7 +54,6 @@ public partial class HudMinimap : Control
 
         var player = Project(_snapshot.Player.Position, center, radius);
         DrawCircle(player, 5, new Color("#f8dd6d"));
-        DrawTextureRect(_ring, new Rect2(Vector2.Zero, Size), false);
         DrawString(ThemeDB.FallbackFont, new Vector2(center.X - 4, 13), "N", HorizontalAlignment.Left, -1, 13, new Color("#ffe9a3"));
     }
 

@@ -50,17 +50,17 @@ public sealed partial class GameSession : IDisposable
         Progression = new ProgressionSystem(Events, rng, Player, PlayerModifiers, canonical, Monsters, () => CanonicalRegionId, IsAtCanonicalShrine, () => SimulationTick);
         if (canonical is not null)
             SoulBanners.ConfigureCanonical(canonical, () => Player.State.Rank, () => CanonicalRegionId, IsAtCanonicalShrine, Progression.HasCanonicalFact);
-        Essence = new EssenceSystem(Events, definitions.SoulNatures, PlayerModifiers);
-        Bloodline = new BloodlineSystem(Events, definitions.SoulNatures, PlayerModifiers);
+        Essence = canonical is null ? new EssenceSystem(Events, definitions.SoulNatures, PlayerModifiers) : null;
+        Bloodline = canonical is null ? new BloodlineSystem(Events, definitions.SoulNatures, PlayerModifiers) : null;
         Capabilities = new CapabilitySystem();
         if (canonical is not null) Capabilities.ConfigureCanonical(canonical.Content.Capabilities);
         Possession = new PossessionSystem(Events, definitions.SoulNatures, Souls, SoulBanners, Summons, PlayerModifiers, Capabilities, Player);
         if (canonical is not null) Summons.ConfigureCanonical(canonical, Player, () => Possession.ActiveSoulId is not null,
             () => IsWithinCanonicalShrine(96), IsCanonicalCombatActive);
-        if (canonical is not null) Allies.ConfigureCanonical(Player, (start, goal, distance) => Player.FindReachableNextStep(start, goal, 18, distance),
+        if (canonical is not null) Allies.ConfigureCanonical(Player, (start, goal, radius, distance) => Player.FindReachableNextStep(start, goal, radius, distance),
             (origin, radius, maxRadius) => Player.FindNearestFree(origin, radius, maxRadius), IsCanonicalCombatActive);
         World = new WorldInteractionSystem(Events, map, Capabilities);
-        Devouring = new DevourSystem(Events, definitions, Souls, SoulBanners, Summons, Essence, Bloodline, Progression.AddPlayerXp);
+        Devouring = canonical is null ? new DevourSystem(Events, definitions, Souls, SoulBanners, Summons, Essence!, Bloodline!, Progression.AddPlayerXp) : null;
         Sync = canonical is null ? null : new V25SyncSystem(Events, canonical, Souls, () => SimulationTick, IsAtCanonicalShrine, Capabilities.Has, speciesId => Possession.CanonicalSnapshot?.SpeciesId == speciesId);
         if (canonical is not null) Possession.ConfigureCanonical(canonical,
             speciesId => Sync?.TotalMicro(speciesId) ?? 0,
@@ -79,7 +79,7 @@ public sealed partial class GameSession : IDisposable
             Player.State.CurrentSpirit = Player.State.MaxSpirit;
         }
         UniquePowersV25 = canonical is null || InventoryV25 is null ? null
-            : new V25UniquePowerSystem(canonical, Events, Progression.HasCanonicalFact, IsAtCanonicalShrine, () => SimulationTick);
+            : new V25UniquePowerSystem(canonical, Events, Progression.HasCanonicalFact, IsAtCanonicalShrine, () => Player.State.Position, () => SimulationTick);
         LootV25 = canonical is null || InventoryV25 is null ? null
             : new V25LootSystem(canonical, Events, InventoryV25, RandomStreams.ItemDrop, RandomStreams.ItemFamily);
         SkillGrantsV25 = canonical is null || InventoryV25 is null ? null
@@ -105,7 +105,7 @@ public sealed partial class GameSession : IDisposable
             : new V25QuestSystem(canonical, Events, Souls, Progression, InventoryV25, SkillGrantsV25,
                 () => CanonicalRegionId, IsAtCanonicalShrine, Progression.HasCanonicalFact, () => SimulationTick);
         WorldLifecycleV25 = canonical is null || QuestsV25 is null ? null
-            : new V25WorldLifecycleSystem(canonical, Events, QuestsV25, () => CanonicalRegionId, SpawnCanonicalEncounter);
+            : new V25WorldLifecycleSystem(canonical, Events, QuestsV25, () => CanonicalRegionId, ResetCanonicalEncounter);
         if (canonical is not null)
         {
             _canonicalDurabilitySubscriptions.Add(Events.Subscribe<MonsterDefeatedEvent>(defeated => { if (defeated.RewardEligible && defeated.EncounterType is not (V25EncounterType.Arena or V25EncounterType.Debug)) _canonicalDurableCommitRequired = true; }));
@@ -113,15 +113,30 @@ public sealed partial class GameSession : IDisposable
             _canonicalDurabilitySubscriptions.Add(Events.Subscribe<V25BannerUpgradeCommittedEvent>(_ => _canonicalDurableCommitRequired = true));
             _canonicalDurabilitySubscriptions.Add(Events.Subscribe<V25UniquePowerUnlockedEvent>(_ => _canonicalDurableCommitRequired = true));
             _canonicalDurabilitySubscriptions.Add(Events.Subscribe<SoulSummonedEvent>(_ => _canonicalDurableCommitRequired = true));
+            _canonicalDurabilitySubscriptions.Add(Events.Subscribe<SoulUnsummonedEvent>(_ => _canonicalDurableCommitRequired = true));
+            _canonicalDurabilitySubscriptions.Add(Events.Subscribe<SoulDispersedEvent>(_ => _canonicalDurableCommitRequired = true));
+            _canonicalDurabilitySubscriptions.Add(Events.Subscribe<SoulRecoveredEvent>(_ => _canonicalDurableCommitRequired = true));
             _canonicalDurabilitySubscriptions.Add(Events.Subscribe<PossessionStartedEvent>(_ => _canonicalDurableCommitRequired = true));
+            _canonicalDurabilitySubscriptions.Add(Events.Subscribe<PossessionEndedEvent>(_ => _canonicalDurableCommitRequired = true));
+            _canonicalDurabilitySubscriptions.Add(Events.Subscribe<PlayerDefeatedEvent>(_ => _canonicalDurableCommitRequired = true));
         }
         Player.SetColliders(World.BlockingRects());
         if (Traversal is not null) World.ConfigureCanonicalTraversal(Traversal);
         if (canonical is not null)
         {
+            var canonicalContent = CanonicalContent!;
             Player.TerrainEntryAllowed = CanEnterCanonicalTerrain;
-            Player.NonPlayerTerrainBarriers = () => CanonicalTerrain.Where(a => a.Terrain is V25TerrainTag.Gap or V25TerrainTag.ShallowWater or V25TerrainTag.PhasePassable).Select(a => a.Bounds).ToArray();
+            // Only Player traversal is capability-gated. AI actors use their own body radius and
+            // never borrow a possessed Player's mobility; crumbling surfaces are excluded because
+            // they have no non-player rescue contract.
+            Player.NonPlayerTerrainBarriers = () => CanonicalTerrain.Where(a => a.Terrain is V25TerrainTag.Gap or V25TerrainTag.ShallowWater or V25TerrainTag.PhasePassable or V25TerrainTag.CrumblingFloor).Select(a => a.Bounds).ToArray();
             Player.TerrainCombatAllowed = () => !CanonicalTerrain.Any(a => a.Terrain == V25TerrainTag.ShallowWater && V25WorldLayout.Contains(a.Bounds, Player.State.Position));
+            Allies.EnvironmentSpeedMultiplier = ally =>
+            {
+                var onFrost = CanonicalTerrain.Any(area => area.Terrain == V25TerrainTag.FrostFloor && V25WorldLayout.Contains(area.Bounds, ally.Position));
+                var species = canonicalContent.SpeciesForProfile(canonicalContent.ActiveProfileId).First(item => item.Id == ally.SpeciesId);
+                return onFrost && species.CapabilityId != "FrostStep" ? 0.75 : 1;
+            };
             // NewGame starts full after equipment/passives. Restore later overwrites these constructor values.
             Player.State.CurrentHp = Player.State.MaxHp;
             Player.State.CurrentSpirit = Player.State.MaxSpirit;
@@ -158,12 +173,15 @@ public sealed partial class GameSession : IDisposable
     public SummonSystem Summons { get; }
     public PlayerModifierSystem PlayerModifiers { get; }
     public ProgressionSystem Progression { get; }
-    public EssenceSystem Essence { get; }
-    public BloodlineSystem Bloodline { get; }
+    /// <summary>Legacy-save compatibility only; canonical V2.5 has no Essence mechanic.</summary>
+    public EssenceSystem? Essence { get; }
+    /// <summary>Legacy-save compatibility only; canonical V2.5 has no Bloodline mechanic.</summary>
+    public BloodlineSystem? Bloodline { get; }
     public CapabilitySystem Capabilities { get; }
     public PossessionSystem Possession { get; }
     public WorldInteractionSystem World { get; }
-    public DevourSystem Devouring { get; }
+    /// <summary>Legacy-save compatibility only; canonical V2.5 has no Devour mechanic.</summary>
+    public DevourSystem? Devouring { get; }
     public V25SyncSystem? Sync { get; }
     public V25SpiritSystem? Spirit { get; }
     public V25TraversalSystem? Traversal { get; }
@@ -332,9 +350,20 @@ public sealed partial class GameSession : IDisposable
         var definition = Definitions.Monsters.FirstOrDefault(item => item.SpeciesId.Equals(encounter.SpeciesId, StringComparison.OrdinalIgnoreCase))
             ?? throw new InvalidDataException($"No runtime monster definition exists for canonical species '{encounter.SpeciesId}'.");
         var position = CanonicalEncounterPosition(encounter);
-        position = new Vec2(Math.Clamp(position.X, 0, WorldMap.CurrentMap.Width), Math.Clamp(position.Y, 0, WorldMap.CurrentMap.Height));
+        if (position.X < 0 || position.Y < 0 || position.X > WorldMap.CurrentMap.Width || position.Y > WorldMap.CurrentMap.Height)
+            throw new InvalidDataException($"Canonical encounter '{encounter.Id}' is outside the active map; authored data was not clamped.");
         return Monsters.Spawn(definition.Id, new MonsterSpawnOptions(Level: encounter.Level, Position: position,
             EncounterType: encounterType, RewardEligible: encounter.RewardEligible, EncounterId: encounter.Id));
+    }
+
+    private MonsterState ResetCanonicalEncounter(string encounterId)
+    {
+        // Rest reset is the sole producer of a new authored normal/elite life. Remove its
+        // previously defeated runtime row first so one encounter never accumulates a second
+        // life identity (and therefore a second save/runtime entry) in the same world cycle.
+        if (!Monsters.RemoveDefeatedEncounter(encounterId))
+            throw new InvalidOperationException($"Canonical Rest reset cannot find one retired encounter life for '{encounterId}'.");
+        return SpawnCanonicalEncounter(encounterId);
     }
     public RegionTravelResult TravelToRegion(string regionId)
     {

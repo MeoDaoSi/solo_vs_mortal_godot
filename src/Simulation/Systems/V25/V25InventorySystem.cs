@@ -266,7 +266,12 @@ public sealed class V25InventorySystem
         if (carried && result.Count > InventorySlotCapacity) throw new InvalidDataException("Canonical inventory exceeds 60 carried slots.");
         return result;
     }
-    private void ApplyEquipmentModifiers() => _modifiers.SetSource(PlayerModifierSource.Equipment, EquipmentModifiers());
+    private void ApplyEquipmentModifiers()
+    {
+        var style = EquippedDefinition(V25EquipmentSlot.MainHand)?.CombatStyleId ?? "fist";
+        _player.SetCanonicalCombatStyle(style);
+        _modifiers.SetSource(PlayerModifierSource.Equipment, EquipmentModifiers());
+    }
     private CanonicalEquipmentDefinition? EquippedDefinition(V25EquipmentSlot slot) => _equipped.TryGetValue(slot, out var item) ? _canonical.Content.Equipment.FirstOrDefault(definition => definition.Id == item.DefinitionId) : null;
     private static StatModifiers ToModifiers(CanonicalEquipmentDefinition definition)
     {

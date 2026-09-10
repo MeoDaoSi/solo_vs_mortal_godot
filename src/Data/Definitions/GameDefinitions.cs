@@ -91,19 +91,56 @@ public sealed class GameDefinitions
     public GameDefinitions WithCanonicalRoster(V25.CanonicalContentRegistry canonical)
     {
         var roster = _monsters.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
-        var template = roster.Values.First();
+        var soulNatures = WithCanonicalSoulNatures(canonical);
         foreach (var species in canonical.Content.Species)
         {
-            if (roster.Values.Any(m => m.SpeciesId.Equals(species.Id, StringComparison.OrdinalIgnoreCase))) continue;
             var style = canonical.Content.CombatStyles.First(s => s.Id == species.CombatStyleId);
-            roster.Add($"mon_{species.Id}", template with {
-                Id = $"mon_{species.Id}", SpeciesId = species.Id, DisplayName = species.Name,
-                DefaultRank = 1, LevelRange = new(1, canonical.Balance.MaxLevel), Ai = new(192, style.RangeUnits),
-                Assets = new("", new Dictionary<string, string>(), null), Audio = new("", "", "", "")
-            });
+            var definitionId = $"mon_{species.Id}";
+            // This record is an adapter for legacy render/Soul view models only. None of the
+            // authored legacy monster behavior is inherited by a V2.5 species: canonical
+            // combat, drops, capability and skills come from CanonicalContentRegistry.
+            roster[definitionId] = new MonsterDefinition(
+                definitionId,
+                species.Id,
+                species.Name,
+                CanonicalSoulNatureId(species.Id),
+                1,
+                new LevelRangeDefinition(1, canonical.Balance.MaxLevel),
+                new AiDefinition(192, style.RangeUnits),
+                new SoulDropDefinition(0, 1, Enumerable.Range(1, 9).ToDictionary(rank => rank.ToString(System.Globalization.CultureInfo.InvariantCulture), _ => 0d, StringComparer.Ordinal)),
+                new MonsterAssetDefinition("", new Dictionary<string, string>(StringComparer.Ordinal), null),
+                new MonsterAudioDefinition("", "", "", ""));
         }
-        return new GameDefinitions(Player, Soul, roster, _bannersById, SoulNatures, Assets, CharacterAnimations, Maps, WorldMap);
+        return new GameDefinitions(Player, Soul, roster, _bannersById, soulNatures, Assets, CharacterAnimations, Maps, WorldMap);
     }
+
+    private SoulNatureDefinitions WithCanonicalSoulNatures(V25.CanonicalContentRegistry canonical)
+    {
+        const string traitId = "V25_CANONICAL";
+        const string costId = "V25_CANONICAL_SOUL";
+        var traits = SoulNatures.Traits.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+        var costs = SoulNatures.CostProfiles.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+        var natures = SoulNatures.Natures.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+        traits[traitId] = new NamedDefinition(traitId, "Canonical V2.5");
+        costs[costId] = new SoulCostProfileDefinition(costId, "Canonical V2.5", 1);
+        foreach (var species in canonical.Content.Species)
+        {
+            var id = CanonicalSoulNatureId(species.Id);
+            natures[id] = new SoulNatureDefinition(id, species.Name, new[] { traitId }, costId, null, null);
+        }
+        return new SoulNatureDefinitions(
+            SoulNatures.SchemaVersion,
+            new ReadOnlyDictionary<string, NamedDefinition>(traits),
+            SoulNatures.Capabilities,
+            new ReadOnlyDictionary<string, SoulCostProfileDefinition>(costs),
+            SoulNatures.DevourXpProfiles,
+            SoulNatures.EssenceProfiles,
+            SoulNatures.BloodlineProfiles,
+            SoulNatures.PossessionProfiles,
+            new ReadOnlyDictionary<string, SoulNatureDefinition>(natures));
+    }
+
+    private static string CanonicalSoulNatureId(string speciesId) => $"V25_{speciesId.ToUpperInvariant()}";
 
     public MonsterDefinition Monster(string id) => Lookup(_monsters, id, "monster");
     public SoulBannerDefinition SoulBanner(string id) => Lookup(_bannersById, id, "Soul Banner");

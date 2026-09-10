@@ -7,6 +7,7 @@ using SoloVsMortal.Data.Definitions;
 using SoloVsMortal.Simulation.Events;
 using SoloVsMortal.Simulation.Rules;
 using SoloVsMortal.Simulation.State;
+using SoloVsMortal.Simulation.Systems.V25;
 
 namespace SoloVsMortal.Simulation.Systems;
 
@@ -173,7 +174,7 @@ public sealed class V25CombatCoordinator
     public void AdvanceCanonicalMovement(long tick)
     {
         if (tick < 0) throw new ArgumentOutOfRangeException(nameof(tick));
-        foreach (var item in _knockbacks.Values.ToArray())
+        foreach (var item in _knockbacks.Values.OrderBy(item => item.TargetUid, StringComparer.Ordinal).ToArray())
         {
             if (!TryGetActor(item.TargetUid, out var target) || !target.Alive || item.RemainingTicks <= 0 || item.RemainingDistance <= 0)
             {
@@ -237,12 +238,12 @@ public sealed class V25CombatCoordinator
     {
         _player.State.Shields.Expire(tick);
         _player.State.Statuses.Tick(tick, status => ApplyDot(GetActor(_player.State.Uid), status, tick));
-        foreach (var monster in _monsters.AllMonsters())
+        foreach (var monster in _monsters.AllMonsters().OrderBy(monster => monster.Uid, StringComparer.Ordinal))
         {
             monster.Shields.Expire(tick);
             monster.Statuses.Tick(tick, status => ApplyDot(GetActor(monster.Uid), status, tick));
         }
-        foreach (var ally in _allies.AliveAllies())
+        foreach (var ally in _allies.AliveAllies().OrderBy(ally => ally.Uid, StringComparer.Ordinal))
         {
             ally.Shields.Expire(tick);
             ally.Statuses.Tick(tick, status => ApplyDot(GetActor(ally.Uid), status, tick));
@@ -251,8 +252,12 @@ public sealed class V25CombatCoordinator
 
     private void DecrementCooldowns()
     {
-        foreach (var key in _cooldowns.Keys.ToArray())
+        foreach (var key in _cooldowns.Keys.OrderBy(key => key.SourceUid, StringComparer.Ordinal).ThenBy(key => key.SkillId, StringComparer.Ordinal).ToArray())
         {
+            // A parked region owns no active simulation time.  Its status, shield and AI
+            // timers already pause in the dormant snapshot; skill cooldowns must follow
+            // the same rule or a region could resume with only one class of timer elapsed.
+            if (_monsters.HasDormantActor(key.SourceUid)) continue;
             var remaining = _cooldowns[key] - 1;
             if (remaining <= 0) _cooldowns.Remove(key);
             else _cooldowns[key] = remaining;
@@ -363,7 +368,7 @@ public sealed class V25CombatCoordinator
 
     private void AdvanceCasts(long tick)
     {
-        foreach (var cast in _casts.Values.ToArray())
+        foreach (var cast in _casts.Values.OrderBy(cast => cast.AcceptedTick).ThenBy(cast => cast.CastId, StringComparer.Ordinal).ToArray())
         {
             // A release earlier in this deterministic pass may have staggered the
             // source and removed its windup/recovery casts. Do not process the
@@ -453,7 +458,7 @@ public sealed class V25CombatCoordinator
     private void AdvanceProjectiles(long tick)
     {
         var step = _canonical.Balance.Combat.ProjectileSpeed / SoloVsMortal.Core.Loop.SimulationClock.SimulationHz;
-        foreach (var projectile in _projectiles.ToArray())
+        foreach (var projectile in _projectiles.OrderBy(projectile => projectile.ReleasedTick).ThenBy(projectile => projectile.CastId, StringComparer.Ordinal).ToArray())
         {
             projectile.RemainingTicks--;
             var previous = projectile.Position;
@@ -719,9 +724,15 @@ public sealed class V25CombatCoordinator
         switch (source.Kind)
         {
             case V25EntityKind.Player: _player.TryMoveSwept(direction, distance); break;
-            case V25EntityKind.Monster when _monsters.Get(source.Uid) is { } monster: monster.Position = _player.NonPlayerSweptPosition(monster.Position, direction, distance); break;
-            case V25EntityKind.Ally when _allies.Get(source.Uid) is { } ally: ally.Position = _player.NonPlayerSweptPosition(ally.Position, direction, distance); break;
+            case V25EntityKind.Monster when _monsters.Get(source.Uid) is { } monster: monster.Position = _player.NonPlayerSweptPosition(monster.Position, direction, distance, CanonicalBodyRadius(monster.SpeciesId)); break;
+            case V25EntityKind.Ally when _allies.Get(source.Uid) is { } ally: ally.Position = _player.NonPlayerSweptPosition(ally.Position, direction, distance, CanonicalBodyRadius(ally.SpeciesId)); break;
         }
+    }
+
+    private double CanonicalBodyRadius(string speciesId)
+    {
+        var species = _canonical.SpeciesForProfile(_canonical.ActiveProfileId).First(item => item.Id == speciesId);
+        return V25ActorBodyRadii.ForSpeciesRole(species.Role);
     }
 
     private void StartKnockback(ActorView target, Vec2 from)

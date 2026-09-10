@@ -1,0 +1,98 @@
+[
+  {
+    "assetId": "player.fist.attack.s",
+    "clip": "attack",
+    "direction": "s",
+    "family": "fist",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-5e3c2c28-6830-4573-91e0-e513ee09425e.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-5e3c2c28-6830-4573-91e0-e513ee09425e.png",
+    "localJobId": "exec-5e3c2c28-6830-4573-91e0-e513ee09425e",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.fist.attack.s, the south-facing key pose for a six-frame unarmed fist attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and crisp pixel clusters. Show a readable close-range bare-handed punch or guarded strike with one arm driving forward and the other counterbalancing, both hands/forearms readable, grounded foot/contact anchor, no weapon. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, projectile, slash trail, spark, particles, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.fist.attack.w",
+    "clip": "attack",
+    "direction": "w",
+    "family": "fist",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-ab589fb9-e072-4da0-8280-acd29ba7eafc.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-ab589fb9-e072-4da0-8280-acd29ba7eafc.png",
+    "localJobId": "exec-ab589fb9-e072-4da0-8280-acd29ba7eafc",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.fist.attack.w, the west-facing/left key pose for a six-frame unarmed fist attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and crisp pixel clusters. Show a readable close-range bare-handed punch or guarded strike with one arm driving forward and the other counterbalancing, both hands/forearms readable, grounded foot/contact anchor, no weapon. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, projectile, slash trail, spark, particles, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.fist.attack.e",
+    "clip": "attack",
+    "direction": "e",
+    "family": "fist",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-8d9ccdd8-ac7b-4ccd-b252-a989f6d4c7b0.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-8d9ccdd8-ac7b-4ccd-b252-a989f6d4c7b0.png",
+    "localJobId": "exec-8d9ccdd8-ac7b-4ccd-b252-a989f6d4c7b0",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.fist.attack.e, the east-facing/right key pose for a six-frame unarmed fist attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and crisp pixel clusters. Show a readable close-range bare-handed punch or guarded strike with one arm driving forward and the other counterbalancing, both hands/forearms readable, grounded foot/contact anchor, no weapon. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, projectile, slash trail, spark, particles, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.fist.attack.n",
+    "clip": "attack",
+    "direction": "n",
+    "family": "fist",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-6b17590b-1a88-4672-ab0c-d3ec13b97a74.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-6b17590b-1a88-4672-ab0c-d3ec13b97a74.png",
+    "localJobId": "exec-6b17590b-1a88-4672-ab0c-d3ec13b97a74",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.fist.attack.n, the north-facing/up key pose for a six-frame unarmed fist attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and crisp pixel clusters. Show a readable close-range bare-handed punch or guarded strike with one arm driving forward and the other counterbalancing, both hands/forearms readable, grounded foot/contact anchor, no weapon. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, projectile, slash trail, spark, particles, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  }
+]

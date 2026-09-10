@@ -33,6 +33,8 @@ public sealed class SoulSystem : IDisposable
     private bool PickupInCurrentRegion(string id) => _currentRegion is null || _pickupRegions.GetValueOrDefault(id, _currentRegion()) == _currentRegion();
     public void RestorePickupRegions(IReadOnlyDictionary<string, string>? regions)
     {
+        if (regions is null && _canonicalPickups.Count > 0)
+            throw new InvalidDataException("Canonical Soul pickups lack their region mapping; restore is rejected rather than relocating them.");
         _pickupRegions.Clear();
         foreach (var pickup in _canonicalPickups.Values)
         {

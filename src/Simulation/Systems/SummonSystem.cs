@@ -95,7 +95,7 @@ public sealed class SummonSystem : IDisposable
         var placement = _canonicalPlayer.FindNearestFree(requestedPosition, 18, 48);
         if (placement is null) return new(false, Failure: SummonFailure.NoSpawnSpace);
         var ally = _allies.SpawnSoul(soul, _banners.Starter()!, placement.Value);
-        var state = new V25SummonStateSnapshot(species.Id, V25SoulRuntimeMode.Summoned, ally.Uid, V25FixedPoint.DensitySyncScale, 0, 1, ally.AttackCooldown);
+        var state = new V25SummonStateSnapshot(species.Id, V25SoulRuntimeMode.Summoned, ally.Uid, V25FixedPoint.DensitySyncScale, 0, 1, 0);
         _canonicalState[species.Id] = state;
         _summonBySoul[soul.Id] = ally.Uid; _soulBySummon[ally.Uid] = soul.Id;
         _events.Publish(new SoulSummonedEvent(soul.Id, ally.Uid, _banners.Starter()?.Id ?? "canonical.banner", placement.Value));
@@ -134,7 +134,7 @@ public sealed class SummonSystem : IDisposable
         var soul = _souls.CanonicalOwnedSpecies(speciesId);
         if (ally is null || soul is null) return false;
         var ratio = ally.MaxHp > 0 ? Math.Clamp(ally.CurrentHp / ally.MaxHp, 0, 1) : state.HpRatio;
-        var next = state with { Mode = V25SoulRuntimeMode.Ready, ActiveAllyUid = null, HpRatio = ratio, AttackCooldown = Math.Max(0, ally.AttackCooldown), RecoveryTicks = 0 };
+        var next = state with { Mode = V25SoulRuntimeMode.Ready, ActiveAllyUid = null, HpRatio = ratio, AttackCooldown = 0, RecoveryTicks = 0 };
         _canonicalState[speciesId] = next;
         _summonBySoul.Remove(soul.Id); _soulBySummon.Remove(ally.Uid); _allies.Remove(ally.Uid);
         _events.Publish(new SoulUnsummonedEvent(soul.Id, ally.Uid));
@@ -213,7 +213,10 @@ public sealed class SummonSystem : IDisposable
             if (state.Mode == V25SoulRuntimeMode.Dispersed && (state.RecoveryTicks <= 0 || state.VitalityMicro != 0)) throw new InvalidDataException("Dispersed species state is inconsistent.");
             if (state.Mode == V25SoulRuntimeMode.Ready && state.RecoveryTicks != 0 || state.Mode == V25SoulRuntimeMode.Ready && state.VitalityMicro <= 0) throw new InvalidDataException("Ready species state is inconsistent.");
         }
-        _canonicalState.Clear(); foreach (var state in staged) _canonicalState.Add(state.SpeciesId, state);
+        // AttackCooldown belongs to the legacy soul combat loop. Canonical casts use the
+        // combat coordinator's integer tick ledger, so this persisted compatibility field
+        // is deliberately normalized to zero on restore.
+        _canonicalState.Clear(); foreach (var state in staged) _canonicalState.Add(state.SpeciesId, state with { AttackCooldown = 0 });
         _summonBySoul.Clear(); _soulBySummon.Clear();
         foreach (var state in staged.Where(item => item.Mode == V25SoulRuntimeMode.Summoned))
         {
@@ -223,6 +226,13 @@ public sealed class SummonSystem : IDisposable
     }
     public void ClearActiveForMapChange()
     {
+        if (_souls.CanonicalMode)
+        {
+            // A region transition recalls living allies and preserves their vitality/HP ratio.
+            // Removing the actor first would leave a persisted Summoned state with a dangling UID.
+            foreach (var state in _canonicalState.Values.Where(item => item.Mode == V25SoulRuntimeMode.Summoned).ToArray())
+                _ = RecallCanonical(state.SpeciesId);
+        }
         foreach (var uid in _soulBySummon.Keys.ToArray()) _allies.Remove(uid);
         _summonBySoul.Clear(); _soulBySummon.Clear(); _bannerBySoul.Clear();
     }

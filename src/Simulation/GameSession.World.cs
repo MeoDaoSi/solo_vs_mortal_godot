@@ -63,7 +63,7 @@ public sealed partial class GameSession
         Player.EnvironmentMoveMultiplier = area?.Terrain == V25TerrainTag.FrostFloor && !Capabilities.Has("FrostStep") ? 0.75 : 1;
         bool Pulse(string uid, Vec2 position, bool player)
         {
-            var hazard = areas.FirstOrDefault(a => a.Terrain is V25TerrainTag.FireField or V25TerrainTag.ToxicPool && V25WorldLayout.Contains(a.Bounds, position));
+            var hazard = areas.FirstOrDefault(a => (a.Terrain is V25TerrainTag.FireField or V25TerrainTag.ToxicPool) && V25WorldLayout.Contains(a.Bounds, position));
             var immune = hazard is not null && player && Capabilities.Has(hazard.Terrain == V25TerrainTag.FireField ? "FireWard" : "ToxicWard");
             if (hazard is null || immune) { _hazardTicks.Remove(uid); return false; }
             var count = _hazardTicks.GetValueOrDefault(uid) + 1;

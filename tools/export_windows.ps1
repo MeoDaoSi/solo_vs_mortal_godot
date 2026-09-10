@@ -4,6 +4,7 @@ $buildDir = Join-Path $projectRoot 'build'
 $publishDir = Join-Path $projectRoot '.godot\mono\temp\bin\ExportRelease\win-x64'
 $dataDir = Join-Path $buildDir 'data_solo_vs_mortal_godot_windows_x86_64'
 $configDir = Join-Path $buildDir 'data\configs'
+$runtimeAssetDir = Join-Path $buildDir 'assets\v2.5'
 
 New-Item -ItemType Directory -Force $buildDir | Out-Null
 dotnet restore (Join-Path $projectRoot 'solo_vs_mortal_godot.csproj') -r win-x64 --ignore-failed-sources
@@ -19,6 +20,11 @@ if (Test-Path $dataDir) { Remove-Item -LiteralPath $dataDir -Recurse -Force }
 Copy-Item -LiteralPath $publishDir -Destination $dataDir -Recurse -Force
 New-Item -ItemType Directory -Force (Join-Path $buildDir 'data') | Out-Null
 Copy-Item -Path (Join-Path $projectRoot 'data\*') -Destination (Join-Path $buildDir 'data') -Recurse -Force
+# Canonical asset catalogs deliberately use physical paths and hashes. Copy only the imported
+# V2.5 package, never production raw/master/preview directories from the Art workspace.
+if (Test-Path $runtimeAssetDir) { Remove-Item -LiteralPath $runtimeAssetDir -Recurse -Force }
+New-Item -ItemType Directory -Force $runtimeAssetDir | Out-Null
+Copy-Item -Path (Join-Path $projectRoot 'assets\v2.5\*') -Destination $runtimeAssetDir -Recurse -Force
 
 $required = @(
     (Join-Path $dataDir 'solo_vs_mortal_godot.dll'),
@@ -29,7 +35,9 @@ $required = @(
     (Join-Path $buildDir 'data\v2.5\content.v2.5.json'),
     (Join-Path $buildDir 'data\v2.5\balance.v2.5.json'),
     (Join-Path $buildDir 'data\v2.5\asset-requirements.v2.5.json'),
+    (Join-Path $buildDir 'data\v2.5\asset-catalog.v2.5.json'),
     (Join-Path $buildDir 'data\v2.5\style-lock.json')
 )
 foreach ($path in $required) { if (-not (Test-Path $path)) { throw "Missing export runtime file: $path" } }
+if (-not (Test-Path $runtimeAssetDir)) { throw 'Missing exported V2.5 runtime asset package.' }
 Write-Output "WINDOWS_EXPORT_MANAGED_ASSEMBLIES_PASS $dataDir"

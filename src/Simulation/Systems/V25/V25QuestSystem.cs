@@ -84,6 +84,9 @@ public sealed class V25QuestSystem : IDisposable
     public IReadOnlyList<V25QuestState> ActiveQuests => Quests.Where(row => row.Status == V25QuestStatus.Active).ToArray();
     public IReadOnlySet<string> RewardReceipts => _rewardReceipts;
     public bool IsRewarded(string questId) => _rewardReceipts.Contains(RewardReceipt(questId));
+    public bool HasPendingNpcObjective(string npcId) => !string.IsNullOrWhiteSpace(npcId) && _quests.Values.Any(row =>
+        row.Definition.RegionId == _regionId() && row.Definition.Objective.Event == "InteractNpc" && row.Definition.Objective.Target == npcId &&
+        row.Status is V25QuestStatus.Available or V25QuestStatus.Active);
 
     /// <summary>Stages ownership objectives before the Soul capture WAL payload is built.</summary>
     public void PrepareOwnershipCommit()

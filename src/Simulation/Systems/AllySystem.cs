@@ -6,6 +6,7 @@ using SoloVsMortal.Data.Definitions.V25;
 using SoloVsMortal.Simulation.Events;
 using SoloVsMortal.Simulation.Rules;
 using SoloVsMortal.Simulation.State;
+using SoloVsMortal.Simulation.Systems.V25;
 
 namespace SoloVsMortal.Simulation.Systems;
 
@@ -22,9 +23,11 @@ public sealed class AllySystem
     private readonly EventBus _events; private readonly UidGenerator _uids; private readonly GameDefinitions _definitions; private readonly CanonicalContentRegistry? _canonical;
     private string? _canonicalPlayerUid;
     private long _simulationTick;
-    private Func<Vec2, Vec2, double, Vec2>? _canonicalNextStep;
+    private Func<Vec2, Vec2, double, double, Vec2>? _canonicalNextStep;
     private Func<Vec2, double, double, Vec2?>? _canonicalNearestFree;
     private Func<bool>? _canonicalCombatOrHazard;
+    /// <summary>Environment movement is actor-scoped; it must not inherit Player capabilities.</summary>
+    public Func<AllyState, double>? EnvironmentSpeedMultiplier { get; set; }
     private readonly IDisposable _damageSubscription;
     private readonly Dictionary<string, long> _recentPlayerAttackers = new(StringComparer.Ordinal);
     public AllySystem(EventBus events, UidGenerator uids, GameDefinitions definitions, CanonicalContentRegistry? canonical = null)
@@ -56,7 +59,7 @@ public sealed class AllySystem
         _allies.Add(ally.Uid, ally); _events.Publish(new AllySpawnedEvent(ally.Uid, monster.Id, ally.SpeciesId, ally.Rank, ally.Level, position)); return ally;
     }
 
-    public void ConfigureCanonical(PlayerSystem player, Func<Vec2, Vec2, double, Vec2>? nextStep = null,
+    public void ConfigureCanonical(PlayerSystem player, Func<Vec2, Vec2, double, double, Vec2>? nextStep = null,
         Func<Vec2, double, double, Vec2?>? nearestFree = null, Func<bool>? combatOrHazard = null)
     {
         if (!CanonicalMode) throw new InvalidOperationException("Canonical Ally AI is not enabled.");
@@ -116,7 +119,6 @@ public sealed class AllySystem
         foreach (var ally in _allies.Values.ToArray())
         {
             if (!ally.Alive) continue;
-            ally.AttackCooldown = Math.Max(0, ally.AttackCooldown - deltaSeconds);
             ally.FocusRemainingTicks = Math.Max(0, ally.FocusRemainingTicks - ticks);
             if (ally.FocusRemainingTicks == 0) ally.FocusTargetUid = null;
             ally.ThinkTicks = Math.Max(0, ally.ThinkTicks - ticks);
@@ -141,7 +143,7 @@ public sealed class AllySystem
             {
                 ally.TargetUid = null;
                 ally.AiState = AllyAiState.Return;
-                MoveToward(ally, home, deltaSeconds, ticks, inCombat: false, playerPosition);
+                MoveToward(ally, home, CanonicalMoveSpeed(ally) * deltaSeconds, ticks, inCombat: false, playerPosition);
                 continue;
             }
             if (target is not null)
@@ -151,13 +153,16 @@ public sealed class AllySystem
                     ?? _canonical.Content.CombatStyles.First(item => item.Id == "fist");
                 if (distance <= style.RangeUnits + 10)
                 {
-                    ally.AiState = ally.AttackCooldown > 0 ? AllyAiState.Recover : AllyAiState.Attack;
+                    // Canonical attack availability is owned by V25CombatCoordinator's
+                    // tick-based cooldown ledger.  AttackCooldown is legacy-only state
+                    // and must not influence the canonical actor intent state.
+                    ally.AiState = AllyAiState.Attack;
                     ally.PathFailTicks = 0;
                 }
                 else
                 {
                     ally.AiState = AllyAiState.Approach;
-                    var speed = ally.Stats.SpeedRaw * (ally.Statuses.Has(ally.TargetLifeUid, "haste") ? 1.20 : 1) * (ally.Statuses.Has(ally.TargetLifeUid, "chill") ? 0.75 : 1);
+                    var speed = CanonicalMoveSpeed(ally);
                     MoveToward(ally, target.Position, speed * deltaSeconds, ticks, inCombat: true, playerPosition);
                 }
                 continue;
@@ -167,7 +172,7 @@ public sealed class AllySystem
             else
             {
                 ally.AiState = AllyAiState.Follow;
-                var speed = ally.Stats.SpeedRaw * (ally.Statuses.Has(ally.TargetLifeUid, "haste") ? 1.20 : 1) * (ally.Statuses.Has(ally.TargetLifeUid, "chill") ? 0.75 : 1);
+                var speed = CanonicalMoveSpeed(ally);
                 MoveToward(ally, home, speed * deltaSeconds, ticks, inCombat: false, playerPosition);
             }
         }
@@ -187,11 +192,22 @@ public sealed class AllySystem
     private static bool IsTargetStillValid(AllyState ally, MonsterState target, double modeRadius) =>
         target.Alive && (ally.FocusTargetUid == target.Uid && ally.FocusRemainingTicks > 0 || target.Position.DistanceTo(ally.Position) <= modeRadius);
 
+    private double CanonicalMoveSpeed(AllyState ally) =>
+        ally.Stats.SpeedRaw * (ally.Statuses.Has(ally.TargetLifeUid, "haste") ? 1.20 : 1) *
+        (ally.Statuses.Has(ally.TargetLifeUid, "chill") ? 0.75 : 1) * Math.Max(0, EnvironmentSpeedMultiplier?.Invoke(ally) ?? 1);
+
+    private double CanonicalBodyRadius(AllyState ally)
+    {
+        var species = _canonical!.SpeciesForProfile(_canonical.ActiveProfileId).First(item => item.Id == ally.SpeciesId);
+        return V25ActorBodyRadii.ForSpeciesRole(species.Role);
+    }
+
     private void MoveToward(AllyState ally, Vec2 goal, double distance, int ticks, bool inCombat, Vec2 playerPosition)
     {
         if (distance <= 0) return;
         var start = ally.Position;
-        var next = _canonicalNextStep?.Invoke(start, goal, distance) ?? start.MoveTowards(goal, distance);
+        var bodyRadius = CanonicalBodyRadius(ally);
+        var next = _canonicalNextStep?.Invoke(start, goal, bodyRadius, distance) ?? start.MoveTowards(goal, distance);
         if (next == start && start.DistanceTo(goal) > _definitions.Soul.Summon.ArriveDistance)
         {
             ally.PathFailTicks = Math.Min(PathFailureTicks, checked(ally.PathFailTicks + ticks));
@@ -203,7 +219,7 @@ public sealed class AllySystem
                     _events.Publish(new AllyUnreachableEvent(ally.Uid, ally.SourceSoulId, ally.Position));
                     return;
                 }
-                var rescue = _canonicalNearestFree?.Invoke(playerPosition, 18, 48);
+                var rescue = _canonicalNearestFree?.Invoke(playerPosition, bodyRadius, 48);
                 if (rescue is { } point) ally.Position = point;
             }
             return;
@@ -320,12 +336,22 @@ public sealed class AllySystem
             RecentAttackerTick = recentAttackerUid is null ? -1 : Math.Max(0, currentTick - recentAttackerAgeTicks),
             AttackCooldown = attackCooldown, TargetUid = targetUid, Vitality = vitality, RecoveryTicks = recoveryTicks, CurrentHp = V25FixedPoint.QuantizeMilli(currentHp) };
         state.Statuses.Restore(uid, statuses, currentTick); state.Shields.Restore(uid, shields, currentTick);
-        _allies.Add(uid, state); _uids.Observe(uid);
+        _allies.Add(uid, state);
+        // Target selection reads this shared attacker index, not only the per-Ally display
+        // fields. Rebuild it from persisted memory so a save/load cannot silently discard
+        // the remaining 2-second protect-the-player priority.
+        if (recentAttackerUid is not null && recentAttackerAgeTicks < RecentAttackerTicks)
+        {
+            var attackerTick = Math.Max(0, currentTick - recentAttackerAgeTicks);
+            if (!_recentPlayerAttackers.TryGetValue(recentAttackerUid, out var existing) || attackerTick > existing)
+                _recentPlayerAttackers[recentAttackerUid] = attackerTick;
+        }
+        _uids.Observe(uid);
         return state;
     }
 
     public bool Remove(string uid) => _allies.Remove(uid);
-    public void Clear() => _allies.Clear();
+    public void Clear() { _allies.Clear(); _recentPlayerAttackers.Clear(); }
     public AllyState? Get(string uid) => _allies.GetValueOrDefault(uid);
     public IReadOnlyList<AllyState> AliveAllies() => _allies.Values.Where(ally => ally.Alive).ToArray();
 }

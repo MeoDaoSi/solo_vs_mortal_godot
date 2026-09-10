@@ -250,3 +250,320 @@ Không copy lại nguyên lệnh cũ một cách mù quáng. Đọc source mới
 3. Art có thể tiếp tục production trong folder riêng khi được giao, nhưng giữ versioned exports và danh sách bảo vệ để không conflict cleanup. Không nhập/xóa artifact đang được Art ghi.
 4. Sau gate world/persistence: triển khai phần6 adapter → chuyển callers → cleanup; song song hoàn thiện phần7 assets theo scope đã chốt.
 5. Chỉ triển khai phần8 bàn giao cuối khi code/manifest/asset dependencies đủ. User tiếp tục là người quyết định mỹ thuật và nghiệm thu gameplay.
+
+## 12. Nhật ký thực hiện append-only
+
+> Phần này chỉ bổ sung trạng thái và evidence mới; không sửa hoặc xóa nội dung kế hoạch/báo cáo ở các mục trên. Mỗi mục tham chiếu chính xác phần/bước gốc để giữ lịch sử audit.
+
+### 2026-09-09 — Phần 2 / bước 1: khóa authority và phân loại nguồn
+
+- **Trạng thái:** `complete`.
+- **Đã thực hiện:** Đối chiếu `data/v2.5/spec-lock.json` của source với `C:/ws/asset-production_system/game_spec/spec-lock.json`, rồi tính SHA-256 lại toàn bộ sáu file authority được khóa: tài liệu V2.5, content, balance, asset requirements, style lock và acceptance cases.
+- **Evidence:** 6/6 hash khớp revision `2026-09-08.closed-1`; hai file `spec-lock.json` cũng có cùng SHA-256 `a4c70efaba0e4aa3bf72181059e8f229a5d2b5c3f49d8bab848ea6779b23b492`.
+- **Hệ quả:** Từ bước này, chỉ bundle authority đã khóa được dùng để quyết định gameplay. Các báo cáo/work-item vẫn là tài liệu triển khai, không phải nguồn thay đổi balance hay mechanic.
+
+### 2026-09-09 — Phần 2 / bước 2: audit loader và canonical bootstrap roster
+
+- **Trạng thái:** `complete`.
+- **Lỗi đã xác nhận:** `GameDefinitions.WithCanonicalRoster` từng copy `SoulNatureId` và `SoulDrop` từ definition Skeleton cho 16 species không có trong config cũ. Như vậy UI/legacy bridge có thể gán sai bản chất Soul; một lần refactor caller về sau cũng có nguy cơ dùng lại drop metadata cũ.
+- **Đã thực hiện:** Thay template-copy bằng record adapter được tạo cho **mọi** canonical species. Adapter chỉ chứa ID/display name, level envelope, range từ combat-style và asset/audio rỗng; combat, AI, drop, capability và skill tiếp tục lấy từ `CanonicalContentRegistry`.
+- **Evidence:** `src/Data/Definitions/GameDefinitions.cs` tạo `V25_<SPECIES>` SoulNature compatibility metadata riêng, với trait/cost neutral; không một species canonical nào còn mang `UNDEAD_WARRIOR`, `GOBLIN_RAIDER` hoặc `STONE_CONSTRUCT` từ config cũ. Build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-09 — Phần 2 / bước 3: adapter metadata compatibility
+
+- **Trạng thái:** `complete`.
+- **Đã thực hiện:** Adapter metadata được giới hạn ở `GameDefinitions` và không phát sinh asset fallback, audio fallback hay legacy drop behavior. Các nature cũ vẫn tồn tại chỉ để đọc save/legacy path, còn V2.5 references `V25_<SPECIES>`.
+- **Evidence:** Build compile-only pass sau thay đổi; chưa được xem là nghiệm thu gameplay/visual.
+
+### 2026-09-09 — Vấn đề 6 / P04: UID và allocator
+
+- **Trạng thái:** `complete`.
+- **Đã thực hiện:** Restore dormant nhận tập UID actor đang active để reject trùng UID xuyên vùng. Restore pre-swap tính suffix lớn nhất của actor/cast/projectile/cooldown/hit/knockback/world Soul/dormant/possession IDs và từ chối save có `uidNext` đi lùi. Inventory restore giữ `NextInstance` ít nhất bằng suffix `item.<n>` cao nhất, nên không tái cấp instance đã tồn tại.
+- **Bảo toàn:** Mọi validation này chạy trên staged session trước swap; save lỗi bị từ chối, không ghi đè file hay thay session đang chạy.
+- **Evidence:** `GameApplication.ValidateUidAllocatorFloor`, `MonsterSystem.RestoreDormantRegions`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-09 — Vấn đề 6 / P05: dormant actor contract
+
+- **Trạng thái:** `in_progress`.
+- **Đã hoàn thành trong bước này:** Dormant row hiện phải có authored encounter đúng region/species/level/type/reward eligibility, metadata species canonical đúng, `definitionId` đúng adapter, vị trí và home finite/in-map, home đúng authored encounter, UID không đụng actor active hay dormant khác. Boss add runtime không bị ép vào dormant authored-row contract.
+- **Còn lại trước khi đóng:** Rà chính xác expiry status/shield, cooldown/target links khi park-resume và lifecycle Rest/travel với actor non-static trong các đường gọi còn lại.
+- **Evidence:** `src/Simulation/Systems/MonsterSystem.Regions.cs`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-09 — Vấn đề 6 / P01: inventory state persistence
+
+- **Trạng thái:** `in_progress`.
+- **Đã audit:** `CaptureCanonicalSave` có capture → serialize/checksum cho player resources/runtime actor/cast/projectile/cooldown/hit/knockback, Soul density/pity/pickup/consumed receipts, summon/possession/cooldown, traversal, inventory/overflow/equipment/`NextInstance`, skill/passive/mastery budget+debt, quest/loot/unique/world lifecycle, RNG và fixed-tick Spirit carries. `RestoreCanonicalSaveInPlace` có đường restore tương ứng trong staged session.
+- **Đã xử lý mismatch:** World state không thể suy ra (`HazardTicks`, `DormantRegions`, `PickupRegions`, `VisitedTiles`) thiếu ở save cũ nay bị reject có chủ đích; không còn restore bằng default làm mất/reposition tiến trình.
+- **Còn lại trước khi đóng:** Tiếp tục trace source/target links của combat runtime, expiry semantics và selection/command state để tách thật sự transient khỏi state phải persist.
+- **Evidence:** `src/Application/GameApplication.cs`, `src/Application/Persistence/V25/V25SaveData.cs`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-09 — Vấn đề 6 / P02: thứ tự restore resources và weapon style
+
+- **Trạng thái:** `complete`.
+- **Đã audit:** Player runtime được restore trước để giữ current HP/Spirit chính xác; inventory, passive và possession sau đó dựng modifier sources; cuối restore recompute derived maxima rồi set lại absolute current values, chỉ clamp ở max đã xác minh. Save current không được refill theo tỉ lệ.
+- **Lỗi đã xác nhận và sửa:** Combat style trước đây chỉ tin runtime actor và không được suy lại từ main-hand. `V25InventorySystem` nay set style từ main-hand (không có main-hand thì `fist`); restore reject nếu style đã lưu khác style của equipment đã restore.
+- **Evidence:** `PlayerSystem.SetCanonicalCombatStyle`, `V25InventorySystem.ApplyEquipmentModifiers`, `GameApplication.RestoreCanonicalSaveInPlace`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-09 — Vấn đề 6 / P03: checksum, normalization và compatibility
+
+- **Trạng thái:** `complete`.
+- **Đã audit:** Codec deserialize bằng schema đóng, validate shape/reference, tính lại envelope SHA-256 trên representation deserialize rồi mới restore. `JsonIgnore(WhenWritingNull/Default)` giữ representation của file cũ có optional field vắng mặt; dictionary/list được capture từ snapshot có thứ tự rõ ràng trước khi checksum.
+- **Quyết định compatibility:** File checksum cũ vẫn có thể được đọc và checksum được kiểm; nếu thiếu state không thể migrate chính xác thì restore bị từ chối trước swap và file không bị ghi đè. Checksum sai luôn bị từ chối.
+- **Evidence:** `V25SaveCodec.Deserialize/Normalize/ComputeEnvelopeChecksum`, `GameApplication.ValidateImplementedCanonicalPayload`; build compile-only pass, 0 warning / 0 error. Manual disk-failure/checksum case vẫn thuộc checklist user.
+
+### 2026-09-09 — Vấn đề 6 / P06: pickup region map
+
+- **Trạng thái:** `complete`.
+- **Đã audit:** Mỗi canonical pickup được capture cùng `PickupRegions`; restore yêu cầu region tồn tại trong active profile, reject key không có pickup, và `WorldSouls`/auto-collect chỉ nhìn pickup của current region.
+- **Đã xử lý compatibility:** Missing mapping với pickup chưa consume bị reject thay vì đưa pickup sang current region. Điều này bảo toàn file cũ và chặn Soul nhảy vùng hoặc bị consume hai lần.
+- **Evidence:** `SoulSystem.RestorePickupRegions`, `SoulSystem.PickupInCurrentRegion`, `GameApplication.CaptureCanonicalSave`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-09 — Vấn đề 6 / P07: timer save/suspend/restore/travel
+
+- **Trạng thái:** `in_progress`.
+- **Đã audit:** Fixed clock chạy 60 Hz; combat status/shield expiry lọc theo `ExpireTick > currentTick`; Spirit lưu cả fractional carry và rate carry; potion, dodge, respawn, summon recovery, hazard accumulator, crumble và traversal grace đều là tick state được capture/restore. Suspend dừng `_PhysicsProcess`, vì vậy không có catch-up offline.
+- **Đã sửa:** Transition lock 300 ms sau Possession trước đây chỉ có trong RAM. `PossessionTransitionLockTicks` nay được ghi/validate/restore như state bắt buộc (0..18 ticks). Save thiếu field này bị từ chối giữ nguyên, thay vì reset lock và cho phép thao tác sớm sau load.
+- **Còn lại trước khi đóng:** Chuẩn hóa Possession duration/cooldown từ số thực sang representation tick trong persistence, rồi trace lại cooldown của actor dormant và manual suspend tại ranh giới hazard/possession. Chưa đánh dấu complete vì các timer Possession hiện vẫn capture dưới đơn vị seconds.
+- **Evidence:** `PossessionSystem.CanonicalTransitionLockTicks`, `V25SaveDocument.PossessionTransitionLockTicks`, `GameApplication.CaptureCanonicalSave/RestoreCanonicalSaveInPlace`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-09 — Vấn đề 6 / W04: hazard và môi trường theo actor
+
+- **Trạng thái:** `in_progress`.
+- **Đã thực hiện:** Hazard clock 500 ms được lưu theo UID và reset khi actor rời vùng hazard; environmental HP loss đi thẳng vào HP, không gọi damage resolver nên không có shield/crit/mastery. FrostFloor của Ally dùng `AllySystem.EnvironmentSpeedMultiplier` và capability của chính species, không mượn capability Player. Return movement của Ally cũng đã dùng canonical move speed thay vì di chuyển cố định theo delta.
+- **Còn lại trước khi đóng:** Rà contract Ward riêng từng actor và phạm vi CrumblingFloor/rescue để xác nhận mọi actor thuộc scope có producer/caller đúng V2.5. Chưa có evidence manual cho exit/reload đúng tick 500 ms.
+- **Evidence:** `GameSession.TickCanonicalWorld`, `GameSession` canonical environment setup, `AllySystem.CanonicalMoveSpeed`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-09 — Vấn đề 6 / W07: region transition và durable boundary
+
+- **Trạng thái:** `in_progress`.
+- **Lỗi đã xác nhận:** Presentation trước đây gọi `TravelToRegion`, đổi runtime/map ngay, rồi mới thử save. Nếu ghi đĩa thất bại, UI trả failure nhưng session vẫn ở region mới chưa được durable commit.
+- **Đã sửa:** `Arena.TravelToRegion` nay flush mutation bền vững có trước, giữ envelope trước travel trong RAM, chỉ rebuild sprite/map sau khi post-transition commit thành công. Nếu commit đích thất bại, runtime restore từ envelope cũ; nếu rollback cũng lỗi thì chặn ghi tiếp và yêu cầu load save hợp lệ.
+- **Còn lại trước khi đóng:** Rà toàn bộ mutation region/background/asset khi recovery và user chạy manual disk-failure retry; trace world lifecycle/RestReset để hoàn tất W08.
+- **Evidence:** `Presentation/Arena.cs:TravelToRegion`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-09 — Cập nhật trạng thái Vấn đề 6 / P05: dormant actor contract
+
+- **Trạng thái:** `complete`.
+- **Đã hoàn thành phần còn lại:** Status/shield của dormant actor giữ nguyên trong snapshot nhưng chỉ còn hiệu lực khi `ExpireTick > tick` lúc resume. Cooldown cast canonical giờ dừng cùng dormant actor; vì trạng thái/AI/cooldown của vùng park đều pause, không có một loại timer nào tiếp tục chạy riêng khi vùng không active. `TargetUid` không được đưa vào dormant row: canonical travel bị chặn khi combat/target còn active, còn row resume khởi đầu từ authored home/AI state và target được acquire lại trong fixed tick.
+- **Quyết định contract:** Chỉ authored normal/elite/boss encounter lives được dormant. Boss add là actor runtime của combat và không được serialize thành dormant row; travel ngoài combat nên không có add hợp lệ ở ranh giới park. Save giả mạo bị reject ở staged restore.
+- **Evidence:** `MonsterSystem.Regions.ParkRegion/ResumeRegion/RestoreDormantRegions`, `V25CombatCoordinator.DecrementCooldowns`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-09 — Cập nhật trạng thái Vấn đề 6 / P07: timer save/suspend/restore/travel
+
+- **Trạng thái:** `complete`.
+- **Đã hoàn thành phần còn lại:** Possession duration/cooldown được giữ nội bộ bằng integer tick; seconds trong HUD/save chỉ là giá trị `ticks / 60` dẫn xuất. Transition lock 300 ms cũng là tick state bắt buộc. Cooldown cast canonical, status/shield, dodge, potion, summon recovery, hazard, crumble/grace, respawn, Spirit carry đều là tick/fixed-point state có capture/restore; suspend dừng fixed tick và không có offline catch-up.
+- **Đã loại ảnh hưởng legacy:** `AttackCooldown` dạng double của Player/Monster/Ally/Summon không còn điều khiển đường canonical và được canonical capture/restore về 0. Cooldown gameplay duy nhất của canonical là `V25CombatCoordinator` tick ledger, tránh serialize một timer số thực cạnh tranh với timer tick.
+- **Evidence:** `PossessionSystem`, `V25SaveDocument.PossessionTransitionLockTicks`, `V25CombatCoordinator`, `AllySystem.UpdateCanonical`, `GameApplication.CanonicalRuntimeSnapshot`; build compile-only pass, 0 warning / 0 error. Case suspend/hazard/possession tại tick biên vẫn là manual acceptance của user theo `AGENTS.md`.
+
+### 2026-09-09 — Vấn đề 6 / P08: upgrade Beta 01 sang Full 01
+
+- **Trạng thái:** `complete`.
+- **Đã audit:** Nâng profile capture beta envelope trước, dựng `GameApplication`/`GameSession` full trong isolation, validate payload beta theo registry beta rồi restore trên runtime full. Density tạo ownership rỗng/locked cho species full chưa có; Sync và Quest nối default rows full còn thiếu. Các award, receipt, proof, density/pity, inventory/equipment, mastery, quest beta, world lifecycle, RNG và runtime beta giữ nguyên payload/identity.
+- **Commit boundary:** UI buộc save slot hiện tại trước nâng và commit lại chính slot đó sau khi staged migration thành công. Nếu staged restore lỗi, session beta đang chạy và file cũ không bị thay.
+- **Evidence:** `GameApplication.UpgradeCanonicalProfile/RestoreCanonicalSave/BuildCanonicalDensitySnapshot`, `SoulSystem.RestoreCanonicalState`, `Arena.cs` callback `Mở Full 01`; static trace đã xác nhận profile mismatch branch của Sync/Quest chỉ bổ sung default state cho content mới. Build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-09 — Vấn đề 6 / W08: RestReset và runtime encounter life
+
+- **Trạng thái:** `complete`.
+- **Lỗi đã xác nhận:** `RestReset` có thể spawn normal/elite mới khi runtime vẫn giữ actor đã chết cùng `EncounterId`, khiến một encounter tích lũy nhiều life record qua nhiều vòng nghỉ.
+- **Đã sửa:** Reset giờ yêu cầu đúng một retired/dead life của encounter, xóa row đó rồi mới spawn life kế tiếp. `_defeated` chỉ được bỏ với normal/elite của region hiện tại sau khi replacement hợp lệ; boss không nằm trong reset scope. Nếu lifecycle/runtime không khớp, thao tác bị fail thay vì tạo duplicate actor.
+- **Evidence:** `MonsterSystem.RemoveDefeatedEncounter`, `GameSession.ResetCanonicalEncounter`, `V25WorldLifecycleSystem.RestReset`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-09 — Cập nhật trạng thái Vấn đề 6 / P01: full canonical persistence coverage
+
+- **Trạng thái:** `complete`.
+- **Lỗi đã xác nhận và sửa:** Ally có lưu `RecentAttackerUid/age`, nhưng target selector thực tế đọc thêm index `_recentPlayerAttackers` trong RAM. Restore trước đây không rebuild index này, nên priority bảo vệ Player mất âm thầm sau load. Restore giờ dựng lại index theo tick tuổi còn lại; clear map cũng clear index để không kéo attacker của map cũ sang map mới.
+- **Đã siết reference graph:** Target của Monster phải là Player/Ally sống; target/focus của Ally phải là Monster sống; Player không có AI target; focus UID/duration phải nhất quán; recent attacker của Ally phải là Monster runtime. Cast/projectile/cooldown/hit/knockback, navigation, AI mode/think/focus/path state, input buffer, summon links và RNG đã có capture/restore staged trước đó.
+- **Evidence:** `AllySystem.RestoreCanonicalRuntime/Clear`, `GameApplication.ValidateCanonicalRuntimeBeforeSwap`, `CanonicalRuntimeSnapshot`; build compile-only pass, 0 warning / 0 error. Nghiệm thu save/load trong combat vẫn thuộc manual checklist user theo `AGENTS.md`.
+
+### 2026-09-09 — Vấn đề 6 / P09: WAL, atomic commit và exact retry
+
+- **Trạng thái:** `complete`.
+- **Đã audit:** Save writer normalize/validate rồi ghi `.tmp` bền vững, ghi WAL `staged`, đọc-validate lại temp, promote atomically, copy backup, chuyển WAL `committed` và append history. Recovery chỉ promote staged file khi checksum/transaction/sequence/slot khớp; candidate khác slot hoặc version không hỗ trợ bị giữ nguyên/reject. `.previous`, `.backup`, `.wal`, `.rejected` và history tạo sequence fence, không được coi foreign slot là fallback.
+- **Exact retry:** `Arena` chỉ capture một `_pendingSave`; nếu I/O thất bại simulation bị pause và F5 dùng lại envelope/hash/transaction đó. `PrepareCanonicalRewardCommit` chạy trước lần capture duy nhất; `CommitCanonicalAcquisitionEvents` chỉ phát event và clear durable flag sau store commit thành công. Không có UI success hoặc callback reward trước commit.
+- **Evidence:** `V25SaveStore.Commit/Recover/RecoverFromCandidates`, `Arena.Save/TryLoad`, `GameApplication.PrepareCanonicalRewardCommit/CommitCanonicalAcquisitionEvents`; static audit, build compile-only pass trước đó. Disk-failure sequence là manual acceptance case của user.
+
+### 2026-09-09 — Vấn đề 6 / P10: rebalance, removed content và award ledger
+
+- **Trạng thái:** `complete`.
+- **Quyết định compatibility:** Build này chỉ hỗ trợ đúng `format/schema/spec/content/balance` đã pin. File có version khác bị reject-preserved từ đầu recovery, không downgrade sang backup, không recompute award và không ghi đè. Đây là bảo toàn bằng từ chối rõ ràng, không phải tuyên bố migration rebalance.
+- **Đã audit:** Density ledger giữ `Granted/Applied/Pending/Discarded`, proof/result/source-level/rank tại thời điểm award; Sync giữ award amount/source/version/commit sequence; mastery, loot, receipt và fact có identity/provenance riêng. Restore kiểm tổng ledger/ID/proof để không sum lại từ balance hiện tại. Không có `LegacyRelic` hoặc mapping migration explicit trong authority/runtime, nên không có đường xóa ownership hay hạ progress ngầm.
+- **Evidence:** `V25SaveCodec.Validate`, `V25SaveStore.ReadVersionIncompatibility/Recover`, `V25DensityEngine.Restore`, `V25SyncSystem.Restore`; static audit, build compile-only pass trước đó.
+
+### 2026-09-10 — Vấn đề 6 / W01: blueprint topology, tọa độ và roster
+
+- **Trạng thái:** `complete`.
+- **Đã thực hiện:** Loader canonical hiện validate trước khi dựng map: topology cố định 4 chunk trong lưới 2×2, `chunk=128`, `tile=32`, road4, camp8, outer-wall2; uniqueness của chunk cell; toàn bộ local/global coordinate của shrine/NPC/entry/exit/road/chest/tutorial/arena/secret và encounter. Encounter bắt buộc có đúng một nguồn tâm và tọa độ thuộc authored chunk.
+- **Fail closed:** `GameSession.SpawnCanonicalEncounter` không còn clamp/reposition tọa độ encounter. Nếu dữ liệu ngoài map, load/spawn báo lỗi rõ ràng thay vì tạo quái ở tọa độ khác.
+- **Evidence:** `CanonicalV25Definitions.ValidateLayoutBlueprint`, `GameSession.SpawnCanonicalEncounter`; build compile-only ngày 2026-09-10 pass, 0 warning / 0 error.
+
+### 2026-09-10 — Vấn đề 6 / W02: road, wall, camp và walkmesh topology
+
+- **Trạng thái:** `complete`.
+- **Đã audit:** `V25WorldLayout.Roads/Populate` dùng road rộng 4 tile, wall ngoài dày 2 tile, decor loại trừ camp 8 tile, encounter clearance 6 tile, road clearance 4 tile và hazard/object clearance. Road không phải collider giả; map base walkmesh trống và chỉ `World.BlockingRects()` mới chặn, vì vậy main path không có collider road ẩn.
+- **Quyết định topology:** Entry/exit là portal object không blocking nằm trong map, không phải lỗ trên outer wall. Chúng chỉ thực hiện transition khi `PreviewCanonicalRegion` xác nhận adjacency, vị trí portal, boss/rank/fact gate. Điều này khớp blueprint hiện có và không tạo đường đi xuyên wall.
+- **Nghiệm thu còn lại:** User kiểm tra trực quan/đi bộ path trong game; không có gameplay runner mới theo `AGENTS.md`.
+
+### 2026-09-10 — Vấn đề 6 / W03: movement, collider và swept collision
+
+- **Trạng thái:** `complete`.
+- **Lỗi đã sửa:** Monster/Ally từng dùng fixed radius18 dù content có role `actor`, `large_actor`, `huge_actor`. Đã thêm `V25ActorBodyRadii` (10/18/26) lấy từ canonical species role và nối vào AI chase/return, Ally path/rescue, dash và knockback. Player tiếp tục dùng radius10.
+- **Đã siết capability:** Non-player terrain barriers gồm Gap/ShallowWater/PhasePassable/CrumblingFloor; Ally/Monster không mượn capability của Player possession. Frost của Ally là multiplier theo species capability riêng. Walk/dodge/dash/knockback giữ swept-circle path; restore player position reject fail-closed nếu ngoài walkmesh/collider thay vì clamp thành vị trí khác.
+- **Evidence:** `V25ActorBodyRadii`, `PlayerSystem.NonPlayerSweptPosition/RestoreCanonicalPosition`, `MonsterSystem`, `AllySystem`, `V25CombatCoordinator`, `GameSession`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-10 — Vấn đề 6 / W04: hazard và môi trường theo actor
+
+- **Trạng thái:** `complete`.
+- **Đã thực hiện:** Hazard Fire/Toxic query được parenthesize rõ terrain+rect, tick 30 fixed ticks (=500ms), lưu accumulator từng actor và reset khi rời vùng. Damage đi thẳng HP (`shieldAbsorbed=0`), không crit/shield/mastery. Player Ward chỉ áp Player capability; Ally không mượn Ward từ Player. Ally FrostFloor dùng capability species riêng; CrumblingFloor bị coi là non-player barrier vì không có rescue contract cho AI.
+- **Evidence:** `GameSession.TickCanonicalWorld`, `AllySystem.EnvironmentSpeedMultiplier/ApplyEnvironmentalDamage`, `Player.NonPlayerTerrainBarriers`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-10 — Vấn đề 6 / W05: safe anchor, traversal state và capability expiry
+
+- **Trạng thái:** `complete`.
+- **Đã siết restore:** Save traversal giờ phải khớp terrain thực tại vị trí Player, region gate-state hiện hành và safe-anchor/candidate gate-state của region. Sai lệch bị reject trong staged session; không clamp vị trí rồi giữ grace/anchor cũ.
+- **Quyết định gate identity:** Blueprint V2.5 không định nghĩa nhiều locked gate trong cùng region; `CanonicalRegionId` là identity duy nhất của gate context. Portal progression được kiểm ở `PreviewCanonicalRegion`; các shortcut vẫn dùng `V25TraversalSystem` capability/grace/rescue. Không có path nào teleport qua portal chưa đạt fact/rank.
+- **Evidence:** `GameApplication.RestoreCanonicalSaveInPlace`, `V25TraversalSystem`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-10 — Vấn đề 6 / W06: E interaction, shrine và ritual
+
+- **Trạng thái:** `complete`.
+- **Đã thực hiện:** E chạy theo thứ tự khóa `quest → pickup → shrine → NPC`, dùng phạm vi48 và tie theo distance/ID ở query NPC. Quest NPC có query pending riêng; pickup dùng canonical current-region map; portal chỉ được thực hiện sau các nhánh ưu tiên và đi qua durable transaction ở `Arena.TravelToRegion`.
+- **Ritual:** `V25UniquePowerSystem` có ritual state machine 180 tick cho Covenant. Chỉ start tại shrine khi đủ fact; phải giữ E; move/rời shrine, nhả E, nhận damage hoặc chết sẽ cancel không tạo receipt. Chỉ khi complete mới commit Unique Power/durable flag. Rest 1 giây và RestReset đã có UI action, gate tại shrine/out-combat/hazard và save khi state đổi.
+- **Evidence:** `V25QuestSystem.HasPendingNpcObjective`, `GameApplication.NearbyCanonicalNpcId/BeginCanonicalUniqueRitual`, `V25UniquePowerSystem.BeginAvailableRitual/AdvanceRitual`, `Arena._PhysicsProcess/RebuildFeaturePanel`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-10 — Cập nhật trạng thái Vấn đề 6 / W07: transition và durable boundary
+
+- **Trạng thái:** `complete`.
+- **Lỗi đã sửa:** E tại portal từng gọi thẳng simulation travel, nên save failure không dùng rollback transaction của presentation. E portal giờ chỉ resolve target trong Application; `Arena.TravelToRegion` là owner duy nhất của mutation/save/rollback. UI không báo success trước durable commit.
+- **Lỗi đã sửa:** `ClearActiveForMapChange` xóa Ally runtime nhưng giữ `Summoned` state/UID, tạo snapshot summon treo sau transition. Canonical transition nay gọi `RecallCanonical` trước khi remove actor, giữ HP ratio/vitality và chuyển Soul sang Ready; possession kết thúc qua cooldown canonical đã có.
+- **Evidence:** `GameApplication.NearbyCanonicalPortalTarget`, `Arena.TravelToRegion`, `SummonSystem.ClearActiveForMapChange/RecallCanonical`; build compile-only pass, 0 warning / 0 error.
+
+### 2026-09-10 — Vấn đề 6 / W09: fog/minimap và marker asset
+
+- **Trạng thái:** `in_progress`.
+- **Đã xác nhận đúng:** Fog reveal 12 tile, persist per-region (`VisitedTiles`) và `HudMinimap` lọc object/Soul marker bằng `WasCanonicalTileVisited`; load/travel không lộ marker vùng chưa reveal.
+- **Chưa hoàn thành:** `Arena` vẫn dùng circle/text technical fallback khi asset hoặc animation species thiếu. Đây không thể được tính là asset hoàn chỉnh; marker canonical (`ui.minimap_marker`, `ui.quest_marker`) và asset adapter thuộc dependency phần6/7 chưa hoàn tất. Không thay fallback thành artwork giả hoặc sửa catalog asset trong khi export chưa được chốt.
+- **Bước tiếp theo:** Hoàn thành phần6 canonical asset adapter + mapping manifest, sau đó thay marker/fallback bằng asset ID có version/hash và chạy user visual acceptance trong game.
+
+### 2026-09-10 — Phần 2 / bước 4: single V2.5 documentation entry point và historical boundary
+
+- **Trạng thái:** `complete`.
+- **Đã thực hiện:** Bổ sung `docs/V2.5/README.md` làm điểm vào duy nhất cho authority, evidence và validation boundary. `docs/README.md` trỏ về đây. Các tài liệu prototype `ARCHITECTURE`, `MAP_SYSTEM`, `GAME_TERMINOLOGY`, `GAME_TERMINOLOGY_VN`, `PERFORMANCE_BUDGET` đã được giữ lại với header historical; không còn được dùng để thay đổi rule/balance/save/asset của V2.5.
+- **Evidence:** `docs/V2.5/README.md`, `docs/README.md`; không xóa tài liệu vendor/license hay historical record.
+
+### 2026-09-10 — Phần 2 / bước 5: current evidence index, không rewrite historical plan
+
+- **Trạng thái:** `complete`.
+- **Đã thực hiện:** Thêm `docs/V2.5/CURRENT_IMPLEMENTATION_STATUS.md` làm một điểm đọc current status. File này liên kết authority, progress journal, trạng thái từng phần, giới hạn validation và dependency asset hiện hành. `work-items.json`, `implementation-tasks-4-8.json` và `source-audit.md` được giữ nguyên là planning/audit snapshot lịch sử; không có hai nguồn cùng tự nhận là current status.
+- **Evidence:** `docs/V2.5/CURRENT_IMPLEMENTATION_STATUS.md`; các audit cũ vẫn truy vết được đầy đủ.
+
+### 2026-09-10 — Phần 2 / bước 6: canonical Godot 4.5.2 Compatibility baseline
+
+- **Trạng thái:** `not_complete`.
+- **Lý do:** Môi trường hiện chỉ có Godot .NET 4.7.2 và project hiện pin `Godot.NET.Sdk/4.7.2`, feature `Godot 4.7 C# Forward Plus`. Không có executable/template Godot .NET 4.5.2 để compile/export baseline; không được suy diễn compatibility từ export 4.7.2.
+- **Bước tiếp theo:** Khi environment có Godot .NET 4.5.2 và export templates tương ứng, kiểm tra project configuration/API compatibility, chạy compile-only và export debug; ghi kết quả độc lập, không chạy gameplay acceptance tự động.
+
+### 2026-09-10 — Phần 2 / bước 7: compile và package bằng toolchain hiện có
+
+- **Trạng thái:** `complete` (giới hạn Godot 4.7.2).
+- **Đã thực hiện:** `dotnet build solo_vs_mortal_godot.csproj --no-restore` pass với 0 warning/0 error. Godot 4.7.2 export-debug đã tạo `build/v25-4.7.2/SoloVsMortal.exe`, `SoloVsMortal.console.exe`, `SoloVsMortal.pck`.
+- **Giới hạn:** Artifact xác nhận đóng gói kỹ thuật ở 4.7.2, không thay thế baseline 4.5.2 hoặc 18 manual acceptance cases của user.
+
+### 2026-09-10 — Phần 6 / bước 6.01: dependency inventory và danh sách bảo vệ asset
+
+- **Trạng thái:** `complete`.
+- **Đã thực hiện:** Tạo `docs/V2.5/ASSET_DEPENDENCY_INVENTORY_V2.5.md`. Inventory ghi 10,700 requirement V2.5 (beta_01: 1,271), snapshot file/byte của `assets`, `spritesheets`, `spriteframes`, `build`, runtime caller hiện hành, legal/vendor retain và delete gate theo từng nhóm. Không có thao tác delete nào.
+- **Đã khóa bảo vệ:** Bốn PNG Skeleton static đã được user cho phép tái sử dụng được copy nguyên vẹn vào `assets/v2.5/skeleton-static-integration-v001/`. Raw/master/normalized/preview Art, source export và license không nằm trong cleanup scope.
+- **Evidence:** `ASSET_DEPENDENCY_INVENTORY_V2.5.md`, `data/v2.5/asset-catalog.v2.5.json`, bốn SHA-256 từ source `skeleton-static-integration-v001/asset-map.json`.
+
+### 2026-09-10 — Phần 6 / bước 6.02: canonical asset adapter và migration presentation từng phần
+
+- **Trạng thái:** `in_progress`.
+- **Đã thực hiện:** Thêm `CanonicalAssetCatalog`: parse strict schema, reject unknown field/AssetId/path/hash/frame rectangle sai, đọc metadata file/hash/frame rect/duration/pivot/clip/direction/rank/sockets/layering/QA. `Arena` chỉ query catalog V2.5 cho map/world/pickup/actor; ID không có art hiển thị `MISSING: <AssetId>` thay vì dùng art prototype hoặc Skeleton sai species. Skeleton rank01 pickup/enemy/ally static dùng frame/pivot/layer riêng; player đã bỏ đường sprite-sheet cũ và hiển thị missing marker cho đến khi có package approved. `HudMinimap` bỏ hard-coded Kenney path và dùng primitive fallback trong lúc chưa có marker UI canonical.
+- **Đã xác minh:** `dotnet build solo_vs_mortal_godot.csproj --no-restore` pass, 0 warning/0 error. Không chạy gameplay.
+- **Chưa complete:** Catalog mới chỉ có 4 static Skeleton AssetId; 1,267 requirement beta còn chưa có approved export. Chưa có player clips/directions, actor animation, world/tile, equipment, UI marker, socket/layer assets đầy đủ; không thể chuyển mọi caller sang art hoàn chỉnh hoặc xóa nhóm cũ.
+- **Bước tiếp theo:** Art export thêm package versioned; Code thêm entry hash-verified vào catalog, migrate ID tương ứng và giữ explicit missing list. Chỉ khi một group không còn caller và license/provenance rõ ràng mới thực hiện 6.03 delete theo group.
+
+### 2026-09-10 — Vấn đề 6 / W09: tiếp tục sau asset adapter foundation
+
+- **Trạng thái:** `in_progress`.
+- **Đã cập nhật:** Runtime không còn tự lấy art prototype hoặc Kenney ring cho visual canonical đã chạm tới; fog/visited marker filter vẫn giữ đúng. Marker minimap/object còn là primitive/magenta technical fallback vì `ui.minimap_marker`, `ui.quest_marker` và world export canonical chưa tồn tại.
+- **Chưa complete:** User cần review in-engine Skeleton static và approve art package có marker/world/UI trước khi fallback được thay thế; không thể gọi visual acceptance này là đã pass bằng compile-only.
+
+### 2026-09-10 — Phần 6 / bước 6.03: physical cleanup obsolete asset/code
+
+- **Trạng thái:** `not_complete`.
+- **Rà soát dependency:** `GameDefinitions.Load` vẫn bootstrap `data/asset-manifest.json` và `characterAnimations.json`; `tools/export_windows.ps1` vẫn package asset manifest. Đây là dependency compatibility/bootstrap có thật, không phải file mồ côi có thể xóa. `assets`, `spritesheets`, `spriteframes` còn chứa old runtime/vendor/generated material và chưa có catalog V2.5 replacement đầy đủ.
+- **Quyết định:** Không xóa file/group nào ở bước này. Xóa bây giờ sẽ làm canonical bootstrap/package fail hoặc mất legal/provenance, trái điều kiện complete. Inventory đã ghi replacement ID/delete gate để cleanup sau không phải suy đoán theo wildcard.
+- **Bước tiếp theo:** Sau mỗi Art export được approve, migrate AssetId/caller tương ứng, remove dependency legacy đã được chứng minh không còn dùng, kiểm tra build/export và append danh sách file xóa cùng replacement ID. Chưa có bằng chứng để đóng phần 6.
+
+### 2026-09-10 — Phần 6 / bước 6.03: continuation — dead presentation API cleanup
+
+- **Trạng thái:** `in_progress`.
+- **Đã thực hiện:** Sau khi Arena chuyển qua `CanonicalAssetCatalog`, xóa API presentation cũ không còn bất kỳ caller nào: `GameApplication.HasSpeciesAnimation/HasAsset/Asset/MonsterAnimation/PlayerAnimation` và snapshot descriptors `AssetSnapshot/AnimationClipSnapshot/PlayerAnimationClipSnapshot`. Không còn raw path expansion hoặc hard-coded player/monster scale ở canonical presentation caller.
+- **Giữ lại có chủ ý:** `GameDefinitions.Load`, `AssetDefinitions`, `CharacterAnimationDefinitions`, `data/asset-manifest.json` và `characterAnimations.json` vẫn là bootstrap/compatibility dependency hiện hữu; không gắn nhãn dead code hoặc xóa vật lý khi chưa refactor bootstrap sang definition/map canonical hoàn toàn.
+- **Evidence:** static caller scan; `dotnet build solo_vs_mortal_godot.csproj --no-restore` pass, 0 warning/0 error. Physical cleanup vẫn `not_complete` cho tới khi replacement và dependency delete gate đầy đủ.
+
+### 2026-09-10 — Phần 6 / bước 6.02: continuation — export inclusion verification
+
+- **Trạng thái:** `in_progress`.
+- **Đã thực hiện:** `tools/export_windows.ps1` nay copy riêng `assets/v2.5` và yêu cầu `data/v2.5/asset-catalog.v2.5.json`; không package kho production Art. Godot 4.7.2 `--export-pack` tạo `build/v25-4.7.2/SoloVsMortal-current.pck`; static inspection xác nhận PCK có catalog và `soul.skeleton.rank01.enemy.south.png`.
+- **Giới hạn:** Đây chỉ xác minh included resource/package. Không có gameplay launch, in-engine QA hay claim baseline 4.5.2. `project.godot`/preset hiện còn viewport 1280×720 trong khi style-lock V2.5 yêu cầu native 640×360; chưa được đổi vì HUD/WorldMap hiện dùng absolute layout 1280 và cần migrate đồng bộ để không cắt UI. Mục này vẫn open cho phase layout/pixel-snap và asset package tiếp theo.
+
+### 2026-09-10 — Phần 3 / bước 1–5: fixed-tick combat static trace và deterministic ordering
+
+- **Trạng thái:** `complete` (static implementation review).
+- **Đã thực hiện:** Tạo `docs/V2.5/COMBAT_RUNTIME_TRACE_V2.5.md`, trace authority tick order qua `GameSession.FixedStep` và `V25CombatCoordinator`. Audit phát hiện các path cast/projectile/cooldown/knockback/DoT từng phụ thuộc dictionary/list iteration không khai báo; đã đặt sort key deterministic cho từng path. Damage tiếp tục resolve defense lúc hit, snapshot offense lúc release; death/revoke cancel unreleased cast, projectile released giữ snapshot.
+- **Evidence:** `V25CombatCoordinator`, `V25StatusStore.Tick`, `COMBAT_RUNTIME_TRACE_V2.5.md`; `dotnet build solo_vs_mortal_godot.csproj --no-restore` pass, 0 warning/0 error.
+- **Giới hạn:** Không đánh dấu user acceptance. Same-tick boss/player death, projectile/LOS, dodge/collision, combat save/load và case 7–9/10/15–18 phải do user kiểm trong game.
+
+### 2026-09-10 — Phần 3 / bước 6–7: acceptance map và build boundary
+
+- **Trạng thái:** `in_progress`.
+- **Đã thực hiện:** Combat map liên kết requirement→symbol→manual verification trong `COMBAT_RUNTIME_TRACE_V2.5.md`; build compile-only đã pass sau sửa.
+- **Chưa complete:** 18 acceptance cases là user-owned theo `AGENTS.md`; chưa có kết quả manual playtest. Phần 3 vì vậy vẫn `in_progress`, không được đổi status top table.
+
+### 2026-09-10 — Phần 4 / bước 4.12: canonical-flow isolation of legacy Soul mechanics
+
+- **Trạng thái:** `complete` (canonical runtime isolation; physical removal thuộc phần 6).
+- **Đã thực hiện:** Khi canonical V2.5 active, `GameSession` không khởi tạo `DevourSystem`, `EssenceSystem` hoặc `BloodlineSystem`; các property được ghi rõ legacy-compatibility-only. `ProgressionSystem.Craft/UsePlayerStatPill` fail closed trong canonical mode. `Arena` dùng canonical branch của `SoulLinks` (không expose Devour); Soul/Inventory/Quest V2.5 vẫn dùng system riêng.
+- **Giữ lại:** File/class legacy và legacy save payload vẫn giữ cho namespace v1–v6, không là route canonical. `GameDefinitions` legacy bootstrap chưa refactor hoàn toàn nên physical delete phải chờ phần 6 replacement/dependency gate.
+- **Safety note:** Không thêm guard mới trực tiếp vào legacy `CaptureSave/RestoreSave` vì automatic approval review từ chối thay đổi đó với lý do có thể chặn save/restore và làm mất tiến trình. Không có thay đổi nào vào hai API này; canonical route hiện dùng `CaptureCanonicalSave/RestoreCanonicalSave` riêng.
+- **Evidence:** `GameSession`, `ProgressionSystem`, `GameApplication.SoulLinks`; build compile-only pass, 0 warning/0 error.
+
+### 2026-09-10 — Phần 4 / bước 4.07–4.08: durable boundary for Soul/Spirit/Possession state changes
+
+- **Trạng thái:** `complete` (implementation/static review).
+- **Lỗi đã sửa:** Canonical durability flag trước đây chỉ subscribe `SoulSummoned` và `PossessionStarted`. Recall, Ally disperse/recover, end Possession và Player death có thể chờ autosave 10 giây thay vì đi qua durable boundary.
+- **Đã thực hiện:** `GameSession` giờ mark canonical durable commit cho `SoulUnsummoned`, `SoulDispersed`, `SoulRecovered`, `PossessionEnded` và `PlayerDefeated`, cùng các event đã có. Arena nhận flag trong physics loop và commit envelope hiện hành trước khi tiếp tục; manual save vẫn capture đúng mid-recovery/mid-cooldown state khi user yêu cầu.
+- **Evidence:** `GameSession._canonicalDurabilitySubscriptions`, `SummonSystem.RecallCanonical/OnAllyDefeated`, `PossessionSystem.EndCanonical`; build compile-only pass, 0 warning/0 error. User vẫn cần manual check zero-crossing, same-tick lethal/recall và reload trong real Godot.
+
+### 2026-09-10 — Phần 7 / bước 7.01: reconcile logical Slice scope
+
+- **Trạng thái:** `complete` cho scope reconciliation; Phần 7 vẫn `not_complete` vì chưa có art approval, export đủ dependency hoặc in-engine QA.
+- **Đã thực hiện:** Đối chiếu `art/production/catalog.json` với `art/production/slice-parts.json`. Catalog có đúng 161 AssetId với `slice01=true` (101 `generated`, 4 `needs_rework`, 56 `not_generated`); worklist 49 part có 158 AssetId unique, không trùng và toàn bộ đều nằm trong catalog. Chốt membership theo hash bằng `data/v2.5/slice-01.scope-lock.v2.5.json`, scope version `slice-01.reconciled.2026-09-10`.
+- **Đã giải thích chênh lệch 3 ID:** `player.base.idle.s` là candidate `needs_rework` bị loại khỏi generation worklist; `soul.skeleton.rank01.enemy.south` và `soul.skeleton.rank01.ally.south` là static Skeleton hướng Nam đã được user cho phép tái sử dụng, không phải animation task. `pickup` và `banner.icon` reuse nằm trong `ART-34`, nên không tạo thêm chênh lệch.
+- **Approval boundary:** `generated`/technical QA/reuse permission không được coi là user approval. Tại snapshot, 105 entry có output record, 105 technical QA, 5 visual QA, 5 frame-isolation QA, 1 motion QA và 0 in-engine QA. Tài liệu `SLICE_SCOPE_RECONCILIATION_V2.5.md` chốt trạng thái `pending_user_review → approved|needs_rework|rejected` cho output mới và yêu cầu mỗi rework có version/hash mới.
+- **Evidence:** `docs/V2.5/SLICE_SCOPE_RECONCILIATION_V2.5.md`, `data/v2.5/slice-01.scope-lock.v2.5.json`; không generate, không tự approve mỹ thuật và không thay đổi catalog Art gốc trong bước này.
+- **Bước tiếp theo:** 7.02 dispatch theo 158 ID production-worklist đã khóa, giữ ba catalog-only ID ở handling đã nêu; trước assemble export phải hoàn tất metadata/file/hash và user decision cho từng ID required.
+
+### 2026-09-10 — Phần 7 / bước 2: audit file, hash, manifest và decision hiện hành
+
+- **Trạng thái:** `in_progress`.
+- **Đã hoàn thành phần kỹ thuật:** Kiểm 161 ID locked với filesystem Art. Có 105 output record; cả 105 file, SHA-256 và manifest SHA-256 đều khớp, không thiếu file/manifest. Chạy read-only technical validator trên 18 manifest chứa các output Slice: 18/18 pass. `SLICE_OUTPUT_AUDIT_V2.5.json` giữ snapshot từng AssetId, bao gồm trạng thái output/review/evidence hiện hành.
+- **Đã xác định decision chính xác:** 4 Player idle S/W/E/N đang `needs_rework` theo decision ledger của user; 101 output khác vẫn `generated`/chờ decision. Bốn static Skeleton chỉ có quyền reuse đã được user cho phép, không là visual hoặc in-engine approval. Không có asset nào đủ điều kiện integration export.
+- **Chưa hoàn thành / lý do:** Không thể tự ghi user decision `approved`, `needs_rework` hay `rejected` cho 101 output chờ review. Đây là quyền của user theo approval policy, nên bước này còn mở cho tới khi các decision hash-pinned được ghi.
+- **Evidence:** `docs/V2.5/SLICE_OUTPUT_AUDIT_V2.5.json`, `art/production/catalog.json`, `art/production/user-reviews.json`; không thay output, hash hoặc review ledger trong audit.
+
+### 2026-09-10 — Phần 7 / bước 3: thứ tự microtask theo dependency
+
+- **Trạng thái:** `complete`.
+- **Đã thực hiện:** Tạo `docs/V2.5/SLICE_DISPATCH_PLAN_V2.5.md`. Plan tách trạng thái catalog (output/review) khỏi `slice-parts` part scheduling, nên 48 part `pending` không bị hiểu sai là chưa có file. Queue A gồm 7 batch world độc lập `ART-43`–`ART-49` với 40 ID; Queue B yêu cầu làm lại cả 4 Player idle S/W/E/N trước, sau đó dừng 16 Player move/attack/hit/death ở gate user decision để không nhân lỗi identity/size/clothing sang clip phụ thuộc.
+- **Đã khóa cách tiếp tục:** Mỗi batch có delivery/record/technical-check riêng, failure chỉ block AssetId/part tương ứng và các batch world độc lập vẫn tiếp tục. Không dùng raw contact sheet làm atlas, không overwrite revision cũ, không tự promote output thành approved.
+- **Evidence:** `SLICE_DISPATCH_PLAN_V2.5.md`, `slice-01.scope-lock.v2.5.json` (`scopeMembershipSha256=994ebfd3d946d506a085452da40523ce141cd5b22ab020bdd95d301f15143df6`).
+
+### 2026-09-10 — Phần 7 / bước 6: technical animation/asset QA baseline
+
+- **Trạng thái:** `in_progress`.
+- **Đã hoàn thành:** Validator pass 18/18 manifest hiện có. Animation preview hiện dùng timestamp elapsed ms và duration array trong manifest, không dùng counter frame-rate dependent; snapshot có 28 Skeleton clips, Idle 4×200 ms và Move 6×100 ms. Kiểm data hiện tại không phát hiện frame nào chạm gutter 2px.
+- **Chưa hoàn thành / lý do:** Đây không xác nhận pixel ownership của slash/effect, motion/identity hoặc visual phù hợp; 0 output có in-engine QA. Mỗi output mới trong Queue A/B phải có kiểm frame/pivot/gutter/alpha/palette/hash và animation phải có frame-step/onion/timing evidence trước khi có thể chuyển sang integration-ready.

@@ -817,6 +817,7 @@ public static class CanonicalV25Loader
         }
         foreach (var encounter in registry.Content.Encounters)
             if (!species.ContainsKey(encounter.SpeciesId) || !regions.ContainsKey(encounter.RegionId)) throw new DefinitionException($"Encounter '{encounter.Id}' references an unknown species or region.");
+        ValidateLayoutBlueprint(registry.Content.LayoutBlueprint, registry.Content.Encounters);
         foreach (var power in registry.Content.UniquePowers)
         {
             if (!skills.ContainsKey(power.SkillId)) throw new DefinitionException($"Unique power '{power.Id}' references unknown skill '{power.SkillId}'.");
@@ -827,6 +828,69 @@ public static class CanonicalV25Loader
             if (!regions.ContainsKey(quest.RegionId)) throw new DefinitionException($"Quest '{quest.Id}' references unknown region '{quest.RegionId}'.");
             foreach (var prerequisite in quest.Prerequisites) if (!quests.ContainsKey(prerequisite)) throw new DefinitionException($"Quest '{quest.Id}' references unknown prerequisite '{prerequisite}'.");
             if (quest.Rewards.WorldSoul is { } reward && !species.ContainsKey(reward.SpeciesId)) throw new DefinitionException($"Quest '{quest.Id}' references unknown world-soul species '{reward.SpeciesId}'.");
+        }
+    }
+
+    /// <summary>Validates every authored coordinate before a map is constructed. Runtime must
+    /// never repair a malformed V2.5 blueprint by clamping/repositioning an object.</summary>
+    private static void ValidateLayoutBlueprint(CanonicalLayoutBlueprintDefinition layout, IReadOnlyList<CanonicalEncounterDefinition> encounters)
+    {
+        var chunkWidth = layout.ChunkTiles[0];
+        var chunkHeight = layout.ChunkTiles[1];
+        if (chunkWidth <= 0 || chunkHeight <= 0 || layout.TileSize <= 0 || layout.RoadWidthTiles != 4 || layout.SafeCampRadiusTiles != 8 || layout.OuterWallThicknessTiles != 2)
+            throw new DefinitionException("Canonical layout dimensions or fixed topology constants are invalid.");
+        if (layout.ChunkGrid.Values.Select(point => $"{point[0]},{point[1]}").Distinct(StringComparer.Ordinal).Count() != 4 ||
+            layout.ChunkGrid.Values.Any(point => point[0] is < 0 or > 1 || point[1] is < 0 or > 1))
+            throw new DefinitionException("Canonical chunk grid must use each 2x2 cell exactly once.");
+
+        void Global(IReadOnlyList<int> tile, string label)
+        {
+            if (tile.Count != 2 || tile[0] < 0 || tile[1] < 0 || tile[0] >= chunkWidth * 2 || tile[1] >= chunkHeight * 2)
+                throw new DefinitionException($"Canonical layout {label} is outside the 2x2 world grid.");
+        }
+        void Local(IReadOnlyList<int> tile, string label)
+        {
+            if (tile.Count != 2 || tile[0] < 0 || tile[1] < 0 || tile[0] >= chunkWidth || tile[1] >= chunkHeight)
+                throw new DefinitionException($"Canonical layout {label} is outside its authored chunk.");
+        }
+        void KnownChunk(string chunk, string label)
+        {
+            if (!layout.ChunkGrid.ContainsKey(chunk)) throw new DefinitionException($"Canonical layout {label} references unknown chunk '{chunk}'.");
+        }
+
+        Global(layout.ShrineTile, "shrineTile");
+        Global(layout.EntryTile, "entryTile");
+        Global(layout.ExitTile, "exitTile");
+        foreach (var pair in layout.NpcTiles) Global(pair.Value, $"npcTiles.{pair.Key}");
+        foreach (var road in layout.Roads.Append(layout.ExitRoad))
+        {
+            if (road.Count < 2) throw new DefinitionException("Canonical layout road needs at least two points.");
+            foreach (var tile in road) Global(tile, "road");
+        }
+        foreach (var center in layout.EncounterCenters) Local(center, "encounterCenter");
+        Local(layout.EliteTile, "eliteTile"); Local(layout.BossTile, "bossTile"); Local(layout.LandmarkTile, "landmarkTile");
+        foreach (var pair in layout.ChestTiles) { KnownChunk(pair.Key, $"chestTiles.{pair.Key}"); Local(pair.Value, $"chestTiles.{pair.Key}"); }
+        KnownChunk(layout.Tutorial.Chunk, "tutorial"); Local(layout.Tutorial.CenterTile, "tutorial.centerTile");
+        KnownChunk(layout.Arena.Chunk, "arena"); Local(layout.Arena.EntryTile, "arena.entryTile");
+        if (layout.Arena.BoundsTiles.Count != 4 || layout.Arena.BoundsTiles[0] < 0 || layout.Arena.BoundsTiles[1] < 0 || layout.Arena.BoundsTiles[2] <= layout.Arena.BoundsTiles[0] || layout.Arena.BoundsTiles[3] <= layout.Arena.BoundsTiles[1] || layout.Arena.BoundsTiles[2] > chunkWidth || layout.Arena.BoundsTiles[3] > chunkHeight)
+            throw new DefinitionException("Canonical arena bounds are outside its authored chunk.");
+        foreach (var spawn in layout.Arena.SpawnTiles) Local(spawn, "arena.spawnTile");
+        foreach (var pocket in layout.SecretPockets)
+        {
+            KnownChunk(pocket.Chunk, "secretPocket"); Local(pocket.StartTile, "secretPocket.startTile"); Local(pocket.EndTile, "secretPocket.endTile"); Local(pocket.InteractTile, "secretPocket.interactTile");
+            if (pocket.ShortcutSpanTiles <= 0) throw new DefinitionException("Canonical secret shortcut span must be positive.");
+            foreach (var detour in pocket.DetourTiles) Local(detour, "secretPocket.detourTile");
+        }
+        foreach (var encounter in encounters)
+        {
+            KnownChunk(encounter.Chunk, $"encounter.{encounter.Id}");
+            if ((encounter.CenterIndex is null) == (encounter.CenterTile is null)) throw new DefinitionException($"Encounter '{encounter.Id}' must declare exactly one center source.");
+            var baseTile = encounter.CenterIndex is { } index
+                ? index >= 0 && index < layout.EncounterCenters.Count ? layout.EncounterCenters[index] : throw new DefinitionException($"Encounter '{encounter.Id}' center index is invalid.")
+                : encounter.CenterTile!;
+            if (encounter.OffsetTiles is { Count: not 2 }) throw new DefinitionException($"Encounter '{encounter.Id}' offset must contain two tiles.");
+            var x = baseTile[0] + (encounter.OffsetTiles?[0] ?? 0); var y = baseTile[1] + (encounter.OffsetTiles?[1] ?? 0);
+            Local(new[] { x, y }, $"encounter.{encounter.Id}");
         }
     }
 

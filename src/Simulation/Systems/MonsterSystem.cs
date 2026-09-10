@@ -122,9 +122,10 @@ public sealed partial class MonsterSystem
                 monster.TargetUid = null; monster.AiState = MonsterAiState.Return;
                 var delta = new Vec2(monster.HomePosition.X - monster.Position.X, monster.HomePosition.Y - monster.Position.Y);
                 var distance = Math.Min(delta.Length, speed * deltaSeconds);
+                var bodyRadius = CanonicalBodyRadius(monster);
                 monster.Position = movement is not null
-                    ? movement.FindReachableNextStep(monster.Position, monster.HomePosition, 18, distance)
-                    : V25Navigation.NextStep(monster.Position, monster.HomePosition, distance, new V25WorldBounds(_spawnArea.Width, _spawnArea.Height), Array.Empty<Core.Math.Rect>(), 18);
+                    ? movement.FindReachableNextStep(monster.Position, monster.HomePosition, bodyRadius, distance)
+                    : V25Navigation.NextStep(monster.Position, monster.HomePosition, distance, new V25WorldBounds(_spawnArea.Width, _spawnArea.Height), Array.Empty<Core.Math.Rect>(), bodyRadius);
                 if (monster.Position.DistanceTo(monster.HomePosition) <= 1)
                 {
                     monster.Position = monster.HomePosition; monster.CurrentHp = monster.MaxHp;
@@ -150,8 +151,14 @@ public sealed partial class MonsterSystem
             if (monster.Position.DistanceTo(target.Position) <= style.RangeUnits + 10 || actionLocked?.Invoke(monster.Uid) == true) { monster.AiState = MonsterAiState.Attack; continue; }
             monster.AiState = MonsterAiState.Chase;
             var direction = new Vec2(target.Position.X - monster.Position.X, target.Position.Y - monster.Position.Y).Normalized();
-            monster.Position = movement?.NonPlayerSweptPosition(monster.Position, direction, speed * deltaSeconds) ?? monster.Position.MoveTowards(target.Position, speed * deltaSeconds);
+            monster.Position = movement?.NonPlayerSweptPosition(monster.Position, direction, speed * deltaSeconds, CanonicalBodyRadius(monster)) ?? monster.Position.MoveTowards(target.Position, speed * deltaSeconds);
         }
+    }
+
+    private double CanonicalBodyRadius(MonsterState monster)
+    {
+        var species = _canonical!.SpeciesForProfile(_canonical.ActiveProfileId).First(item => item.Id == monster.SpeciesId);
+        return V25ActorBodyRadii.ForSpeciesRole(species.Role);
     }
 
     public IReadOnlyList<MonsterNavigationState> NavigationSnapshot() => _monsters.Values.Select(monster => new MonsterNavigationState(monster.Uid, monster.HomePosition.X, monster.HomePosition.Y, monster.TargetUid, monster.IsReturning)).ToArray();
@@ -222,6 +229,14 @@ public sealed partial class MonsterSystem
     public MonsterState? Get(string uid) => _monsters.GetValueOrDefault(uid);
     public IReadOnlyList<MonsterState> AllMonsters() => _monsters.Values.ToArray();
     public IReadOnlyList<MonsterState> AliveMonsters() => _monsters.Values.Where(value => value.Alive).ToArray();
+    /// <summary>Removes the retired life for one authored encounter before an explicit Rest reset creates its next life.</summary>
+    public bool RemoveDefeatedEncounter(string encounterId)
+    {
+        if (!CanonicalMode || string.IsNullOrWhiteSpace(encounterId)) return false;
+        var retired = _monsters.Values.Where(monster => !monster.Alive && string.Equals(monster.EncounterId, encounterId, StringComparison.Ordinal)).Select(monster => monster.Uid).ToArray();
+        if (retired.Length != 1) return false;
+        return _monsters.Remove(retired[0]);
+    }
     public void Clear() => _monsters.Clear();
 
     /// <summary>Advances boss stagger timers once at the start of a canonical fixed tick.</summary>

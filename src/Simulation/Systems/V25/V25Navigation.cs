@@ -5,6 +5,22 @@ namespace SoloVsMortal.Simulation.Systems.V25;
 public readonly record struct V25WorldBounds(double Width, double Height);
 public sealed record V25RouteResult(bool Reachable, IReadOnlyList<Vec2> Points);
 
+/// <summary>Collision radii are gameplay data derived from the locked species role, never from sprite pixels.</summary>
+public static class V25ActorBodyRadii
+{
+    public const double Actor = 10;
+    public const double LargeActor = 18;
+    public const double HugeActor = 26;
+
+    public static double ForSpeciesRole(string role) => role switch
+    {
+        "actor" => Actor,
+        "large_actor" => LargeActor,
+        "huge_actor" => HugeActor,
+        _ => throw new InvalidDataException($"Unknown canonical species role '{role}'.")
+    };
+}
+
 /// <summary>Deterministic collision-aware navigation shared by Player, Monster and Ally actors.</summary>
 public static class V25Navigation
 {

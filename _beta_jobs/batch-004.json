@@ -1,0 +1,194 @@
+[
+  {
+    "assetId": "player.base.possession_start.s",
+    "clip": "possession_start",
+    "direction": "s",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-8a650114-51e2-4ac6-b171-510478cb9c69.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-8a650114-51e2-4ac6-b171-510478cb9c69.png",
+    "localJobId": "exec-8a650114-51e2-4ac6-b171-510478cb9c69",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.possession_start.s, the south-facing key pose of the existing unarmed Player base character for a six-frame possession_start clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and grounded foot scale. a readable possession-start key pose: the Player gathers inward with shoulders and hands drawing toward the chest, knees slightly flexed, feet anchored; keep it restrained and visual-only with no aura, particles, soul orb, or other gameplay effect. Isolated genuinely transparent background, one centered full-body character, no weapon or props, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding and the foot/contact anchor; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.possession_start.w",
+    "clip": "possession_start",
+    "direction": "w",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-a61613d1-8d64-4c56-8738-e8428d484870.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-a61613d1-8d64-4c56-8738-e8428d484870.png",
+    "localJobId": "exec-a61613d1-8d64-4c56-8738-e8428d484870",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.possession_start.w, the west-facing/left key pose of the existing unarmed Player base character for a six-frame possession_start clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and grounded foot scale. a readable possession-start key pose: the Player gathers inward with shoulders and hands drawing toward the chest, knees slightly flexed, feet anchored; keep it restrained and visual-only with no aura, particles, soul orb, or other gameplay effect. Isolated genuinely transparent background, one centered full-body character, no weapon or props, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding and the foot/contact anchor; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.possession_start.e",
+    "clip": "possession_start",
+    "direction": "e",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-a614e1e0-eb25-42af-a3b1-5032cf3d45f9.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-a614e1e0-eb25-42af-a3b1-5032cf3d45f9.png",
+    "localJobId": "exec-a614e1e0-eb25-42af-a3b1-5032cf3d45f9",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.possession_start.e, the east-facing/right key pose of the existing unarmed Player base character for a six-frame possession_start clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and grounded foot scale. a readable possession-start key pose: the Player gathers inward with shoulders and hands drawing toward the chest, knees slightly flexed, feet anchored; keep it restrained and visual-only with no aura, particles, soul orb, or other gameplay effect. Isolated genuinely transparent background, one centered full-body character, no weapon or props, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding and the foot/contact anchor; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.possession_start.n",
+    "clip": "possession_start",
+    "direction": "n",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-4a2882b1-3e2f-4fd1-9ea3-a202315b3f6a.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-4a2882b1-3e2f-4fd1-9ea3-a202315b3f6a.png",
+    "localJobId": "exec-4a2882b1-3e2f-4fd1-9ea3-a202315b3f6a",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.possession_start.n, the north-facing/up key pose of the existing unarmed Player base character for a six-frame possession_start clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and grounded foot scale. a readable possession-start key pose: the Player gathers inward with shoulders and hands drawing toward the chest, knees slightly flexed, feet anchored; keep it restrained and visual-only with no aura, particles, soul orb, or other gameplay effect. Isolated genuinely transparent background, one centered full-body character, no weapon or props, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding and the foot/contact anchor; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.possession_end.s",
+    "clip": "possession_end",
+    "direction": "s",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-37b6b30f-79eb-4c6c-9958-e5fa50b53d5e.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-37b6b30f-79eb-4c6c-9958-e5fa50b53d5e.png",
+    "localJobId": "exec-37b6b30f-79eb-4c6c-9958-e5fa50b53d5e",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.possession_end.s, the south-facing key pose of the existing unarmed Player base character for a six-frame possession_end clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and grounded foot scale. a readable possession-end key pose: the Player settles into a composed grounded stance with chest lifted and arms returning to neutral, feet anchored; keep it restrained and visual-only with no aura, particles, soul orb, or other gameplay effect. Isolated genuinely transparent background, one centered full-body character, no weapon or props, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding and the foot/contact anchor; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.possession_end.w",
+    "clip": "possession_end",
+    "direction": "w",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-dbf74433-ab43-4844-89b8-6a8f7c19fb06.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-dbf74433-ab43-4844-89b8-6a8f7c19fb06.png",
+    "localJobId": "exec-dbf74433-ab43-4844-89b8-6a8f7c19fb06",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.possession_end.w, the west-facing/left key pose of the existing unarmed Player base character for a six-frame possession_end clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and grounded foot scale. a readable possession-end key pose: the Player settles into a composed grounded stance with chest lifted and arms returning to neutral, feet anchored; keep it restrained and visual-only with no aura, particles, soul orb, or other gameplay effect. Isolated genuinely transparent background, one centered full-body character, no weapon or props, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding and the foot/contact anchor; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.possession_end.e",
+    "clip": "possession_end",
+    "direction": "e",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-46e74646-89df-4723-9d28-e9e27f59b5a4.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-46e74646-89df-4723-9d28-e9e27f59b5a4.png",
+    "localJobId": "exec-46e74646-89df-4723-9d28-e9e27f59b5a4",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.possession_end.e, the east-facing/right key pose of the existing unarmed Player base character for a six-frame possession_end clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and grounded foot scale. a readable possession-end key pose: the Player settles into a composed grounded stance with chest lifted and arms returning to neutral, feet anchored; keep it restrained and visual-only with no aura, particles, soul orb, or other gameplay effect. Isolated genuinely transparent background, one centered full-body character, no weapon or props, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding and the foot/contact anchor; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.possession_end.n",
+    "clip": "possession_end",
+    "direction": "n",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-36d38c25-6fb6-4ca9-b4bf-046ec37ad75d.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-36d38c25-6fb6-4ca9-b4bf-046ec37ad75d.png",
+    "localJobId": "exec-36d38c25-6fb6-4ca9-b4bf-046ec37ad75d",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.possession_end.n, the north-facing/up key pose of the existing unarmed Player base character for a six-frame possession_end clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and grounded foot scale. a readable possession-end key pose: the Player settles into a composed grounded stance with chest lifted and arms returning to neutral, feet anchored; keep it restrained and visual-only with no aura, particles, soul orb, or other gameplay effect. Isolated genuinely transparent background, one centered full-body character, no weapon or props, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding and the foot/contact anchor; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  }
+]

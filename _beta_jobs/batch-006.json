@@ -1,0 +1,194 @@
+[
+  {
+    "assetId": "player.spear.attack.s",
+    "clip": "attack",
+    "direction": "s",
+    "family": "spear",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-8b455734-e43f-47b4-a782-88e3af15a7a0.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-8b455734-e43f-47b4-a782-88e3af15a7a0.png",
+    "localJobId": "exec-8b455734-e43f-47b4-a782-88e3af15a7a0",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.spear.attack.s, the south-facing key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable two-handed spear thrust key pose: one long simple spear shaft held by both hands, the tip points in the facing direction but stays fully inside the safe canvas, grounded Player stance; no projectile, trail, spark, blood, particles or other VFX. Preserve the existing Player silhouette, visible hand grips and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.spear.attack.w",
+    "clip": "attack",
+    "direction": "w",
+    "family": "spear",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-5f23b883-0c4f-4b2d-a400-61295339365a.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-5f23b883-0c4f-4b2d-a400-61295339365a.png",
+    "localJobId": "exec-5f23b883-0c4f-4b2d-a400-61295339365a",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.spear.attack.w, the west-facing/left key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable two-handed spear thrust key pose: one long simple spear shaft held by both hands, the tip points in the facing direction but stays fully inside the safe canvas, grounded Player stance; no projectile, trail, spark, blood, particles or other VFX. Preserve the existing Player silhouette, visible hand grips and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.spear.attack.e",
+    "clip": "attack",
+    "direction": "e",
+    "family": "spear",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-3e25c192-70b1-47eb-b8ae-2df603936ba2.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-3e25c192-70b1-47eb-b8ae-2df603936ba2.png",
+    "localJobId": "exec-3e25c192-70b1-47eb-b8ae-2df603936ba2",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.spear.attack.e, the east-facing/right key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable two-handed spear thrust key pose: one long simple spear shaft held by both hands, the tip points in the facing direction but stays fully inside the safe canvas, grounded Player stance; no projectile, trail, spark, blood, particles or other VFX. Preserve the existing Player silhouette, visible hand grips and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.spear.attack.n",
+    "clip": "attack",
+    "direction": "n",
+    "family": "spear",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-b1c36b09-c11c-462f-8db7-4a5b7864a315.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-b1c36b09-c11c-462f-8db7-4a5b7864a315.png",
+    "localJobId": "exec-b1c36b09-c11c-462f-8db7-4a5b7864a315",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.spear.attack.n, the north-facing/up key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable two-handed spear thrust key pose: one long simple spear shaft held by both hands, the tip points in the facing direction but stays fully inside the safe canvas, grounded Player stance; no projectile, trail, spark, blood, particles or other VFX. Preserve the existing Player silhouette, visible hand grips and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.bow.attack.s",
+    "clip": "attack",
+    "direction": "s",
+    "family": "bow",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-f101aa61-0ab3-4f4e-920e-60dd1f5ef2f7.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-f101aa61-0ab3-4f4e-920e-60dd1f5ef2f7.png",
+    "localJobId": "exec-f101aa61-0ab3-4f4e-920e-60dd1f5ef2f7",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.bow.attack.s, the south-facing key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable bow attack key pose: the Player holds one compact bow with a clear curved limb and draws the string, facing direction readable, bow fully inside the safe canvas; no airborne arrow, projectile, trail, spark, particles or other VFX. Preserve the existing Player silhouette, visible hand grips and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.bow.attack.w",
+    "clip": "attack",
+    "direction": "w",
+    "family": "bow",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-c418ad64-fb46-46f0-a7c1-540430bcb21b.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-c418ad64-fb46-46f0-a7c1-540430bcb21b.png",
+    "localJobId": "exec-c418ad64-fb46-46f0-a7c1-540430bcb21b",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.bow.attack.w, the west-facing/left key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable bow attack key pose: the Player holds one compact bow with a clear curved limb and draws the string, facing direction readable, bow fully inside the safe canvas; no airborne arrow, projectile, trail, spark, particles or other VFX. Preserve the existing Player silhouette, visible hand grips and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.bow.attack.e",
+    "clip": "attack",
+    "direction": "e",
+    "family": "bow",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-0644f6ec-5411-47ba-8c64-ee46ba07d755.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-0644f6ec-5411-47ba-8c64-ee46ba07d755.png",
+    "localJobId": "exec-0644f6ec-5411-47ba-8c64-ee46ba07d755",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.bow.attack.e, the east-facing/right key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable bow attack key pose: the Player holds one compact bow with a clear curved limb and draws the string, facing direction readable, bow fully inside the safe canvas; no airborne arrow, projectile, trail, spark, particles or other VFX. Preserve the existing Player silhouette, visible hand grips and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.bow.attack.n",
+    "clip": "attack",
+    "direction": "n",
+    "family": "bow",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-e9feba9a-6218-4795-bd6b-554c64ec21c8.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-e9feba9a-6218-4795-bd6b-554c64ec21c8.png",
+    "localJobId": "exec-e9feba9a-6218-4795-bd6b-554c64ec21c8",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.bow.attack.n, the north-facing/up key pose for a six-frame weapon attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable bow attack key pose: the Player holds one compact bow with a clear curved limb and draws the string, facing direction readable, bow fully inside the safe canvas; no airborne arrow, projectile, trail, spark, particles or other VFX. Preserve the existing Player silhouette, visible hand grips and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  }
+]

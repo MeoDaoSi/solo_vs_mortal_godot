@@ -1,0 +1,98 @@
+[
+  {
+    "assetId": "player.base.dodge.s",
+    "clip": "dodge",
+    "direction": "s",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-609e9c1d-7290-4a38-9aa0-af1985c98b9c.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-609e9c1d-7290-4a38-9aa0-af1985c98b9c.png",
+    "localJobId": "exec-609e9c1d-7290-4a38-9aa0-af1985c98b9c",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.dodge.s, the south-facing key pose of the existing unarmed Player base character for a six-frame dodge clip; source candidate, not a sprite sheet. Use the two attached approved references for the svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and grounded foot scale. Show a readable evasive dodge: the body is low and leaning into the escape, one leg displaced while both feet remain clear, arms counterbalancing, silhouette still recognizable. Isolated genuinely transparent background, one centered full-body character, no weapon or props, no ground, baked shadow, text, labels, borders, watermark, grid, panels, particles, slash, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding and the foot/contact anchor; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.dodge.w",
+    "clip": "dodge",
+    "direction": "w",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-f4dd8273-bb9e-4db5-8225-4ad90f607489.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-f4dd8273-bb9e-4db5-8225-4ad90f607489.png",
+    "localJobId": "exec-f4dd8273-bb9e-4db5-8225-4ad90f607489",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.dodge.w, the west-facing/left key pose of the existing unarmed Player base character for a six-frame dodge clip; source candidate, not a sprite sheet. Use the two attached approved references for the svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and grounded foot scale. Show a readable evasive dodge: the body is low and leaning into the escape, one leg displaced while both feet remain clear, arms counterbalancing, silhouette still recognizable. Isolated genuinely transparent background, one centered full-body character, no weapon or props, no ground, baked shadow, text, labels, borders, watermark, grid, panels, particles, slash, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding and the foot/contact anchor; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.dodge.e",
+    "clip": "dodge",
+    "direction": "e",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-ef450afd-7d9a-4dfc-9936-151f005e07d0.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-ef450afd-7d9a-4dfc-9936-151f005e07d0.png",
+    "localJobId": "exec-ef450afd-7d9a-4dfc-9936-151f005e07d0",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.dodge.e, the east-facing/right key pose of the existing unarmed Player base character for a six-frame dodge clip; source candidate, not a sprite sheet. Use the two attached approved references for the svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and grounded foot scale. Show a readable evasive dodge: the body is low and leaning into the escape, one leg displaced while both feet remain clear, arms counterbalancing, silhouette still recognizable. Isolated genuinely transparent background, one centered full-body character, no weapon or props, no ground, baked shadow, text, labels, borders, watermark, grid, panels, particles, slash, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding and the foot/contact anchor; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.dodge.n",
+    "clip": "dodge",
+    "direction": "n",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-8d5a16ca-5ba6-469f-b78a-4e34e96277c3.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-8d5a16ca-5ba6-469f-b78a-4e34e96277c3.png",
+    "localJobId": "exec-8d5a16ca-5ba6-469f-b78a-4e34e96277c3",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.dodge.n, the north-facing/up key pose of the existing unarmed Player base character for a six-frame dodge clip; source candidate, not a sprite sheet. Use the two attached approved references for the svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact 40–44 native-pixel body and grounded foot scale. Show a readable evasive dodge: the body is low and leaning into the escape, one leg displaced while both feet remain clear, arms counterbalancing, silhouette still recognizable. Isolated genuinely transparent background, one centered full-body character, no weapon or props, no ground, baked shadow, text, labels, borders, watermark, grid, panels, particles, slash, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep safe padding and the foot/contact anchor; translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  }
+]

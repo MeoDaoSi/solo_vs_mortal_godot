@@ -1,0 +1,194 @@
+[
+  {
+    "assetId": "player.base.cast.s",
+    "clip": "cast",
+    "direction": "s",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-c5137878-783b-4b0a-820c-71709247a796.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-c5137878-783b-4b0a-820c-71709247a796.png",
+    "localJobId": "exec-c5137878-783b-4b0a-820c-71709247a796",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.cast.s, the south-facing key pose for a six-frame cast clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable restrained spell-casting key pose: both hands raised or cupped near the front of the torso, elbows separated, stance grounded and balanced; no visible spell, orb, projectile, rune, glow, particles or other effect. Preserve the existing Player silhouette and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.cast.w",
+    "clip": "cast",
+    "direction": "w",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-e5034d0b-32c8-46da-83f3-527512e58c38.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-e5034d0b-32c8-46da-83f3-527512e58c38.png",
+    "localJobId": "exec-e5034d0b-32c8-46da-83f3-527512e58c38",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.cast.w, the west-facing/left key pose for a six-frame cast clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable restrained spell-casting key pose: both hands raised or cupped near the front of the torso, elbows separated, stance grounded and balanced; no visible spell, orb, projectile, rune, glow, particles or other effect. Preserve the existing Player silhouette and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.cast.e",
+    "clip": "cast",
+    "direction": "e",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-8398d6f8-22a4-4fe2-9db4-6a7fd043f4a2.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-8398d6f8-22a4-4fe2-9db4-6a7fd043f4a2.png",
+    "localJobId": "exec-8398d6f8-22a4-4fe2-9db4-6a7fd043f4a2",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.cast.e, the east-facing/right key pose for a six-frame cast clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable restrained spell-casting key pose: both hands raised or cupped near the front of the torso, elbows separated, stance grounded and balanced; no visible spell, orb, projectile, rune, glow, particles or other effect. Preserve the existing Player silhouette and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.base.cast.n",
+    "clip": "cast",
+    "direction": "n",
+    "family": "base",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "body",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-abf6ad08-c2de-4ac7-9cf7-c1fc381621f4.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-abf6ad08-c2de-4ac7-9cf7-c1fc381621f4.png",
+    "localJobId": "exec-abf6ad08-c2de-4ac7-9cf7-c1fc381621f4",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.base.cast.n, the north-facing/up key pose for a six-frame cast clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable restrained spell-casting key pose: both hands raised or cupped near the front of the torso, elbows separated, stance grounded and balanced; no visible spell, orb, projectile, rune, glow, particles or other effect. Preserve the existing Player silhouette and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.greatsword.attack.s",
+    "clip": "attack",
+    "direction": "s",
+    "family": "greatsword",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-a2417a39-9040-49cb-88be-2c8a5d8fcf17.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-a2417a39-9040-49cb-88be-2c8a5d8fcf17.png",
+    "localJobId": "exec-a2417a39-9040-49cb-88be-2c8a5d8fcf17",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.greatsword.attack.s, the south-facing key pose for a six-frame attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable heavy two-handed greatsword attack key pose: both hands visibly grip one broad greatsword, with a strong diagonal or overhead swing silhouette; keep the blade attached to the hands and fully visible inside the 64x64 safe area; no slash trail, projectile, spark, blood, particles or other VFX. Preserve the existing Player silhouette and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.greatsword.attack.w",
+    "clip": "attack",
+    "direction": "w",
+    "family": "greatsword",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-5b9aca4d-cf5e-4451-883a-0107a164c626.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-5b9aca4d-cf5e-4451-883a-0107a164c626.png",
+    "localJobId": "exec-5b9aca4d-cf5e-4451-883a-0107a164c626",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.greatsword.attack.w, the west-facing/left key pose for a six-frame attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable heavy two-handed greatsword attack key pose: both hands visibly grip one broad greatsword, with a strong diagonal or overhead swing silhouette; keep the blade attached to the hands and fully visible inside the 64x64 safe area; no slash trail, projectile, spark, blood, particles or other VFX. Preserve the existing Player silhouette and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.greatsword.attack.e",
+    "clip": "attack",
+    "direction": "e",
+    "family": "greatsword",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-7a0a8361-c6b6-4bdd-934d-1bd112e7d4e4.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-7a0a8361-c6b6-4bdd-934d-1bd112e7d4e4.png",
+    "localJobId": "exec-7a0a8361-c6b6-4bdd-934d-1bd112e7d4e4",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.greatsword.attack.e, the east-facing/right key pose for a six-frame attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable heavy two-handed greatsword attack key pose: both hands visibly grip one broad greatsword, with a strong diagonal or overhead swing silhouette; keep the blade attached to the hands and fully visible inside the 64x64 safe area; no slash trail, projectile, spark, blood, particles or other VFX. Preserve the existing Player silhouette and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  },
+  {
+    "assetId": "player.greatsword.attack.n",
+    "clip": "attack",
+    "direction": "n",
+    "family": "greatsword",
+    "frameCount": 6,
+    "durations": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "renderMode": "content",
+    "source": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-b86e374e-23d5-4ee8-859f-24240a96e856.png",
+    "rawOutputHint": "C:/Users/levan/.codex/generated_images/01a08786-b589-7df0-b991-fff6a0777e13/exec-b86e374e-23d5-4ee8-859f-24240a96e856.png",
+    "localJobId": "exec-b86e374e-23d5-4ee8-859f-24240a96e856",
+    "referenceHashes": [
+      "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+      "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
+    ],
+    "prompt": "Use case: stylized-concept. Asset type: Solo vs Mortal runtime player actor candidate. Create one clean source pose for asset ID player.greatsword.attack.n, the north-facing/up key pose for a six-frame attack clip; source candidate, not a sprite sheet. Use the two attached approved references for svm-ash-soulfire@0.2-calibrated pixel palette, top-down three-quarter camera, Player anatomy, compact grounded scale and crisp pixel clusters. a readable heavy two-handed greatsword attack key pose: both hands visibly grip one broad greatsword, with a strong diagonal or overhead swing silhouette; keep the blade attached to the hands and fully visible inside the 64x64 safe area; no slash trail, projectile, spark, blood, particles or other VFX. Preserve the existing Player silhouette and foot/contact anchor. Isolated genuinely transparent background, one centered full-body character, no ground, baked shadow, text, labels, borders, watermark, grid, panels, extra characters, duplicated limbs, perspective, isometric grid, chibi redesign or soft bloom. Keep at least two native pixels of safe gutter and translate to a 64x64 actor canvas with pivot 32,56. This is a visual source pose only, not gameplay content."
+  }
+]

@@ -35,8 +35,8 @@ public partial class Arena : Node2D
     private bool _suspended;
     private bool GameplayCommandsBlocked => _suspended || _saveCommitFailed || _saveWritesBlocked;
     private GameSnapshot? _snapshot;
+    private CanonicalAssetCatalog _assetCatalog = null!;
     private Texture2D? _ground;
-    private Texture2D? _soulTexture;
     private AnimatedSprite2D _playerSprite = null!;
     private readonly Dictionary<string, AnimatedSprite2D> _monsterSprites = new(StringComparer.Ordinal);
     private readonly Dictionary<string, AnimatedSprite2D> _allySprites = new(StringComparer.Ordinal);
@@ -48,6 +48,7 @@ public partial class Arena : Node2D
     private string _lastScreenSignature = "";
     private int _visualRank;
     private BossTelegraphLayer _bossTelegraphs = null!;
+    private string? _activeRitualPowerId;
 
     private string SelectedSaveId => _selectedSaveSlot == 1 ? "slot.primary" : $"slot.{_selectedSaveSlot}";
 
@@ -56,11 +57,12 @@ public partial class Arena : Node2D
         _camera = GetNode<Camera2D>("Camera2D"); _status = GetNode<Label>("Hud/Panel/Status"); _currency = GetNode<Label>("Hud/CurrencyPanel/Currency"); _toast = GetNode<Label>("Hud/Toast"); _soulList = GetNode<VBoxContainer>("Hud/SoulPanel/List"); _featureList = GetNode<VBoxContainer>("Hud/FeaturePanel/Content"); _screens = GetNode<TabContainer>("Hud/Screens");
         ApplyHudVisualDesign();
         _application = GameApplication.CreateFromDefinitionsDirectory(ProjectSettings.GlobalizePath("res://data/configs"));
+        _assetCatalog = CanonicalAssetCatalog.Load(ProjectSettings.GlobalizePath("res://"), ProjectSettings.GlobalizePath("res://data/v2.5/asset-catalog.v2.5.json"));
         _v25Store = CreateSaveStore(_selectedSaveSlot);
         _application.Start();
         _worldMap = new WorldMapUI(); AddChild(_worldMap); _worldMap.Initialize(_application, TravelToRegion);
         _minimap = new HudMinimap { Position = new Vector2(1060, 24), Size = new Vector2(184, 164) }; GetNode<CanvasLayer>("Hud").AddChild(_minimap);
-        _ground = LoadAssetTexture(_application.CurrentMapBackgroundAssetId() ?? "tiles.arena.ground"); _soulTexture = LoadAssetTexture("soul.orb.no_boc"); RebuildMapTextures();
+        _ground = LoadCanonicalAssetTexture(_application.CurrentMapBackgroundAssetId() ?? "tiles.arena.ground"); RebuildMapTextures();
         _visualRank = 1; _playerSprite = BuildPlayerSprite(_visualRank); AddChild(_playerSprite);
         _bossTelegraphs = new BossTelegraphLayer { ZIndex = 15 }; AddChild(_bossTelegraphs);
         var restoredSave = TryLoad(showMessage: false);
@@ -99,25 +101,83 @@ public partial class Arena : Node2D
         for (var slot = 0; slot < 6; slot++) if (Input.IsActionJustPressed($"learned_skill_{slot + 1}")) _application.RequestCanonicalLearnedSkill(slot);
         _application.SetInput(new SimVec2(move.X, move.Y), Input.IsActionPressed("attack"), new SimVec2(mouse.X, mouse.Y), Input.IsActionJustPressed("dodge"));
         _application.Tick(delta);
+        if (_activeRitualPowerId is not null)
+        {
+            var ritual = _application.AdvanceCanonicalUniqueRitual(Input.IsActionPressed("acquire_soul"));
+            if (ritual.Completed)
+            {
+                _activeRitualPowerId = null;
+                var durable = Save(showMessage: false);
+                Toast(durable ? "Nghi thức hoàn tất; Unique Power đã được nhận." : "Nghi thức hoàn tất nhưng đang chờ lưu bền vững.");
+                RefreshSnapshot();
+            }
+            else if (!ritual.Started)
+            {
+                _activeRitualPowerId = null;
+                Toast(ritual.Failure switch { "Released" => "Nghi thức đã hủy vì nhả E.", "MovedOrLeftShrine" => "Nghi thức đã hủy vì di chuyển hoặc rời Shrine.", "Canceled" => "Nghi thức đã hủy vì nhận sát thương.", _ => "Nghi thức đã hủy vì điều kiện thay đổi." });
+            }
+        }
         // Auto-collect is a gameplay transaction too. Do not let it wait for the ten-second
         // autosave window: commit its exact post-capture payload before any reward event/UI.
         if (_application.HasCanonicalDurableChanges && !Save(showMessage: false)) return;
         BeginMonsterDeaths(); UpdateMonsterDeaths(delta);
         if (Input.IsActionJustPressed("acquire_soul"))
         {
-            var interaction = _application.InteractNearestCanonical();
-            if (interaction is not null)
+            // Locked input order: quest → pickup → shrine → NPC, then the remaining nearby
+            // world object. Each branch owns its mutation and commits before acknowledgement.
+            var questNpc = _application.NearbyCanonicalNpcId(requirePendingQuest: true);
+            if (questNpc is not null)
             {
-                var committed = !_application.HasCanonicalDurableChanges || Save(showMessage: false);
-                Toast(committed ? interaction : "Tương tác đang chờ lưu bền vững.");
-                if (committed) { RebuildMapTextures(); RefreshSnapshot(); }
+                var result = _application.InteractCanonicalNpc(questNpc);
+                var durable = !(result.Success || result.HintShown) || Save(showMessage: false);
+                Toast(durable ? result.Message ?? "Đã cập nhật nhiệm vụ." : "Tương tác nhiệm vụ đang chờ lưu bền vững.");
+                RefreshSnapshot();
             }
-            var count = interaction is null ? _application.AcquireNearbySouls().Count : 0;
-            // Canonical pickup ownership, Density, Sync and consumed-pickup identity are one
-            // transaction. Commit before acknowledging the pickup so a disk failure cannot be
-            // reported as a completed reward; Save retains the exact staged payload for retry.
-            var durable = count == 0 || _application.CanonicalContent is null || Save(showMessage: false);
-            if (interaction is null) Toast(count == 0 ? "Không có Hồn ở gần." : durable ? $"Đã thu {count} Hồn." : "Thu Hồn đang chờ lưu bền vững; hãy thử lưu lại.");
+            else if (_application.HasNearbyCanonicalPickup())
+            {
+                var count = _application.AcquireNearbySouls().Count;
+                var durable = count == 0 || _application.CanonicalContent is null || Save(showMessage: false);
+                Toast(count == 0 ? "Không có Hồn ở gần." : durable ? $"Đã thu {count} Hồn." : "Thu Hồn đang chờ lưu bền vững; hãy thử lưu lại.");
+            }
+            else if (_application.IsAtCanonicalShrine())
+            {
+                var ritual = _application.BeginCanonicalUniqueRitual();
+                if (ritual.Started)
+                {
+                    _activeRitualPowerId = ritual.PowerId;
+                    Toast($"Đang thực hiện nghi thức {ritual.PowerId}: giữ E trong {Math.Ceiling(ritual.RemainingTicks / 60.0)} giây.");
+                }
+                else Toast("Shrine: dùng Nghỉ, nhận thưởng hoặc nghi thức khi đủ điều kiện.");
+            }
+            else
+            {
+                var npcId = _application.NearbyCanonicalNpcId(requirePendingQuest: false);
+                if (npcId is not null)
+                {
+                    var result = _application.InteractCanonicalNpc(npcId);
+                    var durable = !(result.Success || result.HintShown) || Save(showMessage: false);
+                    Toast(durable ? result.Message ?? "Đã tương tác NPC." : "Tương tác đang chờ lưu bền vững.");
+                    RefreshSnapshot();
+                }
+                else
+                {
+                    // All portal use goes through this durable transaction. GameApplication deliberately
+                    // exposes the reachable target only; it never mutates a region from a generic E action.
+                    var portalTarget = _application.NearbyCanonicalPortalTarget();
+                    if (portalTarget is not null) _ = TravelToRegion(portalTarget);
+                    else
+                    {
+                        var interaction = _application.InteractNearestCanonical();
+                        if (interaction is not null)
+                        {
+                            var committed = !_application.HasCanonicalDurableChanges || Save(showMessage: false);
+                            Toast(committed ? interaction : "Tương tác đang chờ lưu bền vững.");
+                            if (committed) { RebuildMapTextures(); RefreshSnapshot(); }
+                        }
+                        else Toast("Không có đối tượng để tương tác.");
+                    }
+                }
+            }
         }
         if (Input.IsActionJustPressed("save_game")) Save(showMessage: true, requireSafeManual: true);
         if (Input.IsActionJustPressed("load_game") && _pendingSave is null) TryLoad(showMessage: true);
@@ -150,22 +210,28 @@ public partial class Arena : Node2D
             var p = ToGodot(obj.Position);
             if (obj.Type == "wall") continue;
             if (obj.Type is "npc" or "shrine" or "chest" or "landmark" or "portal" or "secret") DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -20), obj.Id, fontSize: 12);
-            var scale = (float)System.Math.Clamp(obj.PresentationScale, 0.1, 3); if (_mapTextures.TryGetValue(obj.AssetId, out var texture)) { var half = 42 * scale; DrawTextureRect(texture, new Rect2(p.X - half, p.Y - half, half * 2, half * 2), false, new Color(1, 1, 1, 0.92f)); } else { var color = obj.Type switch { "tree" => new Color("#166534"), "building" => new Color("#713f12"), "fragileWall" => new Color("#64748b"), "portal" => new Color("#38bdf8"), _ => new Color("#854d0e") }; DrawCircle(p, (obj.Type == "tree" ? 18 : 12) * scale, color); }
+            var scale = (float)System.Math.Clamp(obj.PresentationScale, 0.1, 3); if (_mapTextures.TryGetValue(obj.AssetId, out var texture)) { var half = 42 * scale; DrawTextureRect(texture, new Rect2(p.X - half, p.Y - half, half * 2, half * 2), false, new Color(1, 1, 1, 0.92f)); } else DrawMissingAssetMarker(p, obj.AssetId, (obj.Type == "tree" ? 18 : 12) * scale);
         }
         if (ShowMapCollisionDebug)
             foreach (var rect in _snapshot.World.BlockingRects) DrawRect(new Rect2((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height), new Color(0.25f, 0.16f, 0.08f, 0.32f), false, 2);
-        foreach (var soul in _snapshot.WorldSouls) { var p = ToGodot(soul.Position); if (_soulTexture is not null) DrawTextureRect(_soulTexture, new Rect2(p.X - 16, p.Y - 16, 32, 32), false); else DrawCircle(p, 10, new Color("#67e8f9")); }
+        foreach (var soul in _snapshot.WorldSouls)
+        {
+            var p = ToGodot(soul.Position); var assetId = SoulPickupAssetId(soul.OriginSpeciesId, soul.OriginRank);
+            if (_assetCatalog.TryGet(assetId, out var asset)) DrawCanonicalFrame(asset, p);
+            else DrawMissingAssetMarker(p, assetId, 10);
+        }
+        if (!HasCanonicalPlayerVisual()) DrawMissingAssetMarker(ToGodot(_snapshot.Player.Position), "player.base.idle.s", 12);
         foreach (var monster in _snapshot.Monsters)
         {
             var p = ToGodot(monster.Position);
-            if (!_application.HasSpeciesAnimation(monster.SpeciesId)) { DrawCircle(p, 18, new Color("#b77c70")); DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(monster.SpeciesId), fontSize: 12); }
+            if (!HasCanonicalActorVisual(monster.SpeciesId, monster.Rank, "enemy")) { DrawMissingAssetMarker(p, ActorAssetId(monster.SpeciesId, monster.Rank, "enemy"), 18); DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(monster.SpeciesId), fontSize: 12); }
             DrawRect(new Rect2(p.X - 22, p.Y - 31, 44, 5), new Color("#3f0d0d"));
             DrawRect(new Rect2(p.X - 22, p.Y - 31, (float)(44 * monster.CurrentHp / monster.MaximumHp), 5), new Color("#22c55e"));
         }
         foreach (var ally in _snapshot.Allies)
         {
             var p = ToGodot(ally.Position);
-            if (!_application.HasSpeciesAnimation(ally.SpeciesId)) { DrawCircle(p, 18, new Color("#6daca0")); DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(ally.SpeciesId), fontSize: 12); }
+            if (!HasCanonicalActorVisual(ally.SpeciesId, ally.Rank, "ally")) { DrawMissingAssetMarker(p, ActorAssetId(ally.SpeciesId, ally.Rank, "ally"), 18); DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(ally.SpeciesId), fontSize: 12); }
             DrawRect(new Rect2(p.X - 22, p.Y - 31, 44, 5), new Color("#123b25"));
             DrawRect(new Rect2(p.X - 22, p.Y - 31, (float)(44 * ally.CurrentHp / ally.MaximumHp), 5), new Color("#86efac"));
         }
@@ -495,6 +561,28 @@ public partial class Arena : Node2D
                 npc.Pressed += () => { if (GameplayCommandsBlocked) return; var result = _application.InteractCanonicalNpc(npcId); var durable = !(result.Success || result.HintShown) || Save(showMessage: false); Toast(durable ? result.Message ?? (result.Success ? "Đã cập nhật nhiệm vụ." : "Không có tương tác.") : "Tương tác đang chờ lưu bền vững."); RefreshSnapshot(); }; npcRow.AddChild(npc);
             }
             _featureList.AddChild(npcRow);
+            var shrineActions = new HBoxContainer();
+            var rest = new Button { Text = "Nghỉ 1 giây tại Shrine" }; StyleActionButton(rest);
+            rest.Pressed += () =>
+            {
+                if (GameplayCommandsBlocked) return;
+                var result = _application.RestAtCanonicalShrine();
+                var durable = !result || Save(showMessage: false);
+                Toast(result && durable ? "Đã nghỉ tại Shrine." : result ? "Nghỉ đang chờ lưu bền vững." : "Cần ở Shrine, ngoài giao tranh và hazard.");
+                RefreshSnapshot();
+            };
+            shrineActions.AddChild(rest);
+            var reset = new Button { Text = "RestReset encounters" }; StyleActionButton(reset);
+            reset.Pressed += () =>
+            {
+                if (GameplayCommandsBlocked) return;
+                var result = _application.RestResetCanonicalEncounters();
+                var durable = !result || Save(showMessage: false);
+                Toast(result && durable ? "Đã reset encounter đã bị đánh bại hợp lệ." : result ? "RestReset đang chờ lưu bền vững." : "Không thể RestReset ở trạng thái hiện tại.");
+                RefreshSnapshot();
+            };
+            shrineActions.AddChild(reset);
+            _featureList.AddChild(shrineActions);
             foreach (var quest in questSummary.Where(item => item.Status == V25QuestStatus.Completed))
             {
                 var claim = new Button { Text = $"Nhận thưởng {quest.QuestId}" }; StyleActionButton(claim);
@@ -568,9 +656,9 @@ public partial class Arena : Node2D
 
     private static Vector2 ToGodot(SimVec2 value) => new((float)value.X, (float)value.Y);
 
-    private Texture2D? LoadAssetTexture(string logicalId)
+    private Texture2D? LoadCanonicalAssetTexture(string logicalId)
     {
-        var asset = _application.Asset(logicalId); return LoadTextureFile(asset.File);
+        return _assetCatalog.TryGet(logicalId, out var asset) ? _assetCatalog.Texture(asset) : null;
     }
 
     private void RebuildMapTextures()
@@ -578,23 +666,31 @@ public partial class Arena : Node2D
         _mapTextures.Clear();
         foreach (var assetId in _application.WorldObjects().Select(item => item.AssetId).Distinct(StringComparer.Ordinal))
         {
-            if (!_application.HasAsset(assetId)) continue;
-            var texture = LoadMapTexture(_application.Asset(assetId));
+            if (!_assetCatalog.TryGet(assetId, out var asset)) continue;
+            var texture = LoadMapTexture(asset);
             if (texture is not null) _mapTextures[assetId] = texture;
         }
     }
 
-    private static Texture2D? LoadMapTexture(AssetSnapshot asset)
+    private Texture2D? LoadMapTexture(CanonicalAssetEntry asset)
     {
-        var texture = LoadTextureFile(asset.File);
-        return texture is null || asset.FrameWidth is not { } frameWidth || asset.FrameHeight is not { } frameHeight
-            ? texture
-            : new AtlasTexture { Atlas = texture, Region = new Rect2(0, 0, frameWidth, frameHeight) };
+        var texture = _assetCatalog.Texture(asset);
+        return asset.Frames.Count == 1 ? new AtlasTexture { Atlas = texture, Region = asset.Frames[0].Region, FilterClip = true } : texture;
     }
 
     private RegionTravelResult TravelToRegion(string regionId)
     {
         if (GameplayCommandsBlocked) return new RegionTravelResult(false, Failure: RegionTravelFailure.TravelConditionFailed, FailedConditionId: "save_recovery_required");
+
+        // Region travel is a durable canonical transition.  Flush any earlier durable
+        // mutation first, then retain an in-memory pre-transition envelope while the
+        // post-transition state is written.  A failed disk commit must not strand the
+        // live session in a region that is not represented by the current slot.
+        if (_application.CanonicalContent is not null && _application.HasCanonicalDurableChanges && !Save(showMessage: false))
+            return new RegionTravelResult(false, Failure: RegionTravelFailure.TravelConditionFailed, FailedConditionId: "durable_commit_pending");
+        var beforeTravel = _application.CanonicalContent is null
+            ? null
+            : _application.CaptureCanonicalSave(_v25Store!.NextCommitSequence(SelectedSaveId), SelectedSaveId);
         var result = _application.TravelToRegion(regionId);
         if (!result.Success)
         {
@@ -608,36 +704,38 @@ public partial class Arena : Node2D
             return result;
         }
 
+        if (_application.CanonicalContent is not null && !Save(showMessage: false))
+        {
+            try
+            {
+                _application.RestoreCanonicalSave(beforeTravel!);
+            }
+            catch (Exception exception)
+            {
+                _saveWritesBlocked = true;
+                GD.PushError($"Region-transition rollback failed; save files were preserved and writes are blocked: {exception.Message}");
+                Toast("Chuyển vùng chưa được lưu và không thể khôi phục runtime; hãy tải lại bản lưu hợp lệ.");
+                return result with { Success = false, Failure = RegionTravelFailure.TravelConditionFailed, FailedConditionId = "rollback_required" };
+            }
+            Toast("Chuyển vùng chưa được lưu; runtime đã quay lại vùng trước. Nhấn F5 để thử lưu lại.");
+            return result with { Success = false, Failure = RegionTravelFailure.TravelConditionFailed, FailedConditionId = "durable_commit_pending" };
+        }
+
         foreach (var sprite in _monsterSprites.Values) sprite.QueueFree();
         foreach (var sprite in _allySprites.Values) sprite.QueueFree();
         _monsterSprites.Clear(); _allySprites.Clear(); _dyingMonsters.Clear();
         RebuildMapTextures();
-        _ground = LoadAssetTexture(_application.CurrentMapBackgroundAssetId() ?? "tiles.arena.ground");
+        _ground = LoadCanonicalAssetTexture(_application.CurrentMapBackgroundAssetId() ?? "tiles.arena.ground");
         _lastSoulSignature = ""; _lastFeatureSignature = ""; _lastScreenSignature = "";
-        if (_application.CanonicalContent is not null && !Save(showMessage: false))
-            return result with { Success = false, Failure = RegionTravelFailure.TravelConditionFailed, FailedConditionId = "durable_commit_pending" };
         Toast($"Đã đến { _application.RegionDetails(regionId)?.DisplayName ?? regionId }.");
         RefreshSnapshot();
         return result;
     }
 
-    private static Texture2D? LoadTextureFile(string relativeFile)
-    {
-        var absolute = ProjectSettings.GlobalizePath($"res://assets/{relativeFile}"); if (!System.IO.File.Exists(absolute)) { GD.PushWarning($"Missing slice asset: {relativeFile}"); return null; }
-        var image = Image.LoadFromFile(absolute); return image.IsEmpty() ? null : ImageTexture.CreateFromImage(image);
-    }
-
     private AnimatedSprite2D BuildPlayerSprite(int rank)
     {
-        var frames = new SpriteFrames(); frames.RemoveAnimation("default");
-        foreach (var action in new[] { "idle", "walk", "attack" }) foreach (var direction in new[] { "front", "left", "right", "back" })
-        {
-            var clip = _application.PlayerAnimation(action, direction, rank); var texture = LoadTextureFile(clip.Asset.File); var name = new StringName(clip.Id); frames.AddAnimation(name); if (texture is null) continue;
-            var columns = texture.GetWidth() / clip.Asset.FrameWidth!.Value;
-            for (var index = 0; index < clip.FrameCount; index++) frames.AddFrame(name, new AtlasTexture { Atlas = texture, Region = new Rect2(index % columns * clip.Asset.FrameWidth.Value, clip.DirectionRow * clip.Asset.FrameHeight!.Value, clip.Asset.FrameWidth.Value, clip.Asset.FrameHeight.Value) });
-            frames.SetAnimationSpeed(name, clip.FrameRate); frames.SetAnimationLoopMode(name, clip.Repeat != 0 ? SpriteFrames.LoopMode.Linear : SpriteFrames.LoopMode.None);
-        }
-        var sprite = new AnimatedSprite2D { SpriteFrames = frames, Scale = new Vector2(2.5f, 2.5f), ZIndex = 20 }; sprite.Play("idle_front"); return sprite;
+        _ = rank;
+        return BuildMissingActorSprite(20);
     }
 
     private void SyncMonsters(IReadOnlyList<MonsterSnapshot> monsters)
@@ -649,11 +747,11 @@ public partial class Arena : Node2D
             if (!_monsterSprites.TryGetValue(monster.Uid, out var sprite)) { sprite = BuildMonsterSprite(monster); _monsterSprites.Add(monster.Uid, sprite); AddChild(sprite); }
             sprite.Position = ToGodot(monster.Position);
             var monsterAction = monster.AiState switch { Simulation.State.MonsterAiState.Chase => "walk", Simulation.State.MonsterAiState.Attack => "attack", Simulation.State.MonsterAiState.Hit => "hit", _ => "idle" };
-            if (sprite.Animation != monsterAction || !sprite.IsPlaying()) sprite.Play(monsterAction);
+            PlayActorAnimation(sprite, monsterAction);
         }
         var move = Input.GetVector("move_left", "move_right", "move_up", "move_down"); if (move != Vector2.Zero) _facing = System.Math.Abs(move.X) > System.Math.Abs(move.Y) ? move.X < 0 ? "left" : "right" : move.Y < 0 ? "back" : "front";
         var action = Input.IsActionPressed("attack") ? "attack" : move != Vector2.Zero ? "walk" : "idle"; var desired = $"{action}_{_facing}";
-        if (_playerSprite.Animation != desired || (!_playerSprite.IsPlaying() && action == "attack")) _playerSprite.Play(desired);
+        PlayActorAnimation(_playerSprite, desired);
     }
 
     private void SyncAllies(IReadOnlyList<AllySnapshot> allies)
@@ -664,30 +762,25 @@ public partial class Arena : Node2D
         {
             if (!_allySprites.TryGetValue(ally.Uid, out var sprite))
             {
-                sprite = BuildMonsterSprite(new MonsterSnapshot(ally.Uid, ally.DefinitionId, ally.SpeciesId, ally.Position, ally.CurrentHp, ally.MaximumHp, true, MonsterAiState.Idle, ally.Level, ally.Rank));
+                sprite = BuildMonsterSprite(new MonsterSnapshot(ally.Uid, ally.DefinitionId, ally.SpeciesId, ally.Position, ally.CurrentHp, ally.MaximumHp, true, MonsterAiState.Idle, ally.Level, ally.Rank), "ally");
                 sprite.Modulate = new Color("#86efac"); sprite.ZIndex = 11; _allySprites.Add(ally.Uid, sprite); AddChild(sprite);
             }
             sprite.Position = ToGodot(ally.Position);
             var action = ally.AiState switch { AllyAiState.Chase => "walk", AllyAiState.Attack => "attack", _ => "idle" };
-            if (sprite.Animation != action || !sprite.IsPlaying()) sprite.Play(action);
+            PlayActorAnimation(sprite, action);
         }
     }
 
-    private AnimatedSprite2D BuildMonsterSprite(MonsterSnapshot monster)
+    private AnimatedSprite2D BuildMonsterSprite(MonsterSnapshot monster, string representation = "enemy")
     {
-        var frames = new SpriteFrames(); frames.RemoveAnimation("default");
-        foreach (var action in new[] { "idle", "walk", "attack", "hit", "death" })
-        {
-            var clip = _application.MonsterAnimation(monster.SpeciesId, monster.Rank, action); var name = new StringName(action); frames.AddAnimation(name);
-            foreach (var file in clip.Files) { var texture = LoadTextureFile(file); if (texture is not null) frames.AddFrame(name, texture); }
-            frames.SetAnimationSpeed(name, clip.FrameRate); frames.SetAnimationLoopMode(name, clip.Repeat != 0 ? SpriteFrames.LoopMode.Linear : SpriteFrames.LoopMode.None);
-        }
-        var sprite = new AnimatedSprite2D { SpriteFrames = frames, Scale = new Vector2(0.1f, 0.1f), ZIndex = 10 }; sprite.Play("idle"); return sprite;
+        return _assetCatalog.TryGet(ActorAssetId(monster.SpeciesId, monster.Rank, representation), out var asset)
+            ? BuildCanonicalStaticSprite(asset)
+            : BuildMissingActorSprite(representation == "ally" ? 11 : 10);
     }
 
     private void BeginMonsterDeaths()
     {
-        foreach (var defeated in _application.DrainDefeatedMonsterVisuals()) if (_monsterSprites.TryGetValue(defeated.Uid, out var sprite)) { sprite.Position = ToGodot(defeated.Position); sprite.Play("death"); _dyingMonsters[defeated.Uid] = defeated.DurationSeconds; }
+        foreach (var defeated in _application.DrainDefeatedMonsterVisuals()) if (_monsterSprites.TryGetValue(defeated.Uid, out var sprite)) { sprite.Position = ToGodot(defeated.Position); PlayActorAnimation(sprite, "death"); _dyingMonsters[defeated.Uid] = defeated.DurationSeconds; }
     }
 
     private void UpdateMonsterDeaths(double delta)
@@ -697,5 +790,44 @@ public partial class Arena : Node2D
             var remaining = entry.Value - delta; if (remaining > 0) { _dyingMonsters[entry.Key] = remaining; continue; }
             if (_monsterSprites.Remove(entry.Key, out var sprite)) sprite.QueueFree(); _dyingMonsters.Remove(entry.Key);
         }
+    }
+
+    private static string ActorAssetId(string speciesId, int rank, string representation) => $"soul.{speciesId}.rank{rank:D2}.{representation}.south";
+    private static string SoulPickupAssetId(string speciesId, int rank) => $"soul.{speciesId}.rank{rank:D2}.pickup";
+    private bool HasCanonicalPlayerVisual() => _assetCatalog.TryGet("player.base.idle.s", out _);
+    private bool HasCanonicalActorVisual(string speciesId, int rank, string representation) => _assetCatalog.TryGet(ActorAssetId(speciesId, rank, representation), out _);
+
+    private AnimatedSprite2D BuildCanonicalStaticSprite(CanonicalAssetEntry asset)
+    {
+        var sprite = new AnimatedSprite2D { SpriteFrames = _assetCatalog.BuildFrames(asset), Centered = false, Offset = -asset.Pivot, ZIndex = asset.Layering.ZIndex, YSortEnabled = asset.Layering.YSortEnabled };
+        sprite.Play("static");
+        return sprite;
+    }
+
+    private static AnimatedSprite2D BuildMissingActorSprite(int zIndex)
+    {
+        var frames = new SpriteFrames(); frames.RemoveAnimation("default"); frames.AddAnimation("missing");
+        return new AnimatedSprite2D { SpriteFrames = frames, ZIndex = zIndex, YSortEnabled = true };
+    }
+
+    private static void PlayActorAnimation(AnimatedSprite2D sprite, string requested)
+    {
+        var frames = sprite.SpriteFrames;
+        var resolved = frames.HasAnimation("static") ? "static" : frames.HasAnimation(requested) ? requested : "missing";
+        if (frames.HasAnimation(resolved) && (sprite.Animation != resolved || !sprite.IsPlaying())) sprite.Play(resolved);
+    }
+
+    private void DrawCanonicalFrame(CanonicalAssetEntry asset, Vector2 origin)
+    {
+        var texture = _assetCatalog.Texture(asset); var frame = asset.Frames[0];
+        var atlas = new AtlasTexture { Atlas = texture, Region = frame.Region, FilterClip = true };
+        DrawTextureRect(atlas, new Rect2(origin - asset.Pivot, asset.FrameSize), false);
+    }
+
+    private void DrawMissingAssetMarker(Vector2 origin, string assetId, float radius)
+    {
+        var rect = new Rect2(origin - new Vector2(radius, radius), new Vector2(radius * 2, radius * 2));
+        DrawRect(rect, new Color("#ff00ff"), false, 2); DrawLine(rect.Position, rect.End, new Color("#ff00ff"), 2); DrawLine(new Vector2(rect.End.X, rect.Position.Y), new Vector2(rect.Position.X, rect.End.Y), new Color("#ff00ff"), 2);
+        DrawString(ThemeDB.FallbackFont, origin + new Vector2(-radius, -radius - 3), $"MISSING: {assetId}", fontSize: 9, modulate: new Color("#ffd4ff"));
     }
 }
