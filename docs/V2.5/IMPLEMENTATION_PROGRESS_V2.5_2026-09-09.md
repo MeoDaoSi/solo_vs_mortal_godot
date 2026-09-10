@@ -1,20 +1,20 @@
 # Báo cáo tiến độ triển khai V2.5 — kế hoạch 8 phần
 
-Ngày cập nhật: 09/09/2026. Người rà soát: agent chính, trực tiếp đối chiếu source.
+Ngày cập nhật: 10/09/2026. Người rà soát: agent chính, đối chiếu source `main`, đặc tả V2.5 khóa hash và toàn bộ evidence trong nhật ký thực hiện.
 
 - Source: `C:/ws/solo_vs_mortal_godot`.
 - Assets/workflow: `C:/ws/asset-production_system`.
 - Đặc tả có thẩm quyền: `Solo_vs_Mortal_Gameplay_System_V2.5.md` và `game_spec/`, revision `2026-09-08.closed-1`, content `svm-content-2.5.1`, balance `svm-balance-2.5.1`.
 - Báo cáo này là trạng thái triển khai và danh sách việc tiếp theo; không thay thế hoặc định nghĩa lại gameplay.
-- Phiên xuất báo cáo chỉ đọc source và viết tài liệu. Không áp dụng lại các bản sửa còn treo, không chạy gameplay test, không xóa assets.
+- Current-state trong các mục 1–11 đã được reconcile theo source/evidence mới nhất. Section 12 append-only vẫn là lịch sử bất biến: không sửa/xóa các entry cũ. Không chạy gameplay acceptance thay user và không xóa asset khi chưa qua dependency/delete gate.
 
 ## 1. Cách đọc trạng thái
 
 **complete**: phạm vi của phần đã hoàn tất, không còn yêu cầu triển khai chưa xử lý được biết đến. **in_progress**: đã có code nhưng còn công việc cụ thể bên dưới. **not_complete**: chưa đủ sản phẩm đầu ra hoặc chưa triển khai đầy đủ pipeline.
 
-Build gần nhất ở phiên triển khai trước: `dotnet build solo_vs_mortal_godot.csproj --no-restore`, thành công, 0 lỗi và 0 cảnh báo; `git diff --check` không báo lỗi whitespace, còn cảnh báo chuẩn hóa newline của Git. Đây không phải kết quả nghiệm thu gameplay. Engine 4.5.2 Compatibility chưa được xác minh; project hiện dùng Godot.NET 4.7.2 và khai báo 4.7 Forward Plus.
+Build/current package gần nhất: `dotnet build solo_vs_mortal_godot.csproj --no-restore` pass 0 warning/0 error; Godot 4.7.2 đã export debug/package thành công. Đây chỉ là compile/package evidence. Baseline đặc tả vẫn là Godot .NET 4.5.2 Compatibility và CHƯA được xác minh; source hiện pin `Godot.NET.Sdk/4.7.2` và project vẫn ở 4.7 Forward Plus. Vì vậy 4.7.2 không được dùng để tự suy ra 4.5.2-compatible.
 
-Không đánh dấu cả phần complete chỉ vì có class, có API, subagent báo xong hoặc build thành công. User là người kiểm thử gameplay duy nhất. Không tạo/chạy automated tests, harness, parity runner, soak hay headless gameplay smoke.
+Không đánh dấu cả phần complete chỉ vì có class/API, static audit hoặc build thành công. Agent tự chịu trách nhiệm audit source, sửa code/data/docs, build/export bằng toolchain đã có, technical asset QA, dependency cleanup và chuẩn bị checklist. User giữ các gate không thể thay thế: quyết định baseline engine nếu cần đổi đặc tả, cài/cung cấp Godot .NET + export templates còn thiếu, chạy 18 manual gameplay acceptance cases trong game thật và approve/reject mỹ thuật. Không tạo/chạy automated gameplay tests, harness, parity runner, soak hay headless gameplay smoke theo policy hiện hành.
 
 Số phần dưới đây là kế hoạch 8 phần đã giao trong hội thoại. Trường `part` trong một số work item của audit ban đầu dùng cách nhóm khác; không lấy số đó để tự đổi thứ tự kế hoạch. `implementation-tasks-4-8.json` còn trạng thái pending và evidence cũ; phải cập nhật sau khi đối chiếu, không dùng nguyên trạng làm bằng chứng tiến độ.
 
@@ -25,7 +25,7 @@ Số phần dưới đây là kế hoạch 8 phần đã giao trong hội thoạ
 | 3 | Simulation/combat/player/AI nền tảng | in_progress |
 | 4 | Soul, Density, Sync, Banner, Summon, Spirit, Possession, capability | in_progress |
 | 5 | Inventory, skills, mastery, quests, loot, world, save/migration | in_progress |
-| 6 | Adapter assets và dọn code/assets/docs cũ | not_complete |
+| 6 | Adapter assets và dọn code/assets/docs cũ | in_progress |
 | 7 | Hoàn thiện bộ Slice assets và export | not_complete |
 | 8 | Tích hợp Godot, đóng gói, bàn giao và nghiệm thu | not_complete |
 
@@ -109,7 +109,7 @@ Status: **in_progress**.
 
 ## 7. Phần 6 — Clean assets, code và docs cũ
 
-Status: **not_complete**.
+Status: **in_progress**.
 
 Hiện trạng đo từ filesystem khi xuất báo cáo:
 
@@ -179,77 +179,179 @@ Status: **not_complete**.
 
 **Điều kiện complete:** có package thật, assets được map đầy đủ theo scope đã chốt, hướng dẫn và checklist dùng được; các issue thuộc phạm vi đã xử lý, kết quả user nghiệm thu được ghi rõ.
 
-## 10. Vấn đề 6 còn mở — rà soát persistence và world
+## 10. Vấn đề 6 — current-state persistence và world sau reconciliation
 
-Status: **in_progress; chưa đóng**. Đây là vấn đề thứ 6 của review trước, KHÔNG đồng nghĩa phần 6 cleanup của kế hoạch.
+Status: **in_progress; chỉ còn W09 phụ thuộc asset/presentation và user visual acceptance**. Đây là “vấn đề 6” của review cũ, KHÔNG phải Phần 6 cleanup.
 
-### 10.1. Những gì đã có và điểm chưa được ghi
+### 10.1. Kết quả hiện tại sau khi đối chiếu toàn bộ nhật ký
 
-Đã có: ActiveProfileId và bootstrap roster 19 species; staged restore/upgrade Beta→Full; world objects/roads/terrain từ blueprint; tương tác NPC/chest/landmark/secret/portal; fog visited tiles; hazard clock; dormant-region monsters; pickup→region map; Item NextInstance; kiểm tra derived maxima sau khi restore modifiers; optional save fields có JsonIgnore để không tự chèn null/default vào checksum cũ.
+Bản kế hoạch cũ ở phần đầu từng ghi một số sửa persistence/world còn treo do quota. Các thay đổi đó đã được áp dụng ở các entry sau trong nhật ký. Current-state phải đọc như sau:
 
-Bản sửa cuối bị quota chặn CHƯA áp dụng:
-
-- `RestoreDormantRegions` chưa nhận tập activeActorIds để phát hiện UID trùng giữa vùng hoạt động và vùng đã rời.
-- Chưa bổ sung đầy đủ kiểm tra encounter/species/level/home bounds và quan hệ allocator với toàn bộ actor ID như bản sửa dự kiến.
-- Chưa nối EnvironmentSpeedMultiplier để Ally chịu FrostFloor độc lập với Player.
-
-Không copy lại nguyên lệnh cũ một cách mù quáng. Đọc source mới, xác định delta còn thiếu rồi áp dụng từng thay đổi.
-
-### 10.2. Quy trình audit → quyết định update → đóng mục
-
-1. Tạo bảng field/state có các cột: owner, producer, capture, serialize/checksum, validate, restore, liên kết UID/region/source, quy tắc timer và xử lý phiên bản cũ.
-2. Với từng mục P/W dưới đây, kết luận một trong ba loại: **đã có và đúng** (không sửa); **thiếu/sai đã chứng minh** (sửa ngay đúng owner); **thiếu dữ liệu để xác nhận** (tiếp tục đọc spec/caller; ghi chính xác case cần user kiểm thử nếu chỉ runtime mới xác minh được).
-3. Update khi có mismatch cụ thể giữa spec và code, state có producer nhưng không lưu, restore tạo mặc định làm mất tiến trình, hoặc validation cho phép identity không hợp lệ. Không update bằng cách nới validation chung để “load được”.
-4. Bản sửa phải gồm producer, capture, validation, restore, UI/command liên quan và tài liệu migration nếu cần. Nếu sửa save contract, chứng minh cách giữ checksum/version cũ và cách reject bảo toàn file khi không thể migrate chính xác.
-5. Review lại đường gọi từ UI tới commit. Build; không tạo automated tests. Giao các case gameplay/disk-failure thực tế cho user theo checklist, không tự thao tác phá save thật.
-6. Chỉ đổi từng mục sang complete khi đủ evidence và không còn phần phụ thuộc bị bỏ. Nếu P/W chưa đóng thì vấn đề 6 và 5.06/5.08 vẫn in_progress; không chuyển sang cleanup có dependency.
-
-### 10.3. P — các bước rà soát persistence
-
-| ID | Thực hiện tiếp theo | Tiêu chí cập nhật/đóng |
+| Nhóm | Current state | Kết luận |
 |---|---|---|
-| P01 | Lập inventory toàn bộ state, đặc biệt HazardTicks, DormantRegions, PickupRegions, VisitedTiles, NextInstance, Spirit carry, cast/projectile/CD, boss/adds, mastery budgets/debts và selection. Tìm field chỉ tồn tại trong RAM hoặc capture nhưng không restore. | Không bỏ sót state làm thay kết quả khi reload; field transient phải có lý do không persist. |
-| P02 | Rà thứ tự restore Player → equipment/passive/possession → recompute → current resources. So cả HP/Spirit/maxima/weapon style; phân biệt save cũ chưa áp passive với save sai. | Không refill hoặc clamp mất resource vì thứ tự tạm thời; chỉ chấp nhận migration cũ có công thức xác định, save mới vẫn validate chặt. |
-| P03 | Rà checksum cũ/mới: JsonIgnore của field optional, ordering của dictionary, normalization và deserialize. Không sửa file user để thử. Dùng đọc source/file save mẫu được phép, ghi manual case nếu cần. | Save đúng phiên bản cũ vẫn được kiểm checksum theo representation hợp lệ; checksum sai bị từ chối, nguyên bản không bị ghi đè. |
-| P04 | Bổ sung kiểm tra UID duy nhất trên Player/active/dormant actor; allocator ≥ suffix ID lớn nhất; item NextInstance không tái cấp ID đang tồn tại. Rà source/cast/projectile/target/cooldown links. | Restore lỗi chỉ hủy staged session, không đổi session sống/UID/RNG. ID không trùng và reference không treo. |
-| P05 | Validate dormant rows với region/encounter/species/level/type/rewardEligible/home/bounds; xử lý boss adds đúng contract thay vì bắt mọi actor phải là encounter tĩnh. Rà TargetUid, IsReturning, CD, status/shield expiry khi park/resume. | Quay lại giữ đúng life và budget; không respawn/reset HP tùy tiện, không reject save hợp lệ có adds; state giả mạo bị từ chối. |
-| P06 | Rà pickup map: mỗi pickup chưa consume có đúng region; không duplicate giữa active/dormant, không unknown region/key. Rà capture/auto-collect chỉ ở region hiện tại. | Hồn không nhảy map, mất hoặc được consume hai lần; save cũ thiếu region có migration xác định hoặc explicit reject giữ file. |
-| P07 | Rà từng timer khi save/suspend/restore/travel: Spirit denominator/carry, potion CD, possession, recovery, dodge, status, hazard500ms, crumble2s, grace, respawn. Đối chiếu timer dormant có pause hay tiến theo world tick. | Không đổi đơn vị, không chạy offline, không reset accumulator để né damage; không tự hồi đầy hoặc triệu hồi lại. |
-| P08 | Rà Beta→Full trong staged session: giữ exact awards/receipts/milestones/proofs/pity/inventory/mastery/quest/world/RNG; chỉ bổ sung state rỗng cho content mới. Lưu trước nâng và commit bản sau nâng đúng slot. | Không re-award, re-roll, mất progress hoặc hạ cap ngầm; lỗi giữa chừng giữ original và không ghi nhầm slot. |
-| P09 | Rà WAL/temp/flush/rename/backup/history/exact retry; UI success sau commit; mọi callback khi suspend/save-failed bị khóa. Kiểm tra snapshot chứa dictionary mutable không bị thay khi chờ retry. | Retry dùng cùng payload/hash/transaction; không success sớm; không recovery từ foreign slot. |
-| P10 | Rà rebalance/removed content: immutable amount/source/version/milestone, không sum lại từ balance mới. Với version không hỗ trợ, giữ nguyên file; migration chỉ có explicit mapping/LegacyRelic đủ metadata. | Không giảm tiến trình hay xóa ownership. Phân biệt rõ “bảo toàn bằng reject” với “đã migrate hỗ trợ”; không tuyên bố rebalance migration hoàn chỉnh nếu mới reject. |
+| P01–P10 persistence | **complete** ở mức implementation/static review | Full canonical state coverage, resource restore ordering, checksum, UID/allocator, dormant actors, pickup-region map, timer/tick semantics, Beta→Full staged migration, WAL/exact retry và rebalance/version preservation đều đã có evidence compile-only. |
+| W01–W08 world/runtime | **complete** ở mức implementation/static review | Topology, road/wall/camp, swept-circle movement, hazard, anchor/traversal, E interaction/ritual, durable region transition và RestReset/runtime encounter life đã được trace/sửa. |
+| W09 fog/minimap/visual mapping | **in_progress** | Fog/VisitedTiles đúng và persist; phần còn thiếu là canonical UI/world/actor assets, marker thật, asset adapter mapping đầy đủ và in-engine visual acceptance. |
 
-### 10.4. W — các bước rà soát world
+Như vậy **persistence/world không còn là blocker logic chính cho cleanup** ngoại trừ W09 visual dependency. Tuy nhiên các P/W “complete” ở đây vẫn chưa phải gameplay acceptance; các case save/load-in-combat, disk failure, hazard boundary, travel, fog và visual phải do user chạy trong build thật.
 
-| ID | Thực hiện tiếp theo | Tiêu chí cập nhật/đóng |
+### 10.2. Những phần source hiện đã khớp tốt với V2.5
+
+1. **Authority/data:** bundle V2.5 revision `2026-09-08.closed-1` được hash-pin; canonical loader/registry là nguồn gameplay, metadata legacy đã được cô lập để không tự cấp nature/drop/art cho species V2.5.
+2. **Deterministic simulation:** `GameSession` là headless owner, fixed tick 60 Hz, RNG streams có seed, combat canonical giữ cast/projectile/cooldown/knockback ở simulation; animation không phát damage.
+3. **Persistence:** save schema canonical dùng staged restore, strict validation, checksum, WAL/atomic commit/exact retry; nhiều state khó như RNG, Spirit carry, possession ticks, cooldown ledger, dormant region, pickup region, mastery budget/debt và world lifecycle đã được capture/restore.
+4. **World:** topology/collider/hazard/traversal/interaction/transition/RestReset đã có owner/caller thật và fail-closed validation thay vì clamp/fallback ngầm.
+5. **Legacy isolation:** canonical V2.5 không khởi tạo Devour/Essence/Bloodline; các đường legacy còn lại là compatibility/bootstrap debt, không còn là gameplay authority.
+
+### 10.3. Những điểm CHƯA khớp/CHƯA đóng so với V2.5
+
+1. **Engine baseline mismatch:** đặc tả/policy khóa Godot .NET **4.5.2 Compatibility**, trong khi source/build hiện dùng **Godot.NET 4.7.2 + Forward Plus**. Đây là blocker kỹ thuật của Phần 2/8 cho tới khi baseline được xác minh hoặc user chính thức đổi authority.
+2. **Style/runtime resolution mismatch:** style lock yêu cầu native **640×360**, nearest/integer scale/pixel snap; project/presentation hiện còn layout **1280×720** và nhiều HUD/WorldMap absolute coordinate nên chưa thể đổi một dòng config mà không migrate layout.
+3. **Asset completeness:** canonical adapter đã có foundation nhưng catalog runtime hiện chỉ map được package Skeleton static nhỏ; phần lớn Beta/Slice asset vẫn chưa có user-approved, hash-versioned integration export. W09 vì vậy chưa đóng.
+4. **Manual acceptance:** combat, Soul loop, save/load, world và UI mới có static/build evidence. 18 canonical acceptance cases chưa có user result; không được nâng Part 3/4/5/8 thành complete.
+5. **Architecture debt:** layering `Core/Data → Simulation → Application → Presentation` vẫn đúng ở macro level, nhưng `Arena.cs`, `GameApplication.cs`, `V25CombatCoordinator.cs` và `CanonicalV25Definitions.cs` đã trở thành hotspot lớn. Presentation còn import một số `Simulation.*`/`Data.*`, và save/travel durable orchestration vẫn nằm nhiều trong `Arena`; đây không nhất thiết đổi gameplay V2.5 nhưng làm tăng rủi ro khi tiếp tục tích hợp.
+6. **Repository hygiene:** `.codex_obj/` đang bị track dù là generated .NET state; `_beta_helpers/_beta_jobs` và một số asset tooling còn ở root; helper có hard-coded workspace `C:\ws\asset-production_system`. Cần dọn/parameterize nhưng chỉ sau khi xác định dependency để không làm hỏng pipeline đang dùng.
+7. **Commit discipline:** current `main` commit `66a0ea9` có message chỉ là `commit` dù thay đổi cross-cutting runtime/data/docs/assets/tooling. Các phase sau phải dùng commit message có scope và tránh gom migration + asset production + presentation cleanup vào một commit khó audit.
+
+### 10.4. Gate đóng vấn đề 6
+
+Vấn đề 6 chỉ được coi là đóng khi:
+
+- W09 có canonical marker/world/actor mapping đủ cho scope đang nghiệm thu;
+- không còn technical fallback bị hiểu nhầm là final visual;
+- user đã xác nhận fog/minimap/visual visibility trong build thật;
+- các manual persistence/world cases liên quan không phát hiện lỗi mới làm mở lại P/W đã đóng.
+
+## 11. Tình hình source so với V2.5 và kế hoạch triển khai kế tiếp
+
+### 11.1. Kết luận current-state
+
+Source hiện **không ở trạng thái “thiếu core gameplay”**. Phần lớn nền tảng V2.5 quan trọng đã có: authority loader, deterministic simulation, combat runtime, Soul systems, inventory/skill/mastery/quest/loot/world, staged persistence và asset adapter foundation. Blocker lớn nhất hiện tại đã chuyển từ “thiếu system” sang bốn nhóm:
+
+1. **xác minh baseline Godot 4.5.2 Compatibility**;
+2. **đóng static review/caller coverage còn lại ở Part 4–5 và chuẩn bị manual acceptance**;
+3. **hoàn thiện asset production → user approval → versioned export → canonical mapping**;
+4. **giảm architecture debt của Presentation/Application trước khi tích hợp visual cuối và cleanup legacy**.
+
+Do đó hướng xử lý đúng là **không rewrite gameplay**, không đổi formula/spec đang khóa. Tiếp tục theo chiến lược: `close functional delta → stabilize boundary → integrate approved assets → cleanup → baseline build → user acceptance`.
+
+### 11.2. Phân công: việc agent tự làm và việc user bắt buộc làm
+
+| Việc | Agent tự làm | User phải làm |
 |---|---|---|
-| W01 | Đối chiếu 9 region, 4 chunk, tile32/chunk128, tọa độ local/global của spawn/shrine/NPC/landmark/chest/elite/boss/entry/exit; bỏ clamp che sai authored position. Rà roster metadata và unknown ID. | Mọi object/encounter đúng blueprint; dữ liệu sai bị báo rõ trước sử dụng, không reposition/random fallback. |
-| W02 | Rà road width4, outer wall2, portal opening, detour, safe camp radius8, encounter clearance6 và grid props. Xác minh tile/walkmesh/material thực tế, không chỉ đường vẽ debug. | Main path đi bộ liên tục; road/safe zone không hazard/prop blocker; không vẽ đường nhưng collision chặn. |
-| W03 | Trace mọi movement entry point: walk, dodge, dash, knockback, AI chase/return, summon/rescue. Tách capability actor; rà circle collider thay vì chỉ tâm điểm và đường swept không bỏ qua terrain. | Không qua wall/gate/gap/water trái phép; Ally/Monster không hưởng capability Player; no-space không partial mutate. |
-| W04 | Rà hazard rectangles, timer500ms, true environmental HP loss, Ward và reset khi rời; thêm FrostFloor cho Ally; rà CrumblingFloor/rescue từng actor thuộc scope. | Damage/slow đúng spec, không shield/crit/mastery; không stack sai; không reset timer bằng reload; không quên actor ngoài Player. |
-| W05 | Rà safe anchor500ms, gate-state identity và capability expiry. Khi Player bước ra vùng, active terrain cập nhật đúng; anchor cũ không nằm trong hazard. | Grace đúng2s/3s; cancel unreleased; return hoặc rescue đúng route; HP loss nonlethal theo CurrentHP; không teleport qua gate chưa mở. |
-| W06 | Rà E priority và khoảng cách48, NPC gates, shrine/rest/claim, chest reward/receipt, secret đúng species+Sync+capability. Hoàn thiện ritual hold/cancel thật, UI failure reason. | Không mua/học/claim từ xa; không mở lại reward; không auto-complete bằng API chưa đủ điều kiện; thao tác user reachable. |
-| W07 | Rà region transition hai chiều: adjacency, đứng portal/entry, boss/rank gate, recall giữ vitality, end possession full CD, save boundary. Rà độ an toàn lúc mutation rồi commit thất bại. | Không nhảy tới region bất kỳ; không mất life/pickup/budget, không show success trước durable; entry/exit đúng hướng. |
-| W08 | Rà encounter lifecycle/rest/death: RestReset chỉ hồi sinh eligible defeated theo spec, living life giữ UID; boss/adds và mastery debt/budget không reset sai. Hoàn thiện chunk preparation trong256units và không unload combat. | Không duplication/reward farming bằng travel/rest/load; streaming có implementation thực hoặc ghi rõ chưa làm, không suy từ region cache. |
-| W09 | Rà fog reveal radius12tiles và persist từng region, dùng dữ liệu đó cho minimap/world theo spec. Rà marker missing assets và adapter phần6, xác minh không còn actor vô hình. | Reveal đúng, giữ khi load/travel, không lộ state trái contract; marker chỉ là fallback kỹ thuật, không được tính asset hoàn chỉnh. |
+| Audit source/spec/hash/caller/save field | **Có** | Không cần prompt từng microtask |
+| Sửa C#/JSON/MD/project config/export preset | **Có**, nếu không đổi gameplay authority | Chỉ cần quyết định khi thay baseline/spec |
+| Build `dotnet` và Godot CLI/export | **Có**, khi executable/templates tương ứng tồn tại trong environment | Cài/cung cấp toolchain còn thiếu |
+| Cài Godot .NET 4.5.2 và export templates trên máy user | Không thể thay user trên máy local | **Bắt buộc nếu giữ baseline 4.5.2** |
+| Quyết định bỏ 4.5.2 để chuyển authority sang 4.7.x | Không tự quyết | **User quyết định** |
+| Refactor architecture không đổi behavior | **Có** | Không cần duyệt từng file; report nếu có risk gameplay/save |
+| Generate asset theo batch, technical QA, hash/manifest/export | **Có** | Không cần prompt từng AssetId |
+| Đánh giá “đẹp/xấu”, approve/reject art, identity/style | Không tự approve | **User quyết định** |
+| Chạy 18 canonical gameplay acceptance cases trong game thật | Không chạy thay user theo policy | **User thực hiện** |
+| Cung cấp screenshot/log/runtime symptom khi manual case fail | Phân tích/fix | **User cung cấp evidence runtime** |
+| Cleanup dead code/assets đã qua dependency gate | **Có** | User chỉ cần can thiệp với asset/file protected hoặc quyết định phá vỡ compatibility |
 
-### 10.5. Thứ tự sửa sau audit và tiêu chí kết thúc vấn đề 6
+Quy tắc vận hành: user **không phải ngồi giao từng việc nhỏ cho agent**. Agent tiếp tục tự audit/sửa/build/QA theo plan; chỉ dừng ở các gate thật sự cần con người: engine installation/baseline decision, visual approval và gameplay acceptance.
 
-1. Sửa P01–P04 trước: state inventory, resource restore, checksum/version và identity. Đây là lớp bảo vệ để các bước world sau không tạo save khó khôi phục.
-2. Sửa P05–P07 cùng W03–W05: dormant/pickup/timers và movement/hazard/anchor. Hoàn thành bản sửa cuối bị quota chặn sau khi đối chiếu lại source.
-3. Sửa W01–W02 và W06–W08: topology/interaction/travel/lifecycle/streaming; đồng bộ capture/restore mỗi khi thêm state mới, không để persistence cho “lượt sau”.
-4. Đóng P08–P10 và W09: profile upgrade, WAL/rebalance, fog/presentation. Rà lại từ save có đầy đủ Soul/gear/quests/boss/world, không chỉ NewGame rỗng.
-5. Build và kiểm dependency/format cho file vừa thay. Chuẩn bị manual sequence cho user: đang gear/passive → save/load; suspend và click HUD; mở rương rồi reload; rời/quay vùng; Soul rơi hai vùng; hazard/grace; upgrade Beta→Full; save-failed retry bằng môi trường user cho phép.
-6. Cập nhật evidence mỗi P/W: kết luận, file/symbol sửa, save field, lý do tương thích cũ, build và manual case. Mục chưa có kết luận không được để complete.
-7. Chỉ đóng vấn đề 6 khi tất cả P/W đạt, không còn lỗi known hoặc producer thiếu; không còn tiến trình reset âm thầm, không còn đường world chưa nối. Sau đó mới đóng 5.06/5.08 và mở bước cleanup phụ thuộc của phần6.
+### 11.3. Bước A — chốt Godot baseline trước khi gọi Part 2 complete
 
-## 11. Thứ tự triển khai kế tiếp
+**User:**
 
-1. Ưu tiên vấn đề 6 theo mục 10; không cần user prompt từng microtask.
-2. Hoàn thiện các phần 3/4/5 còn mở và đồng bộ trạng thái tài liệu phần2; report issue ngay nếu ảnh hưởng tính đúng đắn.
-3. Art có thể tiếp tục production trong folder riêng khi được giao, nhưng giữ versioned exports và danh sách bảo vệ để không conflict cleanup. Không nhập/xóa artifact đang được Art ghi.
-4. Sau gate world/persistence: triển khai phần6 adapter → chuyển callers → cleanup; song song hoàn thiện phần7 assets theo scope đã chốt.
-5. Chỉ triển khai phần8 bàn giao cuối khi code/manifest/asset dependencies đủ. User tiếp tục là người quyết định mỹ thuật và nghiệm thu gameplay.
+1. Nếu giữ đặc tả hiện tại, cài **Godot .NET 4.5.2** và **export templates 4.5.2** tương ứng.
+2. Không cần tự sửa `.csproj`, `project.godot` hay export preset.
+3. Nếu không muốn cài 4.5.2 và muốn chuẩn hóa lên 4.7.x, user phải nói rõ đây là thay đổi authority/baseline; agent không tự đổi vì build 4.7.2 đang pass.
+
+**Agent sau khi toolchain 4.5.2 có sẵn:**
+
+1. Audit API/project setting khác nhau giữa source hiện tại và 4.5.2.
+2. Chuyển/điều chỉnh `Godot.NET.Sdk`, renderer và export preset đúng Compatibility mà không thay gameplay.
+3. `dotnet build` + Godot compile/export debug bằng **đúng 4.5.2**.
+4. Sửa compile/API incompatibility nếu có.
+5. Ghi riêng evidence 4.5.2; không dùng kết quả 4.7.2 để lấp.
+6. Chỉ khi bước này pass mới đổi Phần 2 baseline thành complete.
+
+### 11.4. Bước B — đóng phần code V2.5 còn mở trước visual integration lớn
+
+Agent thực hiện liên tục, không cần user prompt từng bước:
+
+1. **Part 4 Soul loop:** hoàn tất requirement→caller→save→manual-case matrix cho Density/capture, Sync 8 nguồn/species, Banner, Summon/Spirit/Ally, Possession và placement; xác nhận các task đã static-review thật sự và liệt kê đúng manual case còn chờ user.
+2. **Part 5 gameplay/content:** review nốt Inventory/skill-loadout/mastery/quest/loot/unique/boss ở runtime caller thật; không chỉ dựa vào class/API tồn tại.
+3. Rà các transaction cần durable save để không còn đường state mutation chờ autosave ngoài contract.
+4. Rà exact source/grant/cooldown ownership khi đổi equipment, passive, possession, summon/recall/death/travel.
+5. Build sau mỗi nhóm thay đổi logic; nếu phát hiện mismatch với spec khóa thì sửa code, **không sửa spec/hash để hợp thức hóa implementation**.
+6. Tạo một current matrix ngắn cho 18 acceptance cases: case nào code-ready, case nào asset-blocked, case nào user có thể chạy ngay.
+
+### 11.5. Bước C — refactor architecture có kiểm soát, không rewrite gameplay
+
+Thực hiện sau khi functional delta của nhóm tương ứng đã ổn, trước khi thêm nhiều UI/assets mới:
+
+1. **Arena:** tách input adapter, save/travel presentation coordinator, actor/world renderer và HUD/screens khỏi một `Arena.cs` quá lớn. `Arena` giữ vai trò scene composition + Godot lifecycle.
+2. **Application boundary:** Presentation chỉ dùng command/query/DTO của Application cho gameplay flow; giảm import trực tiếp `Simulation.*` và `Data.*`.
+3. **Persistence orchestration:** chuyển transaction logic thuần application (prepare/capture/commit/rollback decision) ra khỏi Presentation; `Arena` chỉ gọi use case và hiển thị kết quả/I/O state cần thiết.
+4. **GameApplication:** split facade theo use-case nhóm (combat/soul/world/progression/persistence) hoặc partial/service nội bộ, vẫn giữ một public application boundary ổn định cho Presentation.
+5. **GameSession construction:** tách bootstrap/wiring V2.5 khỏi constructor khổng lồ nhưng giữ `GameSession` là simulation composition/tick owner.
+6. **V25CombatCoordinator / CanonicalV25Definitions:** chỉ split implementation theo responsibility; không đổi timing/order/formula đã static-audit nếu không có bug cụ thể.
+7. Mọi refactor phải build pass và không thay save schema/asset ID/gameplay number trừ khi task gốc yêu cầu.
+
+### 11.6. Bước D — hoàn thiện asset production và user review theo gate
+
+**Agent tự chạy pipeline:**
+
+1. Queue world độc lập có thể tiếp tục generate/technical-QA theo dispatch plan mà không chờ Player.
+2. Player phải **rework 4 hướng Idle trước** vì identity/scale/clothing là dependency của Move/Attack/Hit/Death; không nhân một base sai sang hàng chục clip.
+3. Mỗi batch giữ version/hash/manifest, frame/pivot/gutter/alpha/palette/timing/sockets/layering evidence.
+4. Không promote `generated` thành `approved`; không overwrite revision cũ.
+5. Khi đủ một nhóm integration-ready, assemble **versioned export** chỉ chứa dependency cần cho game, không bê cả production workspace vào repo.
+
+**User tại gate review:**
+
+1. Review các base/animation/visual quan trọng theo batch, không cần duyệt từng bước kỹ thuật.
+2. Quyết định `approved / needs_rework / rejected` cho đúng revision/hash.
+3. Kiểm trực quan trong scene/game build khi agent đã map asset; screenshot/feedback đủ để agent sửa batch.
+
+### 11.7. Bước E — migrate presentation sang canonical visual và đóng W09
+
+Sau khi có approved export:
+
+1. Agent add AssetId/file/hash/frame/pivot/duration/socket/layer metadata vào canonical catalog.
+2. Migrate lần lượt Player → Monster/Ally/Soul → world/terrain → equipment → UI marker.
+3. Giữ explicit `MISSING:<AssetId>` cho ID chưa có; không fallback sang prototype sai loài/style.
+4. Migrate HUD/WorldMap layout từ 1280×720 sang **native 640×360** đồng bộ với style lock; bật nearest/integer scale/pixel snap sau khi control anchors/layout đã phù hợp.
+5. Kiểm clip direction, Y-sort, front/back weapon layer, socket alignment và animation timing; gameplay damage vẫn theo Simulation tick.
+6. User chạy visual/in-engine review. Khi marker/world/actor visibility đúng và fog/minimap không lộ state sai, đóng W09.
+
+### 11.8. Bước F — cleanup source/repository sau replacement gate
+
+Agent thực hiện theo dependency, không xóa wildcard:
+
+1. Xóa dead presentation API/legacy asset caller đã có canonical replacement.
+2. Cô lập hoặc loại `GameDefinitions`/asset-manifest/characterAnimations compatibility dependency khi bootstrap V2.5 không còn cần.
+3. Chỉ xóa Devour/Essence/Bloodline physical files khi legacy-save/support decision cho phép; canonical runtime isolation hiện đã đạt.
+4. Bỏ generated `.codex_obj/` khỏi Git và thêm ignore phù hợp nếu xác nhận không có dependency runtime.
+5. Gom `_beta_helpers/_beta_jobs` vào `tools/asset_pipeline/` hoặc production workspace; đổi hard-coded `C:\ws\asset-production_system` thành CLI/config/environment input.
+6. Chuẩn hóa commit theo scope (`fix(v2.5): ...`, `refactor(presentation): ...`, `feat(assets): ...`) và tránh commit message kiểu `commit`.
+7. Build/export lại sau mỗi cleanup group; ghi replacement ID và file xóa trong dependency inventory.
+
+### 11.9. Bước G — manual acceptance và đóng 8 phần
+
+Khi code + approved asset scope + baseline engine đều sẵn:
+
+1. Agent build/export package bằng baseline đã chốt.
+2. Agent đưa checklist 18 case theo thứ tự dễ chạy, kèm expected result và cách lấy log/screenshot khi fail.
+3. **User chạy game thật** và ghi pass/fail; agent không tự đánh dấu pass.
+4. Agent sửa từng lỗi user phát hiện, static review vùng bị ảnh hưởng, build lại.
+5. User rerun đúng case bị ảnh hưởng; không bắt chạy lại toàn bộ nếu dependency không lan rộng.
+6. Khi Part 3/4/5 manual cases pass, Part 6 cleanup dependency pass, Part 7 art decision/export pass, Part 8 package pass thì mới đổi status tổng sang complete.
+
+### 11.10. Thứ tự ưu tiên ngay từ current commit
+
+1. **Không thêm gameplay feature mới ngoài V2.5** cho tới khi current requirements/caller matrix được reconcile.
+2. Agent tiếp tục Part 4–5 static closure + architecture boundary cleanup có kiểm soát.
+3. Song song Art chạy world batches; Player dependent clips chờ 4-direction Idle rework + user decision.
+4. User chuẩn bị Godot .NET 4.5.2 + export templates hoặc ra quyết định chính thức chuyển baseline.
+5. Khi approved asset export xuất hiện: map catalog → migrate 640×360 presentation → đóng W09.
+6. Sau đó cleanup legacy/repo hygiene.
+7. Cuối cùng build đúng baseline và user chạy 18 acceptance cases.
 
 ## 12. Nhật ký thực hiện append-only
 
