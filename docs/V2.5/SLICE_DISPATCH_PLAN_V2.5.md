@@ -6,7 +6,7 @@
 
 - Exact scope: `data/v2.5/slice-01.scope-lock.v2.5.json`, `scopeMembershipSha256 = 994ebfd3d946d506a085452da40523ce141cd5b22ab020bdd95d301f15143df6`.
 - Runtime/source audit: `SLICE_OUTPUT_AUDIT_V2.5.json`.
-- Style/reference authority: `C:/ws/asset-production_system/solo-vs-mortal-art/references/style-lock.json`, `art-direction.md`, and `approval-policy.md`.
+- Style/reference authority: `C:/ws/asset-production-system/solo-vs-mortal-art/references/style-lock.json`, `art-direction.md`, and `approval-policy.md`.
 - Each raster request uses the accepted style reference as a real input and produces a separate source candidate. A raw ImageGen board is never an atlas or runtime texture.
 - Pillow may normalize only after the source is saved; it must keep source, recipe, frame/pivot, palette, alpha, crop and hash evidence.
 - A fresh file begins as `generated` / `pending_user_review`. Neither technical pass nor an agent's view can promote it. The user records `approved`, `needs_rework`, or `pending` against its file and manifest hashes in `user-reviews.json`.

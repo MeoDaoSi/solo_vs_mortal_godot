@@ -5,7 +5,7 @@
 
 ## Authority and validation boundary
 
-Gameplay authority is `C:/ws/asset-production_system/Solo_vs_Mortal_Gameplay_System_V2.5.md`, revision `2026-09-08.closed-1`, with its hash-pinned `game_spec` bundle. The user is the sole gameplay tester. The technical results below are not gameplay acceptance.
+Gameplay authority is `C:/ws/asset-production-system/Solo_vs_Mortal_Gameplay_System_V2.5.md`, revision `2026-09-08.closed-1`, with its hash-pinned `game_spec` bundle. The user is the sole gameplay tester. The technical results below are not gameplay acceptance.
 
 | Scope | Current status | Evidence / remaining boundary |
 |---|---|---|
@@ -29,6 +29,6 @@ Gameplay authority is `C:/ws/asset-production_system/Solo_vs_Mortal_Gameplay_Sys
 
 ## Current asset dependency decision
 
-The accepted reusable export `C:/ws/asset-production_system/art/exports/skeleton-static-integration-v001/` remains an incremental source package. Its four Skeleton rank-01 static IDs may be integrated only through a versioned canonical manifest. They do not close the beta asset requirement and no `needs_rework` animation becomes approved by default.
+The accepted reusable export `C:/ws/asset-production-system/art/exports/skeleton-static-integration-v001/` remains an incremental source package. Its four Skeleton rank-01 static IDs may be integrated only through a versioned canonical manifest. They do not close the beta asset requirement and no `needs_rework` animation becomes approved by default.
 
 The next active implementation step is Part 6.01: record each V2.5 `AssetId`, its production/export state, runtime consumer, and any fallback. Part 6.02 then introduces the adapter contract; only after its mapping validates may obsolete presentation paths and legacy assets be cleaned. The next engine maintenance task is to keep the local Godot .NET 4.7.2 executable/templates available and repeat baseline build/export validation when toolchain or package configuration changes.

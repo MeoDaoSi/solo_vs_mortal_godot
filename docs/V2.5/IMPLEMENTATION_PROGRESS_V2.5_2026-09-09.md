@@ -3,7 +3,7 @@
 Ngày cập nhật: 10/09/2026. Người rà soát: agent chính, đối chiếu source `main`, đặc tả V2.5 khóa hash và toàn bộ evidence trong nhật ký thực hiện.
 
 - Source: `C:/ws/solo_vs_mortal_godot`.
-- Assets/workflow: `C:/ws/asset-production_system`.
+- Assets/workflow: `C:/ws/asset-production-system`.
 - Đặc tả có thẩm quyền: `Solo_vs_Mortal_Gameplay_System_V2.5.md` và `game_spec/`, revision `2026-09-08.closed-1`, content `svm-content-2.5.1`, balance `svm-balance-2.5.1`.
 - Báo cáo này là trạng thái triển khai và danh sách việc tiếp theo; không thay thế hoặc định nghĩa lại gameplay.
 - Current-state trong các mục 1–11 đã được reconcile theo source/evidence mới nhất. Section 12 append-only vẫn là lịch sử bất biến: không sửa/xóa các entry cũ. Không chạy gameplay acceptance thay user và không xóa asset khi chưa qua dependency/delete gate.
@@ -210,7 +210,7 @@ Như vậy **persistence/world không còn là blocker logic chính cho cleanup*
 3. **Asset completeness:** canonical adapter đã có foundation nhưng catalog runtime hiện chỉ map được package Skeleton static nhỏ; phần lớn Beta/Slice asset vẫn chưa có user-approved, hash-versioned integration export. W09 vì vậy chưa đóng.
 4. **Manual acceptance:** combat, Soul loop, save/load, world và UI mới có static/build evidence. 18 canonical acceptance cases chưa có user result; không được nâng Part 3/4/5/8 thành complete.
 5. **Architecture debt:** layering `Core/Data → Simulation → Application → Presentation` vẫn đúng ở macro level, nhưng `Arena.cs`, `GameApplication.cs`, `V25CombatCoordinator.cs` và `CanonicalV25Definitions.cs` đã trở thành hotspot lớn. Presentation còn import một số `Simulation.*`/`Data.*`, và save/travel durable orchestration vẫn nằm nhiều trong `Arena`; đây không nhất thiết đổi gameplay V2.5 nhưng làm tăng rủi ro khi tiếp tục tích hợp.
-6. **Repository hygiene:** `.codex_obj/` đang bị track dù là generated .NET state; `_beta_helpers/_beta_jobs` và một số asset tooling còn ở root; helper có hard-coded workspace `C:\ws\asset-production_system`. Cần dọn/parameterize nhưng chỉ sau khi xác định dependency để không làm hỏng pipeline đang dùng.
+6. **Repository hygiene:** `.codex_obj/` đang bị track dù là generated .NET state; `_beta_helpers/_beta_jobs` và một số asset tooling còn ở root; helper dùng workspace `C:\ws\asset-production-system`. Cần dọn/parameterize nhưng chỉ sau khi xác định dependency để không làm hỏng pipeline đang dùng.
 7. **Commit discipline:** current `main` commit `66a0ea9` có message chỉ là `commit` dù thay đổi cross-cutting runtime/data/docs/assets/tooling. Các phase sau phải dùng commit message có scope và tránh gom migration + asset production + presentation cleanup vào một commit khó audit.
 
 ### 10.4. Gate đóng vấn đề 6
@@ -314,7 +314,7 @@ Agent thực hiện theo dependency, không xóa wildcard:
 2. Cô lập hoặc loại `GameDefinitions`/asset-manifest/characterAnimations compatibility dependency khi bootstrap V2.5 không còn cần.
 3. Chỉ xóa Devour/Essence/Bloodline physical files khi legacy-save/support decision cho phép; canonical runtime isolation hiện đã đạt.
 4. Bỏ generated `.codex_obj/` khỏi Git và thêm ignore phù hợp nếu xác nhận không có dependency runtime.
-5. Gom `_beta_helpers/_beta_jobs` vào `tools/asset_pipeline/` hoặc production workspace; đổi hard-coded `C:\ws\asset-production_system` thành CLI/config/environment input.
+5. Gom `_beta_helpers/_beta_jobs` vào `tools/asset_pipeline/` hoặc production workspace; đổi hard-coded `C:\ws\asset-production-system` thành CLI/config/environment input.
 6. Chuẩn hóa commit theo scope (`fix(v2.5): ...`, `refactor(presentation): ...`, `feat(assets): ...`) và tránh commit message kiểu `commit`.
 7. Build/export lại sau mỗi cleanup group; ghi replacement ID và file xóa trong dependency inventory.
 
@@ -664,3 +664,9 @@ Khi code + approved asset scope + baseline engine đều sẵn:
 - **Tài liệu/evidence đã reconcile:** `AGENTS.md`, `docs/README.md`, `docs/V2.5/README.md`, `CURRENT_IMPLEMENTATION_STATUS.md`, `work-items.json`, `implementation-tasks-4-8.json`, và sections 1–11 của báo cáo này nay dùng baseline 4.7.2; `source-audit.md` giữ evidence cũ kèm supersession note. `C:/ws/asset-production_system/game_spec/README.md` đổi prompt implementation hiện hành; `deliverables/review-beta/REVIEW.md` giữ review lịch sử kèm supersession note.
 - **Historical/authority safety:** các entry 4.5.2 trước đây trong Section 12 vẫn là historical evidence hợp lệ tại thời điểm ghi nhưng bị supersede cho implementation tương lai. `data/v2.5/spec-lock.json` không đổi. Hash-pinned `C:/ws/asset-production_system/Solo_vs_Mortal_Gameplay_System_V2.5.md` vẫn giữ wording baseline cũ và SHA-256 `402c93eff6879ec25076aeea10c3d3ff4ec75580a518d00d89ac8b74f93d1b53`; không regenerate authority chỉ để đổi toolchain.
 - **Bước tiếp theo:** giữ executable/templates 4.7.2 và lặp lại baseline build/export khi toolchain/package configuration đổi. Gameplay acceptance 1–18 vẫn hoàn toàn thuộc user; next implementation gate vẫn là Part 6 asset mapping/user approval.
+
+### 2026-09-10 — Reconcile active asset-production workspace path
+
+- **Trạng thái:** `complete`.
+- **Đã cập nhật current-state:** active workspace path là `C:/ws/asset-production-system`; policy, current status, execution plans, dependency inventory, runtime asset-catalog provenance và live helper configuration dùng form hyphen.
+- **Historical safety:** các entry cũ dưới Section 12 không bị sửa hoặc xóa; chúng giữ nguyên path được ghi tại thời điểm evidence/journal được tạo. Audit snapshots, scope locks, generated provenance và review/error records cũng được giữ nguyên để không làm sai hash hoặc provenance lịch sử.

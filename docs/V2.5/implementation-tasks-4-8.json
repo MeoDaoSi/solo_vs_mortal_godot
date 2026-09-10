@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "authority": "C:/ws/asset-production_system/Solo_vs_Mortal_Gameplay_System_V2.5.md closed-1 and pinned game_spec JSON",
+  "authority": "C:/ws/asset-production-system/Solo_vs_Mortal_Gameplay_System_V2.5.md closed-1 and pinned game_spec JSON",
   "purpose": "Execution plan only; numbers and mechanics remain canonical authority. Each required bullet is mandatory, not a suggestion.",
   "executionRules": [
     "User authorizes continuous implementation of an entire numbered part. Microtasks clarify scope and evidence; they are not user-prompt or permission gates. Code completes 4.02 through 4.12 automatically after 4.01, sends checkpoints, and continues in dependency order. Do not start Part5 without authorization.",

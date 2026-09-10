@@ -3,7 +3,7 @@
   "catalogId": "svm-v2.5-runtime-assets",
   "catalogVersion": "skeleton-static-integration-v001",
   "complete": false,
-  "sourceExport": "C:/ws/asset-production_system/art/exports/skeleton-static-integration-v001/asset-map.json",
+  "sourceExport": "C:/ws/asset-production-system/art/exports/skeleton-static-integration-v001/asset-map.json",
   "assets": [
     {
       "assetId": "soul.skeleton.rank01.pickup",

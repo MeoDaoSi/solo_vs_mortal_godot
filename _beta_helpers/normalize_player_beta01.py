@@ -21,7 +21,7 @@ from PIL import Image, ImageDraw, ImageFont
 from scipy import ndimage
 
 
-PROJECT = Path(r"C:\ws\asset-production_system")
+PROJECT = Path(r"C:\ws\asset-production-system")
 CANONICAL_SIZE = (1254, 1254)
 CANVAS = (64, 64)
 PIVOT = [32, 56]

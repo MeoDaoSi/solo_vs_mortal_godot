@@ -27,8 +27,8 @@ An AssetId requirement is a production target, not proof that an image exists. `
 | Group / file | Owner | Reference / replacement state | Action |
 |---|---|---|---|
 | `assets/v2.5/skeleton-static-integration-v001/*.png` | Art export `skeleton-static-integration-v001` | Four user-authorized, technically and visually QA-passed static Skeleton rank-01 files. Hashes and source path are pinned in `data/v2.5/asset-catalog.v2.5.json`. `inEngine` remains false until manual user review. | retain |
-| `C:/ws/asset-production_system/art/exports/skeleton-static-integration-v001/` | Art production repository | Provenance package and the source `asset-map.json`; it is not a project runtime dependency after the four PNGs are copied. | retain outside game project |
-| Raw/master/normalized/preview files in `C:/ws/asset-production_system/art/` | Art production repository | Production provenance and user review evidence. | retain outside game project |
+| `C:/ws/asset-production-system/art/exports/skeleton-static-integration-v001/` | Art production repository | Provenance package and the source `asset-map.json`; it is not a project runtime dependency after the four PNGs are copied. | retain outside game project |
+| Raw/master/normalized/preview files in `C:/ws/asset-production-system/art/` | Art production repository | Production provenance and user review evidence. | retain outside game project |
 | `LICENSE*`, vendor readmes and third-party legal files | Respective vendor | License/legal dependency. | retain |
 
 The imported Skeleton art is deliberately static. It may render only `soul.skeleton.rank01.pickup`, `.banner.icon`, `.enemy.south`, and `.ally.south`. It does not stand in for any other species, direction, rank, or animation.

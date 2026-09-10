@@ -1,6 +1,6 @@
 # Solo vs Mortal — V2.5 implementation records
 
-The closed gameplay authority is outside this checkout at `C:/ws/asset-production_system/Solo_vs_Mortal_Gameplay_System_V2.5.md`, revision `2026-09-08.closed-1`. The runtime accepts only the hash-pinned data in `data/v2.5/`; these records never override that authority.
+The closed gameplay authority is outside this checkout at `C:/ws/asset-production-system/Solo_vs_Mortal_Gameplay_System_V2.5.md`, revision `2026-09-08.closed-1`. The runtime accepts only the hash-pinned data in `data/v2.5/`; these records never override that authority.
 
 ## Current records
 

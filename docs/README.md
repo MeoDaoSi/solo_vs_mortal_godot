@@ -2,7 +2,7 @@
 
 The closed V2.5 gameplay authority lives outside this source checkout at:
 
-`C:/ws/asset-production_system/Solo_vs_Mortal_Gameplay_System_V2.5.md`  
+`C:/ws/asset-production-system/Solo_vs_Mortal_Gameplay_System_V2.5.md`
 Revision: `2026-09-08.closed-1`  
 Content: `svm-content-2.5.1`  
 Balance: `svm-balance-2.5.1`  

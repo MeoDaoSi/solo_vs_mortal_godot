@@ -10,7 +10,7 @@ from pathlib import Path
 from PIL import Image
 
 
-PROJECT = Path(r"C:\ws\asset-production_system")
+PROJECT = Path(r"C:\ws\asset-production-system")
 STYLE_HASH = "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6"
 SCALE_HASH = "fd8e96547e2130e619c373caafe244eb1712e2502045ac2ba6bfb48f4b553fd8"
 
