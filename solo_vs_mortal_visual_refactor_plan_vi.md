@@ -23,7 +23,7 @@
 
 | Phase | Nội dung | Trạng thái | Evidence / Ghi chú |
 |---|---|---|---|
-| Phase 0 | Freeze & Measure — audit asset/presentation hiện tại | [ ] TODO | |
+| Phase 0 | Freeze & Measure — audit asset/presentation hiện tại | [x] COMPLETE | 2026-09-11 — evidence `docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.md/.json`; tool `tools/AssetAudit` |
 | Phase 1 | Repair Animation Assets — sửa animation thật | [ ] TODO | |
 | Phase 2 | World Scale Contract — chốt hệ thống tỉ lệ thế giới | [ ] TODO | |
 | Phase 3 | Readability — làm rõ Player/quái/vật thể | [ ] TODO | |
@@ -36,7 +36,7 @@
 
 | Work Item | Nội dung | Trạng thái | Commit / PR / Evidence |
 |---|---|---|---|
-| A | Asset Truth Audit | [ ] TODO | |
+| A | Asset Truth Audit | [x] COMPLETE | Phase 0 evidence `docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.md/.json` |
 | B | Player Animation Replacement | [ ] TODO | |
 | C | World Scale Contract + VisualScaleLab | [ ] TODO | |
 | D | Runtime Scale Application | [ ] TODO | |
@@ -253,7 +253,7 @@ Tạo evidence chính xác để refactor tiếp theo không dựa vào phỏng 
 
 ## Tasks
 
-- [ ] **P0.1** Export audit table cho mọi AssetId đang được load, gồm:
+- [x] **P0.1** Export audit table cho mọi AssetId đang được load, gồm:
   - AssetId
   - role / representation / rank / clip / direction
   - source PNG dimensions
@@ -265,21 +265,33 @@ Tạo evidence chính xác để refactor tiếp theo không dựa vào phỏng 
   - current visual scale
   - final visible height
   - QA state
-- [ ] **P0.2** Detect identical frames (frame pixel giống nhau).
-- [ ] **P0.3** Detect opaque bounds drift (biên silhouette thay đổi bất thường).
-- [ ] **P0.4** Detect pivot drift.
-- [ ] **P0.5** Detect actor thiếu direction.
-- [ ] **P0.6** Detect actor thiếu `idle/move/attack`.
-- [ ] **P0.7** Detect asset thiếu visual metrics.
-- [ ] **P0.8** Detect duplicate scale ownership do `PresentationScale`.
-- [ ] **P0.9** Tạo `docs/V2.5/VISUAL_ASSET_AUDIT_<date>.md`.
-- [ ] **P0.10** Tạo machine-readable JSON report.
+- [x] **P0.2** Detect identical frames (frame pixel giống nhau).
+- [x] **P0.3** Detect opaque bounds drift (biên silhouette thay đổi bất thường).
+- [x] **P0.4** Detect pivot drift.
+- [x] **P0.5** Detect actor thiếu direction.
+- [x] **P0.6** Detect actor thiếu `idle/move/attack`.
+- [x] **P0.7** Detect asset thiếu visual metrics.
+- [x] **P0.8** Detect duplicate scale ownership do `PresentationScale`.
+- [x] **P0.9** Tạo `docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.md`.
+- [x] **P0.10** Tạo machine-readable JSON report (`docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.json`).
 
 ### Exit Criteria
 
-- [ ] Có thể trả lời chính xác cho mọi visual asset: file nào, bao nhiêu frame thật, silhouette bao nhiêu px, pivot ở đâu, scale runtime bao nhiêu.
-- [ ] Không gọi đây là gameplay test.
-- [ ] Agent cập nhật Phase 0 thành `[x] COMPLETE`.
+- [x] Có thể trả lời chính xác cho mọi visual asset: file nào, bao nhiêu frame thật, silhouette bao nhiêu px, pivot ở đâu, scale runtime bao nhiêu.
+- [x] Không gọi đây là gameplay test.
+- [x] Agent cập nhật Phase 0 thành `[x] COMPLETE`.
+
+> **Kết quả (2026-09-11, tool `tools/AssetAudit`, compile + run `dotnet build`/`dotnet run` only — không phải gameplay test):**
+> - 149 catalog assets trong `asset-integration-trial-v001` (catalog `complete=false`); công cụ đọc trực tiếp đủ 149 PNG (parse IHDR + IDAT + filter reconstruct, không dùng System.Drawing).
+> - Người so sánh: `presentation-visual-metrics.v2.5.json`, khớp chính xác 100% opaque bounds cho các asset có metrics (vd `player.base.move.s` = 21,15,22,41; `soul.skeleton.rank01.enemy.south` = 15,12,34,44) → parser PNG đúng.
+> - **Identical frames: 20 assets** — toàn bộ `player.base.*` (idle 4/4, move/attack/death 6/6, hit 2/2 đều chỉ có 1 unique hash) → khớp finding cũ "1 unique frame/6", thuộc pending `needs_rework` (ART-01 … ), chưa phải approved motion.
+> - **Opaque bounds drift: 32** (chủ yếu Skeleton enemy hit/death — đổi tư thế trong clip là legit; cần xem lẻ trong Phase 1B).
+> - **Missing visual metrics: 126** (bao gồm các bản generate, tile, prop); chỉ 23 asset có metrics; 23 scale not 1:1 (INFO `SCALE_OWNERSHIP`).
+> - **Missing clip: 2 HIGH** (`soul.skeleton.rank01.enemy` thiếu `idle`, `move` — đúng theo `asset-requirements.v2.5.json` yêu cầu idle/move/attack/hit/death; weaponpose chỉ cần attack nên không tính).
+> - **Pivot drift: 0** (mọi animated actor pivot đều (32,56)); **Markers `MISSING: <AssetId>` cho 126/149 asset** vì không có metrics (nhiều là legit — tile mask 1-frame 32×32 pivot (0,0)).
+> - **Static reuse actors** (bị loại khỏi coverage vì thiết kế): `equipment.sword.rank01.attachment.*` (4), `soul.skeleton.rank01.enemy.south`, `soul.skeleton.rank01.ally.south`.
+> - Ghi chú: 3 ID ban đầu dự kiến không tìm thấy trong catalog (so với worklist) — `player.base.idle.s` (`needs_rework`), `soul.skeleton.rank01.enemy.south`, `soul.skeleton.rank01.ally.south` đã được user cho phép tái sử dụng static, không phải animation task.
+> - **Next (Phase 1A)**: regenerate player.body 6-frame locomotion; yêu cầu facet drift check + foot anchor.
 
 ---
 
