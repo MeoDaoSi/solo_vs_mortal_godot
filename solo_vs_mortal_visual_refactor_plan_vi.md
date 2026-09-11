@@ -24,7 +24,7 @@
 | Phase | Nội dung | Trạng thái | Evidence / Ghi chú |
 |---|---|---|---|
 | Phase 0 | Freeze & Measure — audit asset/presentation hiện tại | [x] COMPLETE | 2026-09-11 — evidence `docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.md/.json`; tool `tools/AssetAudit` |
-| Phase 1 | Repair Animation Assets — sửa animation thật | [ ] TODO | |
+| Phase 1 | Repair Animation Assets — sửa animation thật | [-] IN PROGRESS | 2026-09-11 — Player move S/W/E/N đã thay bằng 6 frame riêng/clip từ `player.slice_01/batch-004`; technical QA pass, native-motion và Godot review còn chờ user. |
 | Phase 2 | World Scale Contract — chốt hệ thống tỉ lệ thế giới | [ ] TODO | |
 | Phase 3 | Readability — làm rõ Player/quái/vật thể | [ ] TODO | |
 | Phase 4 | Semantic World Layers — refactor cách build map | [ ] TODO | |
@@ -308,18 +308,18 @@ Tạo evidence chính xác để refactor tiếp theo không dựa vào phỏng 
 
 ### Asset tasks
 
-- [ ] **P1.1** Regenerate hoặc repair 6 frame mỗi direction sao cho có locomotion cycle (chu kỳ bước đi) thật.
-- [ ] **P1.2** Giữ body scale cố định cho cả clip.
-- [ ] **P1.3** Giữ foot anchor / ground pivot cố định.
-- [ ] **P1.4** Không resize riêng từng frame theo bounding box.
-- [ ] **P1.5** Giữ transparent canvas và palette ổn định.
-- [ ] **P1.6** Motion phải nhìn thấy ở native scale (kích thước thật trong game), không chỉ preview 3×.
-- [ ] **P1.7** Export contact sheet / frame-step preview.
-- [ ] **P1.8** Export GIF preview.
-- [ ] **P1.9** Chạy identical-frame detection.
-- [ ] **P1.10** `uniqueFrames >= 4` với clip 6 frame; tốt nhất 6/6 đều có motion hợp lý.
-- [ ] **P1.11** Validate foot vertical drift.
-- [ ] **P1.12** Ghi provenance / transformation recipe vào production manifest.
+- [x] **P1.1** Regenerate hoặc repair 6 frame mỗi direction sao cho có locomotion cycle (chu kỳ bước đi) thật. Technical implementation: contact/down/passing A-B cho S/W/E/N trong `player.slice_01/batch-004`; continuity còn chờ user ở native scale.
+- [x] **P1.2** Giữ body scale cố định cho cả clip. Một `clipScale` chung/direction, không có frame-scale riêng.
+- [x] **P1.3** Giữ foot anchor / ground pivot cố định. Tất cả 24 frame có foot y=56, pivot `(32,56)`.
+- [x] **P1.4** Không resize riêng từng frame theo bounding box. Chỉ canonicalize nguồn và dùng một shared transform/direction.
+- [x] **P1.5** Giữ transparent canvas và palette ổn định. Canvas 64×64, alpha binary, palette 16 màu đã ghi recipe.
+- [?] **P1.6** Motion phải nhìn thấy ở native scale (kích thước thật trong game), không chỉ preview 3×. Chờ user test Godot.
+- [x] **P1.7** Export contact sheet / frame-step preview. Có 1× và 3× theo direction.
+- [x] **P1.8** Export GIF preview. Có GIF 100 ms/frame theo direction.
+- [x] **P1.9** Chạy identical-frame detection. Mỗi clip có 6 output frame hash khác nhau.
+- [x] **P1.10** `uniqueFrames >= 4` với clip 6 frame; tốt nhất 6/6 đều có motion hợp lý. Đo được 6/6 hash riêng cho S/W/E/N; chất lượng motion chờ user review.
+- [x] **P1.11** Validate foot vertical drift. 24/24 frame output có foot y=56.
+- [x] **P1.12** Ghi provenance / transformation recipe vào production manifest. Batch `player.slice_01/batch-004` đã record vào catalog sản xuất; runtime provenance/hash đã cập nhật, status `user_review_pending`.
 
 ### Gợi ý walk cycle 6 frame
 
@@ -358,10 +358,10 @@ Mỗi clip thiếu phải được classify:
 
 ### Tasks
 
-- [ ] **P1.13** Audit Skeleton enemy Rank 1.
-- [ ] **P1.14** Audit Skeleton ally Rank 1.
-- [ ] **P1.15** Không silent fallback sang clip/hướng không liên quan.
-- [ ] **P1.16** Tạo missing animation matrix.
+- [x] **P1.13** Audit Skeleton enemy Rank 1. Thiếu idle ×4, move ×4, attack W/E/N và hit N; death ×4 còn `integration_trial`.
+- [x] **P1.14** Audit Skeleton ally Rank 1. Có đủ idle/move/attack/hit/disperse ×4 nhưng toàn bộ animated clip còn `integration_trial`.
+- [x] **P1.15** Không silent fallback sang clip/hướng không liên quan. Runtime dùng `missing` marker với AssetId yêu cầu khi animation exact không tồn tại.
+- [x] **P1.16** Tạo missing animation matrix. Xem `docs/V2.5/phase1-animation-matrix-2026-09-11.md`.
 
 ---
 
@@ -1596,13 +1596,13 @@ Không sửa map.
 
 ### Checklist
 
-- [ ] move.s repaired.
-- [ ] move.w repaired.
-- [ ] move.e repaired.
-- [ ] move.n repaired.
-- [ ] GIF/contact sheet ready.
-- [ ] Catalog hash updated.
-- [ ] Runtime plays real frames.
+- [x] move.s repaired.
+- [x] move.w repaired.
+- [x] move.e repaired.
+- [x] move.n repaired.
+- [x] GIF/contact sheet ready.
+- [x] Catalog hash updated.
+- [?] Runtime plays real frames — chờ user manual test trong Godot.
 - [?] User review.
 - [ ] Sau user accept → `[x] COMPLETE`.
 

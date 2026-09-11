@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "referenceHashes": [
+    "59bc6b957d801804510db87c3a71cce3bfb63efd62c412091a6b9cb2045b7aa6",
+    "4897d0eac8026f58e1d529aa171e7f1e948b75f7b85b8f36052956893a9dad27",
+    "0de75b5cf07bc8b78a398b42ee3c2e94cb232ad2a98b502a88ce01379ecde4e9",
+    "988467cc6e10fbc7c597f964e09222b2281a84b81ddc16af3dcd73b6e2e7f77d",
+    "3be7cd21f0c4cc2ad23be273722c9553eb8701049ce49916a29a8436b558ad82"
+  ],
+  "referenceIdsUsed": [
+    "style_master_scene"
+  ],
+  "promptTemplate": "Use case: precise-object-edit. Asset type: one source pose for the Solo vs Mortal Player {direction}-facing walk cycle. Use the supplied Player source as the identity/edit target and the approved style scene as the style reference. Preserve the supplied hooded Player: detailed pixel-art dark charcoal armor and cloth, restrained amber seams, palette family, proportions, anatomy, camera and grounded contact landmark; no weapon. Return one centered full-body source pose only, genuinely transparent background, same top-down three-quarter camera. No ground, baked shadow, effects, glow, particles, text, labels, borders, grid, extra characters, duplicated limbs, cropped feet, chibi redesign or background. Primary request: {pose}.",
+  "directions": {
+    "s": [
+      {"sourceId": "babe0f7b-b4ae-48fb-b873-db96b3008116", "prompt": "South contact A: one boot planted forward and the other back; hips and shoulders counter-rotated."},
+      {"sourceId": "c1678796-f675-4797-92ef-e6a10fdd28cb", "prompt": "South down/recoil A: compressed over the planted forward leg, rear heel raised, knees flexed."},
+      {"sourceId": "3ce8fef8-06c5-4674-8316-be7c3619ab90", "prompt": "South passing A: rear boot swings beneath hips while the support boot remains planted."},
+      {"sourceId": "676ff73e-ba5c-4642-8e63-976793016448", "prompt": "South contact B: opposite boot planted forward and the original leading boot back."},
+      {"sourceId": "329e1e3d-4778-4e85-9f24-55ffc0e9dffc", "prompt": "South down/recoil B: compressed over the opposite planted leg, other heel raised, knees flexed."},
+      {"sourceId": "31008023-307d-4dd1-b2cc-325d8731c568", "prompt": "South passing B: opposite boot swings beneath hips while the support boot remains planted."}
+    ],
+    "w": [
+      {"sourceId": "992b3703-e5da-4fd2-9699-040d68d6a272", "prompt": "West contact A: front-most boot planted west/forward and the other boot back; hips and shoulders counter-rotated."},
+      {"sourceId": "dea50cb6-879f-4203-ae3a-fde907b0c4c2", "prompt": "West down/recoil A: compressed over the planted forward leg, rear heel raised, knees flexed."},
+      {"sourceId": "af1e9944-3922-4a9f-b1ad-d3c9aaa8cbeb", "prompt": "West passing A: rear boot swings beneath hips while the support boot remains planted."},
+      {"sourceId": "7fba08bc-3a84-4143-b753-2c57bfc5f17a", "prompt": "West contact B: opposite boot planted west/forward and the original leading boot back."},
+      {"sourceId": "1fdfd03f-a737-4640-ad24-21cf87b339cf", "prompt": "West down/recoil B: compressed over the opposite planted leg, other heel raised, knees flexed."},
+      {"sourceId": "491b79fd-f5a1-4c40-acd1-e77ccc2f2c86", "prompt": "West passing B: opposite boot swings beneath hips while the support boot remains planted."}
+    ],
+    "e": [
+      {"sourceId": "95e075d8-5b2a-4d99-866c-e75549f567ff", "prompt": "East contact A: front-most boot planted east/forward and the other boot back; hips and shoulders counter-rotated."},
+      {"sourceId": "2cbd4de8-5867-48d6-82dd-1189c73dc38f", "prompt": "East down/recoil A: compressed over the planted forward leg, rear heel raised, knees flexed."},
+      {"sourceId": "07dbb747-bb45-46f0-a8ec-7a5f5aa68b59", "prompt": "East passing A: rear boot swings beneath hips while the support boot remains planted."},
+      {"sourceId": "d4e28f3b-6473-46d9-a8f5-4531255db8b4", "prompt": "East contact B: opposite boot planted east/forward and the original leading boot back."},
+      {"sourceId": "e0c8f39a-a4d2-4898-9a94-54c198e75c93", "prompt": "East down/recoil B: compressed over the opposite planted leg, other heel raised, knees flexed."},
+      {"sourceId": "33417d2d-6b09-45ea-94de-1eab0a5252a9", "prompt": "East passing B: opposite boot swings beneath hips while the support boot remains planted."}
+    ],
+    "n": [
+      {"sourceId": "a565a2dd-19f0-41fd-a2f5-1df171cd2455", "prompt": "North contact A: one boot planted north/forward and the other boot back; hips and shoulders counter-rotated."},
+      {"sourceId": "990c6a70-f25d-464b-b2c3-e11b1b0d97e7", "prompt": "North down/recoil A: compressed over the planted forward leg, rear heel raised, knees flexed."},
+      {"sourceId": "4a7f9f64-90f2-47b0-8222-603421d4333c", "prompt": "North passing A: rear boot swings beneath hips while the support boot remains planted."},
+      {"sourceId": "09fa2311-57c0-46da-b780-e76b218cf648", "prompt": "North contact B: opposite boot planted north/forward and the original leading boot back."},
+      {"sourceId": "d26b76a1-fe0c-413b-8665-6b52fd07f23d", "prompt": "North down/recoil B: compressed over the opposite planted leg, other heel raised, knees flexed."},
+      {"sourceId": "e74b9c26-8208-43f3-8ac2-ec0ce30ed12a", "prompt": "North passing B: opposite boot swings beneath hips while the support boot remains planted."}
+    ]
+  }
+}

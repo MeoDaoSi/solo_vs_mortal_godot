@@ -3712,7 +3712,7 @@
     {
       "assetId": "player.base.move.s",
       "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.move.s.png",
-      "sha256": "e3f6341ba889f161280005c6b989937b16cbf0408341b839f85a88f096a67a9b",
+      "sha256": "b9ec7ed79ea28a1f4992bc1fa5c4861045668b31f10ea6cdb5d8742a3b03fa41",
       "role": "actor",
       "representation": "ui",
       "rank": 1,
@@ -3792,12 +3792,12 @@
         "visual": false,
         "inEngine": false
       },
-      "approvalStatus": "integration_trial_authorized"
+      "approvalStatus": "user_review_pending"
     },
     {
       "assetId": "player.base.move.w",
       "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.move.w.png",
-      "sha256": "e3122cb2a786a3dc7c863bc83aaa81bf9f1ec64d157cbb0bad1d120ff101b6d3",
+      "sha256": "ba7f3efefe425a4bfec4eb226f5d9140e99f17fb1fcb61de3adbb9803549e884",
       "role": "actor",
       "representation": "ui",
       "rank": 1,
@@ -3877,12 +3877,12 @@
         "visual": false,
         "inEngine": false
       },
-      "approvalStatus": "integration_trial_authorized"
+      "approvalStatus": "user_review_pending"
     },
     {
       "assetId": "player.base.move.e",
       "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.move.e.png",
-      "sha256": "cdf953f8d72b7118f67fbab23908b452064e83e49afd7be1861976bb4eca0304",
+      "sha256": "cae119219d7d0356102fbf44fd52e15c98b6fb01bd7762fb3c9efccb679a36ab",
       "role": "actor",
       "representation": "ui",
       "rank": 1,
@@ -3962,12 +3962,12 @@
         "visual": false,
         "inEngine": false
       },
-      "approvalStatus": "integration_trial_authorized"
+      "approvalStatus": "user_review_pending"
     },
     {
       "assetId": "player.base.move.n",
       "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.move.n.png",
-      "sha256": "4c9bed65c89fa48937b4b9ca6b2aacc7200b37090c6c58e8a6ed4a6ffdf171db",
+      "sha256": "df6fa1e4f76e69169c061cfa6c3be7788be5c8ef0dd04970c748bf9b4e9af87a",
       "role": "actor",
       "representation": "ui",
       "rank": 1,
@@ -4047,7 +4047,7 @@
         "visual": false,
         "inEngine": false
       },
-      "approvalStatus": "integration_trial_authorized"
+      "approvalStatus": "user_review_pending"
     },
     {
       "assetId": "player.base.attack.s",

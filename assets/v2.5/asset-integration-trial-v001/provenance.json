@@ -6035,16 +6035,16 @@
     },
     {
       "assetId": "player.base.move.s",
-      "originalSourceOutputPath": "art/production/work/player.slice_01/batch-001/outputs/player.base.move.s.png",
+      "originalSourceOutputPath": "art/production/work/player.slice_01/batch-004/outputs/player.base.move.s.png",
       "copiedRelativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.move.s.png",
-      "sourceSha256": "e3f6341ba889f161280005c6b989937b16cbf0408341b839f85a88f096a67a9b",
-      "copiedSha256": "e3f6341ba889f161280005c6b989937b16cbf0408341b839f85a88f096a67a9b",
-      "productionState": "generated",
-      "historicalReviewState": "generated",
-      "authorizationResult": "ELIGIBLE_TRIAL",
-      "outputRecordedAt": "2026-09-10T02:13:14.0000000+07:00",
-      "sourceManifest": "art/production/work/player.slice_01/batch-001/manifest.json",
-      "sourceManifestSha256": "49506060ef22146240c8677e3d58be4d2f8fa75b8929da4a679cab8c8bcf8c39",
+      "sourceSha256": "b9ec7ed79ea28a1f4992bc1fa5c4861045668b31f10ea6cdb5d8742a3b03fa41",
+      "copiedSha256": "b9ec7ed79ea28a1f4992bc1fa5c4861045668b31f10ea6cdb5d8742a3b03fa41",
+      "productionState": "review_ready",
+      "historicalReviewState": "review_ready",
+      "authorizationResult": "USER_DIRECTED_REPAIR_PENDING_REVIEW",
+      "outputRecordedAt": "2026-09-11T18:50:42.7922823+07:00",
+      "sourceManifest": "art/production/work/player.slice_01/batch-004/manifest.json",
+      "sourceManifestSha256": "6f66754ed7573db96ad66d74c82cfa668d506937873baafc9409912b5fdf1077",
       "frameSize": [
         64,
         64
@@ -6122,21 +6122,21 @@
         "visual": false,
         "inEngine": false
       },
-      "approvalStatus": "integration_trial_authorized",
+      "approvalStatus": "user_review_pending",
       "contract": {}
     },
     {
       "assetId": "player.base.move.w",
-      "originalSourceOutputPath": "art/production/work/player.slice_01/batch-001/outputs/player.base.move.w.png",
+      "originalSourceOutputPath": "art/production/work/player.slice_01/batch-004/outputs/player.base.move.w.png",
       "copiedRelativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.move.w.png",
-      "sourceSha256": "e3122cb2a786a3dc7c863bc83aaa81bf9f1ec64d157cbb0bad1d120ff101b6d3",
-      "copiedSha256": "e3122cb2a786a3dc7c863bc83aaa81bf9f1ec64d157cbb0bad1d120ff101b6d3",
-      "productionState": "generated",
-      "historicalReviewState": "generated",
-      "authorizationResult": "ELIGIBLE_TRIAL",
-      "outputRecordedAt": "2026-09-10T02:13:14.0000000+07:00",
-      "sourceManifest": "art/production/work/player.slice_01/batch-001/manifest.json",
-      "sourceManifestSha256": "49506060ef22146240c8677e3d58be4d2f8fa75b8929da4a679cab8c8bcf8c39",
+      "sourceSha256": "ba7f3efefe425a4bfec4eb226f5d9140e99f17fb1fcb61de3adbb9803549e884",
+      "copiedSha256": "ba7f3efefe425a4bfec4eb226f5d9140e99f17fb1fcb61de3adbb9803549e884",
+      "productionState": "review_ready",
+      "historicalReviewState": "review_ready",
+      "authorizationResult": "USER_DIRECTED_REPAIR_PENDING_REVIEW",
+      "outputRecordedAt": "2026-09-11T18:50:42.7922823+07:00",
+      "sourceManifest": "art/production/work/player.slice_01/batch-004/manifest.json",
+      "sourceManifestSha256": "6f66754ed7573db96ad66d74c82cfa668d506937873baafc9409912b5fdf1077",
       "frameSize": [
         64,
         64
@@ -6214,21 +6214,21 @@
         "visual": false,
         "inEngine": false
       },
-      "approvalStatus": "integration_trial_authorized",
+      "approvalStatus": "user_review_pending",
       "contract": {}
     },
     {
       "assetId": "player.base.move.e",
-      "originalSourceOutputPath": "art/production/work/player.slice_01/batch-001/outputs/player.base.move.e.png",
+      "originalSourceOutputPath": "art/production/work/player.slice_01/batch-004/outputs/player.base.move.e.png",
       "copiedRelativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.move.e.png",
-      "sourceSha256": "cdf953f8d72b7118f67fbab23908b452064e83e49afd7be1861976bb4eca0304",
-      "copiedSha256": "cdf953f8d72b7118f67fbab23908b452064e83e49afd7be1861976bb4eca0304",
-      "productionState": "generated",
-      "historicalReviewState": "generated",
-      "authorizationResult": "ELIGIBLE_TRIAL",
-      "outputRecordedAt": "2026-09-10T02:13:14.0000000+07:00",
-      "sourceManifest": "art/production/work/player.slice_01/batch-001/manifest.json",
-      "sourceManifestSha256": "49506060ef22146240c8677e3d58be4d2f8fa75b8929da4a679cab8c8bcf8c39",
+      "sourceSha256": "cae119219d7d0356102fbf44fd52e15c98b6fb01bd7762fb3c9efccb679a36ab",
+      "copiedSha256": "cae119219d7d0356102fbf44fd52e15c98b6fb01bd7762fb3c9efccb679a36ab",
+      "productionState": "review_ready",
+      "historicalReviewState": "review_ready",
+      "authorizationResult": "USER_DIRECTED_REPAIR_PENDING_REVIEW",
+      "outputRecordedAt": "2026-09-11T18:50:42.7922823+07:00",
+      "sourceManifest": "art/production/work/player.slice_01/batch-004/manifest.json",
+      "sourceManifestSha256": "6f66754ed7573db96ad66d74c82cfa668d506937873baafc9409912b5fdf1077",
       "frameSize": [
         64,
         64
@@ -6306,21 +6306,21 @@
         "visual": false,
         "inEngine": false
       },
-      "approvalStatus": "integration_trial_authorized",
+      "approvalStatus": "user_review_pending",
       "contract": {}
     },
     {
       "assetId": "player.base.move.n",
-      "originalSourceOutputPath": "art/production/work/player.slice_01/batch-001/outputs/player.base.move.n.png",
+      "originalSourceOutputPath": "art/production/work/player.slice_01/batch-004/outputs/player.base.move.n.png",
       "copiedRelativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.move.n.png",
-      "sourceSha256": "4c9bed65c89fa48937b4b9ca6b2aacc7200b37090c6c58e8a6ed4a6ffdf171db",
-      "copiedSha256": "4c9bed65c89fa48937b4b9ca6b2aacc7200b37090c6c58e8a6ed4a6ffdf171db",
-      "productionState": "generated",
-      "historicalReviewState": "generated",
-      "authorizationResult": "ELIGIBLE_TRIAL",
-      "outputRecordedAt": "2026-09-10T02:13:14.0000000+07:00",
-      "sourceManifest": "art/production/work/player.slice_01/batch-001/manifest.json",
-      "sourceManifestSha256": "49506060ef22146240c8677e3d58be4d2f8fa75b8929da4a679cab8c8bcf8c39",
+      "sourceSha256": "df6fa1e4f76e69169c061cfa6c3be7788be5c8ef0dd04970c748bf9b4e9af87a",
+      "copiedSha256": "df6fa1e4f76e69169c061cfa6c3be7788be5c8ef0dd04970c748bf9b4e9af87a",
+      "productionState": "review_ready",
+      "historicalReviewState": "review_ready",
+      "authorizationResult": "USER_DIRECTED_REPAIR_PENDING_REVIEW",
+      "outputRecordedAt": "2026-09-11T18:50:42.7922823+07:00",
+      "sourceManifest": "art/production/work/player.slice_01/batch-004/manifest.json",
+      "sourceManifestSha256": "6f66754ed7573db96ad66d74c82cfa668d506937873baafc9409912b5fdf1077",
       "frameSize": [
         64,
         64
@@ -6398,7 +6398,7 @@
         "visual": false,
         "inEngine": false
       },
-      "approvalStatus": "integration_trial_authorized",
+      "approvalStatus": "user_review_pending",
       "contract": {}
     },
     {
