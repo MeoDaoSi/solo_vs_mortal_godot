@@ -30,6 +30,7 @@
 | Phase 4 | Semantic World Layers — refactor cách build map | [ ] TODO | |
 | Phase 5 | Y-sort / Occlusion / Anchoring | [ ] TODO | |
 | Phase 6 | Camera / Viewport Composition | [ ] TODO | |
+| Phase 7 | Bug Fix — Sửa bugs nghiêm trọng trong source code | [ ] TODO | |
 
 ## 0.2 Tổng tiến độ theo Work Item
 
@@ -42,6 +43,8 @@
 | E | Semantic Ash Graves Foundation | [ ] TODO | |
 | F | Environment Integration | [ ] TODO | |
 | G | Readability Polish | [ ] TODO | |
+| H | Critical/High Bug Fix — Sửa bugs nghiêm trọng | [ ] TODO | |
+| I | Medium Bug Fix — Sửa bugs trung bình | [ ] TODO | |
 
 ---
 
@@ -790,6 +793,507 @@ Không dùng camera zoom để chữa sai scale từ đầu.
 
 ---
 
+# Phase 7 — Bug Fix — Sửa bugs nghiêm trọng trong source code
+
+Đây là phase fix bugs được phát hiện qua audit source code toàn diện (2026-09-11). Các bugs này **trong phạm vi** vì ảnh hưởng trực tiếp đến gameplay correctness, data integrity, và runtime stability — kể cả khi visual refactor plan tuyên bố "ngoài phạm vi gameplay V2.5", các bugs này phải fix trước khi refactor visual có ý nghĩa.
+
+**Phạm vi phase này:** sửa logic bugs, crash bugs, data corruption bugs trong C# source code. Không thay đổi gameplay balance, save schema, hay visual presentation.
+
+## 7A. Critical Bugs — Bugs nghiêm trọng nhất (phải fix trước)
+
+### Bug H.1 — Operator precedence sai trong save validation (MaxHp corrupt restore im lặng)
+
+**File:** `src/Application/GameApplication.cs:691-694`
+**Severity:** Critical
+**Ảnh hưởng:** Player có MaxHp sai suốt session nếu save bị corrupt — data corruption không detect được.
+
+**Mô tả bug:**
+```csharp
+// CODE HIỆN TẠI (sai precedence):
+if (save.BalanceVersion == V25SaveFormat.BalanceVersion &&
+    (V25FixedPoint.RoundMilli(_session.Player.State.MaxHp) != player.MaxHpMilli
+     || V25FixedPoint.RoundMilli(_session.Player.State.MaxSpirit) != player.MaxSpiritMilli
+        && !(save.Payload.WorldLifecycle?.HazardTicks is null && player.MaxSpiritMilli == V25FixedPoint.RoundMilli(V25PlayerSpirit(player.Level, player.Rank)))))
+    throw new InvalidDataException("Saved maxima disagree with restored equipment, passives and possession.");
+```
+
+`||` có ưu tiên thấp hơn `&&`. Logic thật sự là:
+`HP_mismatch || (Spirit_mismatch && !Spirit_fallback)`
+
+=> HP mismatch đơn lẻ **không bao giờ throw**. Chỉ Spirit mismatch mới trigger exception.
+
+**Fix:**
+```csharp
+// CODE SAI (cần thêm parentheses):
+if (save.BalanceVersion == V25SaveFormat.BalanceVersion &&
+    ((V25FixedPoint.RoundMilli(_session.Player.State.MaxHp) != player.MaxHpMilli
+      || V25FixedPoint.RoundMilli(_session.Player.State.MaxSpirit) != player.MaxSpiritMilli)
+     && !(save.Payload.WorldLifecycle?.HazardTicks is null
+          && player.MaxSpiritMilli == V25FixedPoint.RoundMilli(V25PlayerSpirit(player.Level, player.Rank)))))
+    throw new InvalidDataException("Saved maxima disagree with restored equipment, passives and possession.");
+```
+
+**Tasks:**
+- [ ] **H.1.1** Đọc `GameApplication.cs:691-694`, xác nhận logic sai.
+- [ ] **H.1.2** Thêm parentheses bao quanh `(HP_mismatch || Spirit_mismatch)`.
+- [ ] **H.1.3** Verify fix bằng `dotnet build`.
+- [ ] **H.1.4** Kiểm tra các caller của `RestoreCanonicalSave` có affected paths không.
+
+---
+
+### Bug H.2 — Pcg32.Int crash với full int range
+
+**File:** `src/Core/Rng/Pcg32.cs:58`
+**Severity:** Critical
+**Ảnh hưởng:** Any call to `Int(int.MinValue, int.MaxValue)` throws `OverflowException` trong checked context. Bất kỳ gameplay system nào dùng full-int range đều crash.
+
+**Mô tả bug:**
+`Int(int.MinValue, int.MaxValue)` tạo range = `4294967296` (toàn bộ uint space). `(int)(value % range)` cast uint > int.MaxValue sang int trong checked context => `OverflowException`.
+
+**Fix:** Dùng `unchecked` cho cast, hoặc xử lý `int.MinValue` edge case riêng.
+
+**Tasks:**
+- [ ] **H.2.1** Đọc `Pcg32.cs:49-58`, xác nhận bug trong checked context.
+- [ ] **H.2.2** Sửa cast sang `unchecked((int)(value % range))` hoặc fix range handling.
+- [ ] **H.2.3** Thêm test case `Int(int.MinValue, int.MaxValue)` không crash.
+- [ ] **H.2.4** Verify fix bằng `dotnet build`.
+- [ ] **H.2.5** Audit tất cả callers của `Pcg32.Int` để xác nhận không có other edge cases.
+
+---
+
+### Bug H.3 — Travel rollback thiếu RefreshSnapshot — presentation desync
+
+**File:** `src/Presentation/Arena.cs:1000-1001`
+**Severity:** Critical
+**Ảnh hưởng:** Khi travel succeed nhưng save fail, application state rollback nhưng presentation vẫn hiển thị vùng mới — sprite, minimap, status bar desync.
+
+**Mô tả bug:**
+```csharp
+// Travel succeeds, Save() fails:
+if (_application.HasCanonicalDurableChanges && !Save(showMessage: false)) return;
+// ← return đây KHÔNG gọi RefreshSnapshot()
+// Lines 1004-1012 (RefreshSnapshot + sprite cleanup) chỉ chạy trên success path
+```
+
+**Fix:** Sau khi rollback `_application.RestoreCanonicalSave(...)`, thêm `RefreshSnapshot()` trước khi return.
+
+**Tasks:**
+- [ ] **H.3.1** Đọc `Arena.cs:990-1020`, xác nhận travel rollback path.
+- [ ] **H.3.2** Thêm `RefreshSnapshot()` sau `_application.RestoreCanonicalSave(...)` trong error path.
+- [ ] **H.3.3** Verify: sau rollback, presentation phải reflect pre-travel state.
+- [ ] **H.3.4** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug H.4 — Silent simulation halt khi save fail không set _saveCommitFailed
+
+**File:** `src/Presentation/Arena.cs:208`
+**Severity:** Critical
+**Ảnh hưởng:** Game đông cứng hoàn toàn — monster death animation không chạy, input không xử lý, không có lỗi UI hiển thị.
+
+**Mô tả bug:**
+```csharp
+if (_application.HasCanonicalDurableChanges && !Save(showMessage: false)) return;
+```
+
+Nếu `Save()` return `false` mà không set `_saveCommitFailed` (xảy ra trong branch `_saveWritesBlocked` hoặc `_application.CanonicalContent is null`), `_PhysicsProcess` bị skip hoàn toàn. Player thấy game freeze, không có toast lỗi, không recover được.
+
+**Fix:** Xác nhận tất cả failure paths của `Save()` đều set `_saveCommitFailed = true`, hoặc thêm fallback flag set ở đây.
+
+**Tasks:**
+- [ ] **H.4.1** Đọc toàn bộ `Save()` method trong `Arena.cs`, liệt kê tất cả return false paths.
+- [ ] **H.4.2** Xác nhận mỗi return false path có set `_saveCommitFailed`.
+- [ ] **H.4.3** Sửa các paths thiếu flag.
+- [ ] **H.4.4** Verify: khi save fail vì bất kỳ lý do gì, player phải thấy error toast và game vẫn respond input.
+- [ ] **H.4.5** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug H.5 — Vec2.Normalized() tạo Infinity từ near-zero vectors
+
+**File:** `src/Core/Math/Vec2.cs:9-12`
+**Severity:** Critical
+**Ảnh hưởng:** Bất kỳ physics/movement path nào chạm zero-magnitude vector sẽ poison toàn bộ downstream calculations với `Infinity`.
+
+**Mô tả bug:**
+```csharp
+// CODE HIỆN TẠI:
+public Vec2 Normalized()
+{
+    var length = Length;
+    if (length == 0) return this;  // so sánh exact == 0
+    return new Vec2(X / length, Y / length);
+}
+```
+
+Vector `(1e-300, 0)` có `Length = 1e-300` (non-zero) => `Normalized()` proceed => `X / length = 1e300` => `Infinity`.
+
+**Fix:** Dùng epsilon threshold thay vì exact comparison:
+```csharp
+if (length < 1e-10) return this;
+```
+
+**Tasks:**
+- [ ] **H.5.1** Đọc `Vec2.cs`, xác nhận `== 0` comparison.
+- [ ] **H.5.2** Sửa thành `length < 1e-10` hoặc epsilon derived từ context.
+- [ ] **H.5.3** Audit tất cả callers của `Normalized()` trong codebase.
+- [ ] **H.5.4** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug H.6 — SeededRng.Int bị bias thống kê
+
+**File:** `src/Core/Rng/SeededRng.cs:39`
+**Severity:** High
+**Ảnh hưởng:** Gameplay RNG (item tiers, loot rolls, etc.) dùng SeededRng bị measurably unfair so với Pcg32 rejection sampling.
+
+**Mô tả bug:**
+```csharp
+// CODE HIỆN TẠI:
+public int Int(int min, int max) => (int)Math.Floor(Range(min, (double)max + 1));
+```
+
+`Math.Floor(Range(...))` map `[0, 1)` từ 32-bit LCG onto integer range. Với range không chia hết cho 2^32, một số giá trị có xác suất cao hơn → bias.
+
+**Fix:** Implement rejection sampling giống Pcg32, hoặc documented bias là intentional.
+
+**Tasks:**
+- [ ] **H.6.1** Đọc `SeededRng.cs`, xác nhận bias.
+- [ ] **H.6.2** Quyết định: rejection sampling hay documented bias.
+- [ ] **H.6.3** Implement fix.
+- [ ] **H.6.4** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug H.7 — EventBus — unhandled exception kill remaining handlers
+
+**File:** `src/Core/Events/EventBus.cs:19`
+**Severity:** High
+**Ảnh hưởng:** Handler ném exception → các handlers tiếp theo cho cùng event type bị skip im lặng. Có thể break event pipeline.
+
+**Mô tả bug:**
+```csharp
+// CODE HIỆN TẠI:
+foreach (var handler in handlers.ToArray())
+    handler.DynamicInvoke(args);  // ← nếu throw, các handler tiếp bị skip
+```
+
+**Fix:** Wrap mỗi handler trong try/catch, log exception, continue:
+```csharp
+foreach (var handler in handlers.ToArray())
+{
+    try { handler.DynamicInvoke(args); }
+    catch (Exception ex) { /* log */ }
+}
+```
+
+**Tasks:**
+- [ ] **H.7.1** Đọc `EventBus.cs`, xác nhận lack of per-handler exception handling.
+- [ ] **H.7.2** Thêm try/catch per handler với logging.
+- [ ] **H.7.3** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug H.8 — GameApplication.Inventory() NullReferenceException
+
+**File:** `src/Application/GameApplication.cs:227-229`
+**Severity:** High
+**Ảnh hưởng:** Crash khi `CanonicalContent is not null` nhưng `_session.InventoryV25` null.
+
+**Mô tả bug:**
+```csharp
+// CODE HIỆN TẠI:
+public IReadOnlyList<InventoryItem> Inventory() => CanonicalContent is not null
+    ? (_session.InventoryV25?.Items.Concat(_session.InventoryV25.Overflow).Select(...).ToArray() ?? ...)
+    : _session.Progression.InventorySnapshot();
+```
+
+`InventoryV25?.Items` trả null nếu `InventoryV25` null, nhưng `.Concat(InventoryV25.Overflow)` dereference null.
+
+**Fix:** Null-check đầy đủ:
+```csharp
+var inv = _session.InventoryV25;
+if (inv is null) return Array.Empty<InventoryItem>();
+return inv.Items.Concat(inv.Overflow).Select(...).ToArray();
+```
+
+**Tasks:**
+- [ ] **H.8.1** Đọc `GameApplication.cs:227-229`, xác nhận NRE risk.
+- [ ] **H.8.2** Sửa null-check chain.
+- [ ] **H.8.3** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug H.9 — AshGravesTerrainLayer ChunkGrid["Field"] crash
+
+**File:** `src/Presentation/AshGravesTerrainLayer.cs:132`
+**Severity:** High
+**Ảnh hưởng:** `KeyNotFoundException` nếu layout không có key `"Field"`.
+
+**Mô tả bug:**
+```csharp
+// CODE HIỆN TẠI:
+var landmarkChunk = _layout.ChunkGrid["Field"];  // ← direct indexer
+```
+
+Cùng file, method `IsRuinPatch` (line 116) đúng cách dùng `TryGetValue`. Đây là inconsistency.
+
+**Fix:** Dùng `TryGetValue`:
+```csharp
+if (!_layout.ChunkGrid.TryGetValue("Field", out var landmarkChunk)) return;
+```
+
+**Tasks:**
+- [ ] **H.9.1** Đọc `AshGravesTerrainLayer.cs:130-137`, xác nhận direct indexer.
+- [ ] **H.9.2** Sửa `ChunkGrid["Field"]` → `TryGetValue`.
+- [ ] **H.9.3** Kiểm tra `ShrineTile`, `LandmarkTile`, `ExitTile` có cần null-check không.
+- [ ] **H.9.4** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug H.10 — Shield refresh dùng raw grant thay vì quantized
+
+**File:** `src/Simulation/Rules/V25SimulationRules.cs:305`
+**Severity:** High
+**Ảnh hưởng:** So sánh precision sai giữa quantized và raw value — shield refresh có thể set giá trị sai.
+
+**Mô tả bug:**
+```csharp
+// CODE HIỆN TẠI:
+var amount = V25FixedPoint.QuantizeMilli(grant);       // line 302: quantized
+if (_shields.TryGetValue(key, out var previous))
+{
+    amount = Math.Max(previous.Amount, grant);          // ← dùng raw `grant` thay vì `amount`
+```
+
+`previous.Amount` là quantized (milli-rounded), `grant` là raw double. So sánh sai precision.
+
+**Fix:** `Math.Max(previous.Amount, amount)` (dùng `amount` đã quantize).
+
+**Tasks:**
+- [ ] **H.10.1** Đọc `V25SimulationRules.cs:300-310`, xác nhận bug.
+- [ ] **H.10.2** Sửa `Math.Max(previous.Amount, grant)` → `Math.Max(previous.Amount, amount)`.
+- [ ] **H.10.3** Verify fix bằng `dotnet build`.
+
+---
+
+## 7B. Medium Bugs — Bugs trung bình
+
+### Bug I.1 — XP accepted/discard accounting sai cho UI
+
+**File:** `src/Simulation/Rules/V25SimulationRules.cs:249-253, 269`
+**Severity:** Medium
+**Ảnh hưởng:** Player thấy "+N XP" nhưng XP bar không di chuyển — UI misleading. (XP discard là thiết kế đúng spec, nhưng accounting cho UI sai.)
+
+**Mô tả bug:**
+```csharp
+// Breakthrough path (level % 10 == 0):
+if (available < requirement) break;  // xp KHÔNG update
+// Sau loop:
+return new(...) { Accepted = amount, Discarded = 0 };  // ← sai: accepted phải = amount - discarded
+```
+
+**Fix:**
+```csharp
+// Tính discarded đúng:
+var discarded = amount - (available - xp);  // hoặc logic tương đương
+return new(...) { Accepted = amount - discarded, Discarded = discarded };
+```
+
+**Tasks:**
+- [ ] **I.1.1** Đọc `V25SimulationRules.cs:240-280`, xác nhận accepted/discard accounting.
+- [ ] **I.1.2** Sửa accepted = amount - discarded trong breakthrough path.
+- [ ] **I.1.3** Verify UI hiển thị đúng: XP bar chỉ di chuyển bằng accepted amount.
+- [ ] **I.1.4** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug I.2 — V25CombatCoordinator DOT hit-key collision
+
+**File:** `src/Simulation/Systems/V25CombatCoordinator.cs:625`
+**Severity:** Medium
+**Ảnh hưởng:** Hai DOT status từ cùng source trên cùng target, tick cùng frame → hit-key trùng → damage bị drop im lặng.
+
+**Mô tả bug:**
+`ApplyDot` build hit-key từ `(int)Math.Min(int.MaxValue, tick)` alone. Hai DOT status tick cùng frame tạo cùng key → `_hitKeys.Add` fail → damage silently dropped.
+
+**Fix:** Thêm discriminator vào hit-key: `status.SourceId + status.EffectId + instance ordinal`.
+
+**Tasks:**
+- [ ] **I.2.1** Đọc `V25CombatCoordinator.cs:620-630`, xác nhận hit-key construction.
+- [ ] **I.2.2** Thêm per-status discriminator vào hit-key.
+- [ ] **I.2.3** Verify: hai DOT trên cùng target không drop damage.
+- [ ] **I.2.4** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug I.3 — Health bar NaN khi MaximumHp = 0
+
+**File:** `src/Presentation/Arena.cs:369, 377`
+**Severity:** Medium
+**Ảnh hồi:** Health bar width = `NaN`/`Infinity` khi monster/ally MaximumHp = 0 → Godot render corrupted rect.
+
+**Mô tả bug:**
+```csharp
+DrawRect(new Rect2(p.X - 22, p.Y - 31, (float)(44 * monster.CurrentHp / monster.MaximumHp), 5), ...);
+```
+
+`MaximumHp = 0` → division by zero → `NaN`.
+
+**Fix:** Guard:
+```csharp
+var barWidth = monster.MaximumHp > 0 ? (float)(44 * monster.CurrentHp / monster.MaximumHp) : 0;
+```
+
+**Tasks:**
+- [ ] **I.3.1** Đọc `Arena.cs:365-380`, xác nhận division by zero.
+- [ ] **I.3.2** Thêm guard cho cả monster và ally health bars.
+- [ ] **I.3.3** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug I.4 — Arena英文字符串 "RestReset encounters" trong Vietnamese UI
+
+**File:** `src/Presentation/Arena.cs:841`
+**Severity:** Medium
+**Ảnh hưởng:** English string leak vào Vietnamese production UI.
+
+**Mô tả bug:**
+```csharp
+var reset = new Button { Text = "RestReset encounters" };
+```
+
+Tất cả button/label khác đều dùng Vietnamese.
+
+**Fix:** Đổi sang Vietnamese, ví dụ: `"Đặt lại quái"` hoặc appropriate translation.
+
+**Tasks:**
+- [ ] **I.4.1** Đọc context quanh `Arena.cs:841`, xác nhận English string.
+- [ ] **I.4.2** Dịch sang Vietnamese phù hợp với game context.
+- [ ] **I.4.3** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug I.5 — PresentationVisualMetrics UniformScale Infinity
+
+**File:** `src/Presentation/PresentationVisualMetrics.cs:20`
+**Severity:** Medium
+**Ảnh hưởng:** `UniformScale` → `Infinity` khi `OpaqueBounds.Size` có zero component → sprite scaled to invisible.
+
+**Mô tả bug:**
+```csharp
+public float UniformScale => Mathf.Min(IntendedFootprint.X / OpaqueBounds.Size.X,
+                                       IntendedFootprint.Y / OpaqueBounds.Size.Y);
+```
+
+`OpaqueBounds.Size.X = 0` → `IntendedFootprint.X / 0 = Infinity`.
+
+**Fix:** Guard:
+```csharp
+public float UniformScale
+{
+    get
+    {
+        if (OpaqueBounds.Size.X <= 0 || OpaqueBounds.Size.Y <= 0) return 1.0f;
+        return Mathf.Min(IntendedFootprint.X / OpaqueBounds.Size.X,
+                         IntendedFootprint.Y / OpaqueBounds.Size.Y);
+    }
+}
+```
+
+**Tasks:**
+- [ ] **I.5.1** Đọc `PresentationVisualMetrics.cs`, xác nhận division risk.
+- [ ] **I.5.2** Thêm zero guard.
+- [ ] **I.5.3** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug I.6 — FancyUi.GetStyle return null im lặng
+
+**File:** `src/Presentation/FancyUi.cs:73`
+**Severity:** Medium
+**Ảnh hưởng:** `GetStyle` return null khi property không tồn tại → NullReferenceException tại call sites với error message không hữu ích.
+
+**Mô tả bug:**
+```csharp
+private static StyleBox GetStyle(string name) => (StyleBox)Styles.Get(name);
+```
+
+`Node.Get()` return null nếu property không tồn tại. Cast `(StyleBox)null` succeed nhưng return null.
+
+**Fix:**
+```csharp
+private static StyleBox GetStyle(string name)
+{
+    var result = Styles?.Get(name);
+    if (result is null) throw new InvalidOperationException($"Style '{name}' not found in FancyUiStyles autoload.");
+    return (StyleBox)result;
+}
+```
+
+**Tasks:**
+- [ ] **I.6.1** Đọc `FancyUi.cs:70-75`, xác nhận null return risk.
+- [ ] **I.6.2** Thêm null check với meaningful error message.
+- [ ] **I.6.3** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug I.7 — HudMinimap.Project division by zero
+
+**File:** `src/Presentation/HudMinimap.cs:63`
+**Severity:** Medium
+**Ảnh hưởng:** Minimap render NaN/Infinity positions khi world Width/Height = 0.
+
+**Mô tả bug:**
+```csharp
+return center + new Vector2((float)(point.X / world.Width - 0.5) * radius * 2,
+                            (float)(point.Y / world.Height - 0.5) * radius * 2);
+```
+
+**Fix:** Guard:
+```csharp
+if (world.Width <= 0 || world.Height <= 0) return center;
+```
+
+**Tasks:**
+- [ ] **I.7.1** Đọc `HudMinimap.cs:60-65`, xác nhận division risk.
+- [ ] **I.7.2** Thêm zero guard.
+- [ ] **I.7.3** Verify fix bằng `dotnet build`.
+
+---
+
+### Bug I.8 — V25MasterySystem KeyNotFoundException
+
+**File:** `src/Simulation/Systems/V25MasterySystem.cs:236,239`
+**Severity:** Medium
+**Ảnh hưởng:** `_skills[skill.Id]` direct indexer có thể throw `KeyNotFoundException` nếu skill active nhưng không có trong `_skills` dictionary (restore path).
+
+**Mô tả bug:**
+`_skills[skill.Id]` pre-/post-`AddCredit` (mà `AddCredit` dùng `TryGetValue`). Nếu injected `_isLearnedActive` delegate report skill active mà không có trong `_skills` → crash.
+
+**Fix:** Dùng `TryGetValue` thay vì direct indexer:
+```csharp
+if (!_skills.TryGetValue(skill.Id, out var entry)) continue;
+```
+
+**Tasks:**
+- [ ] **I.8.1** Đọc `V25MasterySystem.cs:230-245`, xác nhận direct indexer risk.
+- [ ] **I.8.2** Sửa thành `TryGetValue` pattern.
+- [ ] **I.8.3** Verify fix bằng `dotnet build`.
+
+---
+
+## 7C. Exit Criteria cho Phase 7
+
+- [ ] Tất cả Critical bugs (H.1–H.5) đã fix và verify bằng `dotnet build`.
+- [ ] Tất cả High bugs (H.6–H.10) đã fix và verify bằng `dotnet build`.
+- [ ] Tất cả Medium bugs (I.1–I.8) đã fix và verify bằng `dotnet build`.
+- [ ] Không có regression: `dotnet build` pass.
+- [ ] Agent cập nhật Phase 7 thành `[x] COMPLETE`.
+- [?] User review gameplay để xác nhận không có side effect.
+
+---
+
 # 5. File-by-File Refactor Map — Sửa file nào, trách nhiệm gì
 
 ## `src/Presentation/Arena.cs`
@@ -811,6 +1315,13 @@ Hiện class này đang ôm quá nhiều responsibility.
 - snapshot handoff
 - high-level scene orchestration
 - UI orchestration
+
+### Bug Fix Tracking (Phase 7)
+
+- [ ] H.3.1–H.3.4: Travel rollback RefreshSnapshot
+- [ ] H.4.1–H.4.5: Save failure _saveCommitFailed flag
+- [ ] I.3.1–I.3.3: Health bar NaN guard
+- [ ] I.4.1–I.4.3: Vietnamese string translation
 
 ### Tracking
 
@@ -878,6 +1389,10 @@ Refactor theo hướng:
 - `TerrainStampCatalog.cs`
 - `WorldDecorationSpawner.cs`
 
+### Bug Fix Tracking (Phase 7)
+
+- [ ] H.9.1–H.9.4: ChunkGrid["Field"] → TryGetValue + null checks
+
 ### Tracking
 
 - [ ] `IsAshTexturePatch(hash)` removed from final render path.
@@ -922,6 +1437,69 @@ Asset mới chỉ được thêm khi có:
 
 ---
 
+## Files chỉ có Bug Fix (Phase 7) — Không nằm trong visual refactor
+
+Các file này chỉ cần fix bugs, không cần refactor visual.
+
+### `src/Application/GameApplication.cs`
+
+**Bug Fix Tracking:**
+- [ ] H.1.1–H.1.4: Operator precedence trong save validation
+- [ ] H.8.1–H.8.3: Inventory() NullReferenceException
+
+### `src/Core/Rng/Pcg32.cs`
+
+**Bug Fix Tracking:**
+- [ ] H.2.1–H.2.5: Int(int.MinValue, int.MaxValue) OverflowException
+
+### `src/Core/Math/Vec2.cs`
+
+**Bug Fix Tracking:**
+- [ ] H.5.1–H.5.4: Normalized() Infinity từ near-zero vectors
+
+### `src/Core/Rng/SeededRng.cs`
+
+**Bug Fix Tracking:**
+- [ ] H.6.1–H.6.4: Int() bias thống kê
+
+### `src/Core/Events/EventBus.cs`
+
+**Bug Fix Tracking:**
+- [ ] H.7.1–H.7.3: Unhandled exception kill remaining handlers
+
+### `src/Simulation/Rules/V25SimulationRules.cs`
+
+**Bug Fix Tracking:**
+- [ ] H.10.1–H.10.3: Shield refresh dùng raw grant
+- [ ] I.1.1–I.1.4: XP accepted/discard accounting
+
+### `src/Simulation/Systems/V25CombatCoordinator.cs`
+
+**Bug Fix Tracking:**
+- [ ] I.2.1–I.2.4: DOT hit-key collision
+
+### `src/Presentation/PresentationVisualMetrics.cs`
+
+**Bug Fix Tracking:**
+- [ ] I.5.1–I.5.3: UniformScale Infinity
+
+### `src/Presentation/FancyUi.cs`
+
+**Bug Fix Tracking:**
+- [ ] I.6.1–I.6.3: GetStyle return null
+
+### `src/Presentation/HudMinimap.cs`
+
+**Bug Fix Tracking:**
+- [ ] I.7.1–I.7.3: Project() division by zero
+
+### `src/Simulation/Systems/V25MasterySystem.cs`
+
+**Bug Fix Tracking:**
+- [ ] I.8.1–I.8.3: KeyNotFoundException từ direct indexer
+
+---
+
 # 6. Asset Production Priority
 
 ## P0 — Blocker trực tiếp
@@ -953,6 +1531,7 @@ Asset mới chỉ được thêm khi có:
 
 ## P0 — Correctness
 
+- [ ] **Bug Fix: Critical/High bugs (Phase 7A)** — fix trước tất cả crash/data corruption bugs.
 - [ ] Asset audit report generation.
 - [ ] Duplicate-frame validation.
 - [ ] World Scale Contract.
@@ -1103,6 +1682,48 @@ Import/authorize environment tiles/props còn thiếu.
 
 ---
 
+## Work Item H — Critical/High Bug Fix
+
+**Scope:** sửa 5 Critical + 5 High bugs (Phase 7A). Không thay đổi gameplay balance, save schema, hay visual presentation. Đây là **Work Item đầu tiên phải làm**, trước Work Item A.
+
+### Checklist
+
+- [ ] **H.1** Operator precedence trong save validation (`GameApplication.cs:691`) — thêm parentheses.
+- [ ] **H.2** Pcg32.Int full range không crash (`Pcg32.cs:58`) — unchecked cast.
+- [ ] **H.3** Travel rollback RefreshSnapshot (`Arena.cs:1000`) — presentation sync.
+- [ ] **H.4** Save failure luôn set `_saveCommitFailed` (`Arena.cs:208`) — game không freeze.
+- [ ] **H.5** Vec2.Normalized() epsilon (`Vec2.cs:9`) — không tạo Infinity.
+- [ ] **H.6** SeededRng.Int bias resolve (`SeededRng.cs:39`) — rejection sampling hoặc documented.
+- [ ] **H.7** EventBus per-handler try/catch (`EventBus.cs:19`) — pipeline không bị kill.
+- [ ] **H.8** Inventory() null-check chain (`GameApplication.cs:227`) — không NRE.
+- [ ] **H.9** ChunkGrid["Field"] TryGetValue (`AshGravesTerrainLayer.cs:132`) — không crash.
+- [ ] **H.10** Shield refresh quantized value (`V25SimulationRules.cs:305`).
+- [ ] Có evidence `dotnet build` pass.
+- [?] User review gameplay xác nhận không regression.
+- [ ] Sau user accept → `[x] COMPLETE`.
+
+---
+
+## Work Item I — Medium Bug Fix
+
+**Scope:** sửa 8 Medium bugs (Phase 7B). Làm sau Work Item H.
+
+### Checklist
+
+- [ ] **I.1** XP accepted/discard accounting (`V25SimulationRules.cs:269`) — UI đúng.
+- [ ] **I.2** DOT hit-key collision (`V25CombatCoordinator.cs:625`) — no damage drop.
+- [ ] **I.3** Health bar NaN guard (`Arena.cs:369,377`) — MaximumHp = 0 safe.
+- [ ] **I.4** Vietnamese string translation (`Arena.cs:841`).
+- [ ] **I.5** UniformScale Infinity guard (`PresentationVisualMetrics.cs:20`).
+- [ ] **I.6** FancyUi.GetStyle null check (`FancyUi.cs:73`).
+- [ ] **I.7** HudMinimap division by zero guard (`HudMinimap.cs:63`).
+- [ ] **I.8** V25MasterySystem TryGetValue (`V25MasterySystem.cs:236,239`).
+- [ ] Có evidence `dotnet build` pass.
+- [?] User review gameplay xác nhận không regression.
+- [ ] Sau user accept → `[x] COMPLETE`.
+
+---
+
 # 9. Manual Acceptance Checklist — Checklist user test
 
 Theo repo policy, **user là gameplay tester**. Build pass không thay thế visual acceptance.
@@ -1173,6 +1794,8 @@ Theo repo policy, **user là gameplay tester**. Build pass không thay thế vis
 
 # 11. Definition of Done — Khi nào toàn bộ refactor được coi là xong
 
+## Visual Refactor
+
 - [ ] Player có real multi-frame animation.
 - [ ] Active beta enemies có real animation cần thiết.
 - [ ] Relative scale chạy theo Player-centered World Scale Contract.
@@ -1190,6 +1813,29 @@ Theo repo policy, **user là gameplay tester**. Build pass không thay thế vis
 - [ ] User accept representative Ash Graves screenshot với HUD hidden.
 - [ ] User accept representative Ash Graves screenshot với HUD shown.
 
+## Bug Fix (Phase 7)
+
+- [ ] Operator precedence trong save validation đã fix (H.1).
+- [ ] Pcg32.Int full range không crash (H.2).
+- [ ] Travel rollback RefreshSnapshot hoạt động (H.3).
+- [ ] Save failure luôn set _saveCommitFailed (H.4).
+- [ ] Vec2.Normalized() không tạo Infinity (H.5).
+- [ ] SeededRng.Int bias đã resolve (H.6).
+- [ ] EventBus handler exceptions không kill pipeline (H.7).
+- [ ] GameApplication.Inventory() không NRE (H.8).
+- [ ] AshGravesTerrainLayer ChunkGrid không crash (H.9).
+- [ ] Shield refresh dùng quantized value (H.10).
+- [ ] XP accepted/discard accounting đúng cho UI (I.1).
+- [ ] DOT hit-key không collision (I.2).
+- [ ] Health bar không NaN (I.3).
+- [ ] UI strings đều Vietnamese (I.4).
+- [ ] PresentationVisualMetrics không Infinity (I.5).
+- [ ] FancyUi.GetStyle không return null (I.6).
+- [ ] HudMinimap không division by zero (I.7).
+- [ ] V25MasterySystem không KeyNotFoundException (I.8).
+- [ ] `dotnet build` pass, không có regression.
+- [?] User review gameplay xác nhận không side effect.
+
 ---
 
 # 12. Final Diagnosis — Chẩn đoán cuối
@@ -1198,12 +1844,14 @@ Theo repo policy, **user là gameplay tester**. Build pass không thay thế vis
 
 1. **invalid animation content** (frame animation không có motion thật);
 2. **ungrounded world scale contract** (tỉ lệ vật thể chưa dựa trên hệ thống thực tế);
-3. **procedural tile-painting architecture** (cách vẽ map bằng ô/màu không thể tạo cảm giác một thế giới được author hoàn chỉnh).
+3. **procedural tile-painting architecture** (cách vẽ map bằng ô/màu không thể tạo cảm giác một thế giới được author hoàn chỉnh);
+4. **source code bugs** (14 bugs nghiêm trọng trong Core/Simulation/Application/Presentation layers — data corruption, crash, silent failures).
 
 Thứ tự sửa đúng là:
 
 ```text
-Asset Truth
+Bug Fixes (Phase 7) — Critical/High trước
+→ Asset Truth
 → Real Animation
 → World Scale Contract
 → Runtime Scale
@@ -1211,5 +1859,12 @@ Asset Truth
 → Environment Integration
 → Readability / Y-sort / Camera Polish
 ```
+
+**Bug fixes phải đi trước visual refactor** vì:
+- H.1 (operator precedence) cho phép MaxHp corrupt restore → gameplay broken
+- H.2 (Pcg32 crash) có thể crash bất kỳ lúc nào dùng full-int range
+- H.3 + H.4 (Arena desync/halt) làm game freeze hoặc visual desync
+- H.5 (Vec2 Infinity) poison physics/movement calculations
+- Các bugs khác (NRE, division by zero, bias RNG) ảnh hưởng stability
 
 Không đảo thứ tự này nếu không có blocker kỹ thuật cụ thể.
