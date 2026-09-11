@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "baseTileSize": 32,
+  "assets": [
+    { "assetId": "player.base.idle.s", "canvasSize": [64, 64], "opaqueBounds": [22, 19, 20, 37], "groundPivot": [32, 56], "intendedFootprint": [28, 50], "collisionFootprint": null },
+    { "assetId": "player.base.idle.w", "canvasSize": [64, 64], "opaqueBounds": [23, 28, 18, 28], "groundPivot": [32, 56], "intendedFootprint": [27, 42], "collisionFootprint": null },
+    { "assetId": "player.base.idle.e", "canvasSize": [64, 64], "opaqueBounds": [24, 23, 16, 33], "groundPivot": [32, 56], "intendedFootprint": [26, 46], "collisionFootprint": null },
+    { "assetId": "player.base.idle.n", "canvasSize": [64, 64], "opaqueBounds": [23, 23, 18, 33], "groundPivot": [32, 56], "intendedFootprint": [27, 48], "collisionFootprint": null },
+    { "assetId": "player.base.move.s", "canvasSize": [64, 64], "opaqueBounds": [21, 15, 22, 41], "groundPivot": [32, 56], "intendedFootprint": [30, 55], "collisionFootprint": null },
+    { "assetId": "player.base.move.w", "canvasSize": [64, 64], "opaqueBounds": [20, 20, 24, 36], "groundPivot": [32, 56], "intendedFootprint": [31, 50], "collisionFootprint": null },
+    { "assetId": "player.base.move.e", "canvasSize": [64, 64], "opaqueBounds": [22, 26, 20, 30], "groundPivot": [32, 56], "intendedFootprint": [29, 45], "collisionFootprint": null },
+    { "assetId": "player.base.move.n", "canvasSize": [64, 64], "opaqueBounds": [22, 18, 20, 38], "groundPivot": [32, 56], "intendedFootprint": [28, 52], "collisionFootprint": null },
+    { "assetId": "soul.skeleton.rank01.enemy.south", "canvasSize": [64, 64], "opaqueBounds": [15, 12, 34, 44], "groundPivot": [32, 56], "intendedFootprint": [36, 47], "collisionFootprint": null },
+    { "assetId": "soul.skeleton.rank01.ally.south", "canvasSize": [64, 64], "opaqueBounds": [13, 12, 37, 44], "groundPivot": [32, 56], "intendedFootprint": [34, 44], "collisionFootprint": null },
+    { "assetId": "soul.skeleton.rank01.pickup", "canvasSize": [24, 24], "opaqueBounds": [6, 2, 12, 18], "groundPivot": [12, 20], "intendedFootprint": [14, 21], "collisionFootprint": null },
+    { "assetId": "world.ash_graves.debris", "canvasSize": [64, 64], "opaqueBounds": [12, 19, 41, 27], "groundPivot": [32, 56], "intendedFootprint": [24, 16], "collisionFootprint": null },
+    { "assetId": "world.ash_graves.rock", "canvasSize": [64, 64], "opaqueBounds": [19, 18, 33, 26], "groundPivot": [32, 56], "intendedFootprint": [20, 16], "collisionFootprint": null },
+    { "assetId": "world.ash_graves.chest", "canvasSize": [64, 64], "opaqueBounds": [16, 21, 29, 28], "groundPivot": [32, 56], "intendedFootprint": [24, 23], "collisionFootprint": null },
+    { "assetId": "world.ash_graves.pillar", "canvasSize": [64, 64], "opaqueBounds": [18, 5, 29, 49], "groundPivot": [32, 56], "intendedFootprint": [32, 54], "collisionFootprint": null },
+    { "assetId": "world.ash_graves.shrine", "canvasSize": [64, 64], "opaqueBounds": [15, 7, 36, 43], "groundPivot": [32, 56], "intendedFootprint": [88, 106], "collisionFootprint": null },
+    { "assetId": "world.ash_graves.landmark", "canvasSize": [64, 64], "opaqueBounds": [19, 9, 22, 41], "groundPivot": [32, 56], "intendedFootprint": [32, 60], "collisionFootprint": null },
+    { "assetId": "world.ash_graves.tree_or_spire", "canvasSize": [64, 64], "opaqueBounds": [28, 6, 21, 50], "groundPivot": [32, 56], "intendedFootprint": [32, 76], "collisionFootprint": null },
+    { "assetId": "world.ash_graves.portal", "canvasSize": [64, 64], "opaqueBounds": [10, 8, 43, 44], "groundPivot": [32, 56], "intendedFootprint": [128, 130], "collisionFootprint": null },
+    { "assetId": "world.ash_graves.seal", "canvasSize": [64, 64], "opaqueBounds": [9, 14, 43, 35], "groundPivot": [32, 56], "intendedFootprint": [64, 52], "collisionFootprint": null },
+    { "assetId": "world.ash_graves.banner", "canvasSize": [64, 64], "opaqueBounds": [19, 9, 25, 41], "groundPivot": [32, 56], "intendedFootprint": [32, 52], "collisionFootprint": null },
+    { "assetId": "world.ash_graves.bridge_segment", "canvasSize": [64, 64], "opaqueBounds": [10, 21, 44, 32], "groundPivot": [32, 56], "intendedFootprint": [80, 58], "collisionFootprint": null },
+    { "assetId": "world.ash_graves.torch", "canvasSize": [64, 64], "opaqueBounds": [24, 15, 13, 36], "groundPivot": [32, 56], "intendedFootprint": [16, 44], "collisionFootprint": null }
+  ]
+}
