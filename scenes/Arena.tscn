@@ -3,120 +3,191 @@
 [ext_resource type="Script" uid="uid://s3qg4jf1lqkm" path="res://src/Presentation/Arena.cs" id="1_arena"]
 
 [node name="Arena" type="Node2D" unique_id=1377861580]
+texture_filter = 1
 script = ExtResource("1_arena")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1460316336]
-position_smoothing_enabled = true
-position_smoothing_speed = 8.0
+position_smoothing_enabled = false
 
 [node name="Hud" type="CanvasLayer" parent="." unique_id=664602092]
 
-[node name="Panel" type="Panel" parent="Hud" unique_id=1055133588]
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 430.0
-offset_bottom = 222.0
+[node name="HudRoot" type="Control" parent="Hud" unique_id=1683047185]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
-[node name="Status" type="Label" parent="Hud/Panel" unique_id=251611880]
-layout_mode = 0
-offset_left = 22.0
-offset_top = 18.0
-offset_right = 392.0
-offset_bottom = 190.0
+[node name="TopMargin" type="MarginContainer" parent="Hud/HudRoot" unique_id=2096584985]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = 76.0
+grow_horizontal = 2
+
+[node name="TopRow" type="HBoxContainer" parent="Hud/HudRoot/TopMargin" unique_id=740287388]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="StatusPanel" type="PanelContainer" parent="Hud/HudRoot/TopMargin/TopRow" unique_id=1055133588]
+custom_minimum_size = Vector2(176, 46)
+layout_mode = 2
+
+[node name="StatusMargin" type="MarginContainer" parent="Hud/HudRoot/TopMargin/TopRow/StatusPanel" unique_id=1226424788]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 5
+
+[node name="Status" type="Label" parent="Hud/HudRoot/TopMargin/TopRow/StatusPanel/StatusMargin" unique_id=251611880]
+layout_mode = 2
 text = "Đang khởi tạo..."
 autowrap_mode = 2
 
-[node name="CurrencyPanel" type="Panel" parent="Hud" unique_id=1126897107]
-offset_left = 648.0
-offset_top = 16.0
-offset_right = 1030.0
-offset_bottom = 68.0
+[node name="CurrencyPanel" type="PanelContainer" parent="Hud/HudRoot/TopMargin/TopRow" unique_id=1126897107]
+custom_minimum_size = Vector2(142, 28)
+layout_mode = 2
 
-[node name="Currency" type="Label" parent="Hud/CurrencyPanel" unique_id=726553671]
-layout_mode = 0
-offset_left = 18.0
-offset_top = 12.0
-offset_right = 366.0
-offset_bottom = 42.0
+[node name="CurrencyMargin" type="MarginContainer" parent="Hud/HudRoot/TopMargin/TopRow/CurrencyPanel" unique_id=1510409111]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 4
+
+[node name="Currency" type="Label" parent="Hud/HudRoot/TopMargin/TopRow/CurrencyPanel/CurrencyMargin" unique_id=726553671]
+layout_mode = 2
 text = "◉  0     ◆  0     ◈  0"
 horizontal_alignment = 1
 
-[node name="MapCaption" type="Label" parent="Hud" unique_id=792193094]
-offset_left = 1050.0
-offset_top = 190.0
-offset_right = 1264.0
-offset_bottom = 220.0
-text = "M — Bản đồ thế giới"
+[node name="Spacer" type="Control" parent="Hud/HudRoot/TopMargin/TopRow" unique_id=1295619161]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MinimapSlot" type="Control" parent="Hud/HudRoot/TopMargin/TopRow" unique_id=1102861243]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+
+[node name="Toast" type="Label" parent="Hud/HudRoot" unique_id=1227565761]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 118.0
+offset_top = 80.0
+offset_right = -118.0
+offset_bottom = 94.0
+grow_horizontal = 2
 horizontal_alignment = 1
 
-[node name="Toast" type="Label" parent="Hud" unique_id=1227565761]
-offset_left = 448.0
-offset_top = 76.0
-offset_right = 990.0
-offset_bottom = 108.0
-horizontal_alignment = 1
+[node name="BottomMargin" type="MarginContainer" parent="Hud/HudRoot" unique_id=719008340]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = -28.0
+offset_right = -6.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 0
 
-[node name="SoulPanel" type="Panel" parent="Hud" unique_id=2070782765]
-offset_left = 920.0
-offset_top = 230.0
-offset_right = 1264.0
-offset_bottom = 424.0
+[node name="BottomRow" type="HBoxContainer" parent="Hud/HudRoot/BottomMargin" unique_id=1210956552]
+layout_mode = 2
+theme_override_constants/separation = 6
 
-[node name="Title" type="Label" parent="Hud/SoulPanel" unique_id=1743507019]
-layout_mode = 0
-offset_left = 16.0
+[node name="CombatSoulState" type="Label" parent="Hud/HudRoot/BottomMargin/BottomRow" unique_id=1150818945]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Đang khởi tạo..."
+
+[node name="MapCaption" type="Label" parent="Hud/HudRoot/BottomMargin/BottomRow" unique_id=792193094]
+layout_mode = 2
+text = "M: Bản đồ"
+
+[node name="DetailsToggle" type="Button" parent="Hud/HudRoot/BottomMargin/BottomRow" unique_id=1652779444]
+custom_minimum_size = Vector2(72, 22)
+layout_mode = 2
+text = "I: Chi tiết"
+
+[node name="DetailsOverlay" type="PanelContainer" parent="Hud/HudRoot" unique_id=2070782765]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
 offset_top = 12.0
-offset_right = 328.0
-offset_bottom = 38.0
-text = "Hồn sở hữu"
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="List" type="VBoxContainer" parent="Hud/SoulPanel" unique_id=1516785664]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 44.0
-offset_right = 328.0
-offset_bottom = 178.0
+[node name="DetailsMargin" type="MarginContainer" parent="Hud/HudRoot/DetailsOverlay" unique_id=1238410787]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
 
-[node name="Screens" type="TabContainer" parent="Hud" unique_id=1554672589]
-offset_left = 16.0
-offset_top = 438.0
-offset_right = 806.0
-offset_bottom = 678.0
+[node name="DetailsColumn" type="VBoxContainer" parent="Hud/HudRoot/DetailsOverlay/DetailsMargin" unique_id=248380505]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Header" type="HBoxContainer" parent="Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn" unique_id=1289074284]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Header" unique_id=1743507019]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Thông tin & quản lý"
+
+[node name="CloseDetails" type="Button" parent="Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Header" unique_id=1198561417]
+custom_minimum_size = Vector2(54, 20)
+layout_mode = 2
+text = "Đóng"
+
+[node name="Screens" type="TabContainer" parent="Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn" unique_id=1554672589]
+layout_mode = 2
+size_flags_vertical = 3
 current_tab = 0
 
-[node name="Inventory" type="VBoxContainer" parent="Hud/Screens" unique_id=2071674027]
+[node name="Inventory" type="VBoxContainer" parent="Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens" unique_id=2071674027]
 layout_mode = 2
 tooltip_text = "Túi Đồ"
 metadata/_tab_index = 0
 
-[node name="Progression" type="VBoxContainer" parent="Hud/Screens" unique_id=246692167]
+[node name="Progression" type="VBoxContainer" parent="Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens" unique_id=246692167]
 visible = false
 layout_mode = 2
 tooltip_text = "Tiến Hóa"
 metadata/_tab_index = 1
 
-[node name="Banner" type="VBoxContainer" parent="Hud/Screens" unique_id=1187406504]
+[node name="Banner" type="VBoxContainer" parent="Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens" unique_id=1187406504]
 visible = false
 layout_mode = 2
 tooltip_text = "Hồn Phiên"
 metadata/_tab_index = 2
 
-[node name="FeaturePanel" type="Panel" parent="Hud" unique_id=360002863]
-offset_left = 820.0
-offset_top = 438.0
-offset_right = 1264.0
-offset_bottom = 678.0
+[node name="Souls" type="VBoxContainer" parent="Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens" unique_id=1200590512]
+layout_mode = 2
+tooltip_text = "Hồn"
+metadata/_tab_index = 3
 
-[node name="Content" type="VBoxContainer" parent="Hud/FeaturePanel" unique_id=643227971]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 14.0
-offset_right = 428.0
-offset_bottom = 224.0
+[node name="List" type="VBoxContainer" parent="Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens/Souls" unique_id=1516785664]
+layout_mode = 2
 
-[node name="Help" type="Label" parent="Hud" unique_id=1954699190]
-offset_left = 16.0
-offset_top = 686.0
-offset_right = 1120.0
-offset_bottom = 714.0
-text = "W A S D Di chuyển   Space Tấn công   E Thu Hồn   M Bản đồ   F10 Asset Trial   7/8/9 Chọn ô   F5 Lưu an toàn   F6 Tạm dừng   F9 Tải"
+[node name="Actions" type="ScrollContainer" parent="Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens" unique_id=360002863]
+layout_mode = 2
+tooltip_text = "Hành động"
+metadata/_tab_index = 4
+
+[node name="Content" type="VBoxContainer" parent="Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens/Actions" unique_id=643227971]
+layout_mode = 2
+size_flags_horizontal = 3

@@ -14,22 +14,34 @@ namespace SoloVsMortal.Presentation;
 /// <summary>Thin Godot adapter: input in, snapshots out. Simulation remains the gameplay owner.</summary>
 public partial class Arena : Node2D
 {
+    // Locked presentation grid for the Pixel Rendering Foundation. World layout
+    // and collision remain simulation-owned; this only guards trial tile drawing.
+    private const int BaseTileSize = 32;
     private const string SavePath = "user://solo_vs_mortal_save_v25.json";
     private const string LegacySavePath = "user://solo_vs_mortal_save_v6.json";
     private static readonly bool ShowMapCollisionDebug = false;
+    // Opt-in developer diagnostics only. Normal gameplay never renders IDs,
+    // asset keys, or integration/missing text over the world.
+    private static readonly bool ShowPresentationDebug = false;
     private GameApplication _application = null!;
     private Camera2D _camera = null!;
     private Label _status = null!;
     private Label _currency = null!;
+    private Label _combatSoulState = null!;
     private Label _toast = null!;
     private VBoxContainer _soulList = null!;
     private VBoxContainer _featureList = null!;
     private TabContainer _screens = null!;
+    private PanelContainer _detailsOverlay = null!;
     private WorldMapUI _worldMap = null!;
     private HudMinimap _minimap = null!;
     private double _autosaveRemaining = 10;
     private double _toastRemaining;
     private bool _saveWritesBlocked;
+    // A V6 save cannot be restored into the hash-pinned V2.5 payload without a
+    // lossless migration.  Keep it untouched, but do not let its presence make
+    // a fresh V2.5 session unplayable.
+    private bool _legacySavePreserved;
     private V25SaveStore? _v25Store;
     private int _selectedSaveSlot = 1;
     private V25SaveEnvelope? _pendingSave;
@@ -60,20 +72,31 @@ public partial class Arena : Node2D
 
     public override void _Ready()
     {
-        _camera = GetNode<Camera2D>("Camera2D"); _status = GetNode<Label>("Hud/Panel/Status"); _currency = GetNode<Label>("Hud/CurrencyPanel/Currency"); _toast = GetNode<Label>("Hud/Toast"); _soulList = GetNode<VBoxContainer>("Hud/SoulPanel/List"); _featureList = GetNode<VBoxContainer>("Hud/FeaturePanel/Content"); _screens = GetNode<TabContainer>("Hud/Screens");
+#if DEBUG
+        // Technical startup proof for the pixel-foundation configuration. This is
+        // intentionally log-only, never part of the normal gameplay HUD.
+        GD.Print($"PIXEL_RENDERING_FOUNDATION viewport={GetViewport().GetVisibleRect().Size}; window={DisplayServer.WindowGetSize()}; baseTile={BaseTileSize}");
+#endif
+        _camera = GetNode<Camera2D>("Camera2D"); _status = GetNode<Label>("Hud/HudRoot/TopMargin/TopRow/StatusPanel/StatusMargin/Status"); _currency = GetNode<Label>("Hud/HudRoot/TopMargin/TopRow/CurrencyPanel/CurrencyMargin/Currency"); _combatSoulState = GetNode<Label>("Hud/HudRoot/BottomMargin/BottomRow/CombatSoulState"); _toast = GetNode<Label>("Hud/HudRoot/Toast");
+        _soulList = GetNode<VBoxContainer>("Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens/Souls/List"); _featureList = GetNode<VBoxContainer>("Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens/Actions/Content"); _screens = GetNode<TabContainer>("Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens"); _detailsOverlay = GetNode<PanelContainer>("Hud/HudRoot/DetailsOverlay");
+        GetNode<Button>("Hud/HudRoot/BottomMargin/BottomRow/DetailsToggle").Pressed += ToggleDetails;
+        GetNode<Button>("Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Header/CloseDetails").Pressed += ToggleDetails;
         ApplyHudVisualDesign();
         _application = GameApplication.CreateFromDefinitionsDirectory(ProjectSettings.GlobalizePath("res://data/configs"));
         _assetCatalog = CanonicalAssetCatalog.Load(ProjectSettings.GlobalizePath("res://"), ProjectSettings.GlobalizePath("res://data/v2.5/asset-catalog.v2.5.json"));
         _v25Store = CreateSaveStore(_selectedSaveSlot);
         _application.Start();
         _worldMap = new WorldMapUI(); AddChild(_worldMap); _worldMap.Initialize(_application, TravelToRegion);
-        _minimap = new HudMinimap { Position = new Vector2(1060, 24), Size = new Vector2(184, 164) }; GetNode<CanvasLayer>("Hud").AddChild(_minimap);
-        AddAssetTrialAccessButton();
+        _minimap = new HudMinimap(); _minimap.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect); GetNode<Control>("Hud/HudRoot/TopMargin/TopRow/MinimapSlot").AddChild(_minimap);
         _ground = LoadCanonicalAssetTexture(_application.CurrentMapBackgroundAssetId() ?? "tiles.arena.ground"); RebuildMapTextures();
         _visualRank = 1; _playerSprite = BuildPlayerSprite(_visualRank); AddChild(_playerSprite);
         _bossTelegraphs = new BossTelegraphLayer { ZIndex = 15 }; AddChild(_bossTelegraphs);
         var restoredSave = TryLoad(showMessage: false);
         if (!restoredSave && !_saveWritesBlocked && _application.Snapshot().Monsters.Count == 0) _application.SpawnMonster("mon_skeleton", 1, new SimVec2(650, 280));
+#if DEBUG
+        if (_legacySavePreserved)
+            GD.Print("MOVEMENT_RECOVERY legacy_v6_preserved=true; fresh_v25_session=true; gameplay_input_blocked=false");
+#endif
         RefreshSnapshot();
     }
 
@@ -257,6 +280,12 @@ public partial class Arena : Node2D
             GetViewport().SetInputAsHandled();
             return;
         }
+        if (@event is InputEventKey detailsKey && detailsKey.Pressed && !detailsKey.Echo && (detailsKey.Keycode == Key.I || detailsKey.Keycode == Key.Escape && _detailsOverlay.Visible))
+        {
+            ToggleDetails();
+            GetViewport().SetInputAsHandled();
+            return;
+        }
         if (GameplayCommandsBlocked) return;
         if (@event is InputEventKey key && key.Pressed && !key.Echo && key.Keycode == Key.M)
         {
@@ -273,6 +302,8 @@ public partial class Arena : Node2D
         DrawRect(new Rect2(0, 0, width, height), new Color("#c99b5b")); if (_ground is not null) DrawTextureRect(_ground, new Rect2(0, 0, width, height), true, new Color(1, 1, 1, 0.45f));
         if (_snapshot is null) return;
         var hasTrialWorldTiles = DrawAshGravesTrialTiles();
+        if (hasTrialWorldTiles && _application.CanonicalContent is not null)
+            DrawAshGravesVisualComposition(_application.CanonicalContent.Content.LayoutBlueprint);
         if (!hasTrialWorldTiles)
             foreach (var road in _application.CanonicalRoads()) DrawLine(ToGodot(road.Start), ToGodot(road.End), new Color("#756755"), (float)road.Width);
         foreach (var area in _application.CanonicalTerrain()) DrawRect(new Rect2((float)area.Bounds.X, (float)area.Bounds.Y, (float)area.Bounds.Width, (float)area.Bounds.Height), area.Terrain switch { V25TerrainTag.FireField => new Color("#9d472b"), V25TerrainTag.ToxicPool => new Color("#526a39"), V25TerrainTag.FrostFloor => new Color("#819ca6"), V25TerrainTag.Gap => new Color("#201d26"), _ => new Color("#4b5363") });
@@ -280,29 +311,38 @@ public partial class Arena : Node2D
         {
             var p = ToGodot(obj.Position);
             if (obj.Type == "wall") continue;
-            if (obj.Type is "npc" or "shrine" or "chest" or "landmark" or "portal" or "secret") DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -20), obj.Id, fontSize: 12);
-            var scale = (float)System.Math.Clamp(obj.PresentationScale, 0.1, 3); if (_mapTextures.TryGetValue(obj.AssetId, out var texture)) { var half = 42 * scale; DrawTextureRect(texture, new Rect2(p.X - half, p.Y - half, half * 2, half * 2), false, new Color(1, 1, 1, 0.92f)); } else DrawMissingAssetMarker(p, obj.AssetId, (obj.Type == "tree" ? 18 : 12) * scale);
+            if (ShowPresentationDebug && (obj.Type is "npc" or "shrine" or "chest" or "landmark" or "portal" or "secret")) DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -20), obj.Id, fontSize: 9);
+            var scale = WorldObjectVisualScale(obj.Type) * (float)System.Math.Clamp(obj.PresentationScale, 0.1, 3);
+            if (_mapTextures.TryGetValue(obj.AssetId, out var texture) && _assetCatalog.TryGet(obj.AssetId, out var asset))
+                DrawWorldAsset(texture, asset, p, scale, new Color(1, 1, 1, 0.96f));
+            else
+                DrawMissingAssetMarker(p, obj.AssetId, WorldObjectMissingRadius(obj.Type) * scale);
         }
         if (ShowMapCollisionDebug)
             foreach (var rect in _snapshot.World.BlockingRects) DrawRect(new Rect2((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height), new Color(0.25f, 0.16f, 0.08f, 0.32f), false, 2);
         foreach (var soul in _snapshot.WorldSouls)
         {
             var p = ToGodot(soul.Position); var assetId = SoulPickupAssetId(soul.OriginSpeciesId, soul.OriginRank);
+            DrawGroundShadow(p, 20, 0.34f);
             if (_assetCatalog.TryGet(assetId, out var asset)) DrawCanonicalFrame(asset, p);
             else DrawMissingAssetMarker(p, assetId, 10);
         }
-        if (MissingAssetId(_playerSprite) is { } playerMissing) DrawMissingAssetMarker(ToGodot(_snapshot.Player.Position), playerMissing, 12);
+        var playerPosition = ToGodot(_snapshot.Player.Position);
+        DrawGroundShadow(playerPosition, BaseTileSize, 0.42f);
+        if (MissingAssetId(_playerSprite) is { } playerMissing) DrawMissingAssetMarker(playerPosition, playerMissing, 12);
         foreach (var monster in _snapshot.Monsters)
         {
             var p = ToGodot(monster.Position);
-            if (_monsterSprites.TryGetValue(monster.Uid, out var sprite) && MissingAssetId(sprite) is { } missing) { DrawMissingAssetMarker(p, missing, 18); DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(monster.SpeciesId), fontSize: 12); }
+            DrawGroundShadow(p, BaseTileSize, 0.4f);
+            if (_monsterSprites.TryGetValue(monster.Uid, out var sprite) && MissingAssetId(sprite) is { } missing) { DrawMissingAssetMarker(p, missing, 18); if (ShowPresentationDebug) DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(monster.SpeciesId), fontSize: 9); }
             DrawRect(new Rect2(p.X - 22, p.Y - 31, 44, 5), new Color("#3f0d0d"));
             DrawRect(new Rect2(p.X - 22, p.Y - 31, (float)(44 * monster.CurrentHp / monster.MaximumHp), 5), new Color("#22c55e"));
         }
         foreach (var ally in _snapshot.Allies)
         {
             var p = ToGodot(ally.Position);
-            if (_allySprites.TryGetValue(ally.Uid, out var sprite) && MissingAssetId(sprite) is { } missing) { DrawMissingAssetMarker(p, missing, 18); DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(ally.SpeciesId), fontSize: 12); }
+            DrawGroundShadow(p, BaseTileSize, 0.4f);
+            if (_allySprites.TryGetValue(ally.Uid, out var sprite) && MissingAssetId(sprite) is { } missing) { DrawMissingAssetMarker(p, missing, 18); if (ShowPresentationDebug) DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -36), _application.SpeciesDisplayName(ally.SpeciesId), fontSize: 9); }
             DrawRect(new Rect2(p.X - 22, p.Y - 31, 44, 5), new Color("#123b25"));
             DrawRect(new Rect2(p.X - 22, p.Y - 31, (float)(44 * ally.CurrentHp / ally.MaximumHp), 5), new Color("#86efac"));
         }
@@ -314,10 +354,12 @@ public partial class Arena : Node2D
         _playerSprite.Position = ToGodot(player.Position); SyncMonsters(_snapshot.Monsters); SyncAllies(_snapshot.Allies);
         if (player.Rank != _visualRank) { var old = _playerSprite; _visualRank = player.Rank; _playerSprite = BuildPlayerSprite(_visualRank); AddChild(_playerSprite); _playerSprite.Position = old.Position; old.QueueFree(); }
         var regionName = _application.RegionDetails(_snapshot.CurrentRegionId)?.DisplayName ?? _snapshot.CurrentRegionId;
-        _status.Text = $"Khu vực: {regionName}\nSinh lực: {System.Math.Ceiling(player.CurrentHp)}/{player.MaximumHp}  •  Linh lực: {System.Math.Ceiling(player.CurrentSpirit)}/{player.MaximumSpirit}\nCấp: {player.Level}  •  Cảnh giới: {player.Rank}  •  Công: {player.Attack}  •  Thủ: {player.Defense}\nQuái: {_snapshot.Monsters.Count}  •  Hồn gần bản đồ: {_snapshot.WorldSouls.Count}  •  Hồn sở hữu: {_snapshot.OwnedSouls.Count}";
+        _status.Text = $"{regionName}\nHP {DisplayWhole(player.CurrentHp)}/{DisplayWhole(player.MaximumHp)} · SP {DisplayWhole(player.CurrentSpirit)}/{DisplayWhole(player.MaximumSpirit)}";
         _currency.Text = _application.CanonicalInventory() is { } canonicalInventory
-            ? $"Coin {canonicalInventory.Coins}     ◆ XP {player.Xp}     ◈ Soul {_snapshot.OwnedSouls.Count}"
-            : $"✦ {_snapshot.Inventory.Sum(item => item.Count)}     ◆ {player.Xp}     ◈ {_snapshot.OwnedSouls.Count}";
+            ? $"Coin {canonicalInventory.Coins} · XP {player.Xp} · Hồn {_snapshot.OwnedSouls.Count}"
+            : $"Vật phẩm {_snapshot.Inventory.Sum(item => item.Count)} · XP {player.Xp} · Hồn {_snapshot.OwnedSouls.Count}";
+        var soulState = _application.ActivePossessionSoulId is not null ? "Phụ hồn" : _snapshot.Allies.Count > 0 ? $"Ally {_snapshot.Allies.Count}" : $"Hồn {_snapshot.OwnedSouls.Count}";
+        _combatSoulState.Text = _snapshot.Monsters.Count > 0 ? $"Địch {_snapshot.Monsters.Count} · {soulState}" : soulState;
         _minimap.Refresh(_snapshot, _application.WorldObjects(), _application.WasCanonicalTileVisited);
         var runtime = _application.CanonicalRuntimeSnapshot();
         _bossTelegraphs.Refresh(runtime.Casts, runtime.Actors ?? Array.Empty<V25ActorRuntimeSnapshot>());
@@ -329,6 +371,8 @@ public partial class Arena : Node2D
         var banner = _snapshot.SoulBanners.FirstOrDefault(); var screenSignature = $"{player.Level}:{player.Xp}:{inventorySignature(_application.Inventory())}:{banner?.Level}:{banner?.BoundSoulIds.Count}"; if (screenSignature != _lastScreenSignature) { RebuildScreens(_snapshot); _lastScreenSignature = screenSignature; }
         QueueRedraw();
     }
+
+    private static long DisplayWhole(double value) => double.IsFinite(value) ? (long)System.Math.Round(value, MidpointRounding.AwayFromZero) : 0;
 
     private bool Save(bool showMessage, bool requireSafeManual = false)
     {
@@ -387,7 +431,17 @@ public partial class Arena : Node2D
                 {
                     var legacyJson = GodotSaveStore.Read(LegacySavePath);
                     if (legacyJson is null) { if (showMessage) Toast("Chưa có bản lưu."); return false; }
-                    _application.RestoreSaveJson(legacyJson);
+                    // The V6 schema predates the canonical V2.5 save envelope.  It
+                    // is deliberately not parsed or overwritten here: doing either
+                    // would risk data loss.  The already-started canonical session
+                    // is valid to play and saves exclusively to the V2.5 store.
+                    _legacySavePreserved = true;
+                    _saveWritesBlocked = false;
+                    _saveCommitFailed = false;
+                    _suspended = false;
+                    _pendingSave = null;
+                    Toast("Đã giữ nguyên bản lưu V6; bắt đầu phiên V2.5 mới.");
+                    return false;
                 }
             }
             else
@@ -481,7 +535,7 @@ public partial class Arena : Node2D
     }
     private void RebuildScreens(GameSnapshot snapshot)
     {
-        var inventory = GetNode<VBoxContainer>("Hud/Screens/Inventory"); var progression = GetNode<VBoxContainer>("Hud/Screens/Progression"); var bannerPage = GetNode<VBoxContainer>("Hud/Screens/Banner");
+        var inventory = GetNode<VBoxContainer>("Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens/Inventory"); var progression = GetNode<VBoxContainer>("Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens/Progression"); var bannerPage = GetNode<VBoxContainer>("Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Screens/Banner");
         foreach (var page in new[] { inventory, progression, bannerPage }) foreach (var child in page.GetChildren()) child.QueueFree();
 
         inventory.AddChild(new Label { Text = "Túi Đồ", ThemeTypeVariation = "HeaderMedium" });
@@ -509,14 +563,14 @@ public partial class Arena : Node2D
         for (var index = 0; index < Math.Max(14, items.Count); index++)
         {
             InventoryItem? item = index < items.Count ? items[index] : null;
-            var slot = new Button { Text = item is null ? "" : $"{item.Value.StableId}\n×{item.Value.Count}", TooltipText = item is null ? "Ô trống" : item.Value.StableId, CustomMinimumSize = new Vector2(94, 48) };
+            var slot = new Button { Text = item is null ? "" : $"{item.Value.StableId}\n×{item.Value.Count}", TooltipText = item is null ? "Ô trống" : item.Value.StableId, CustomMinimumSize = new Vector2(74, 36) };
             FancyUi.ApplyItemSlot(slot); grid.AddChild(slot);
         }
         var inventoryFooter = new HBoxContainer(); inventoryFooter.AddChild(new Label { Text = _application.CanonicalContent is null ? $"Số ô: {items.Count}/100" : $"Tổng stack hiển thị: {items.Count}", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
         inventory.AddChild(inventoryFooter);
 
         progression.AddChild(new Label { Text = "Tiến Hóa Nhân Vật", ThemeTypeVariation = "HeaderMedium" });
-        progression.AddChild(new Label { Text = $"Cấp {snapshot.Player.Level}  •  XP {snapshot.Player.Xp}\nCảnh giới {snapshot.Player.Rank}\nCông {snapshot.Player.Attack}  •  Thủ {snapshot.Player.Defense}", SizeFlagsVertical = Control.SizeFlags.ExpandFill });
+        progression.AddChild(new Label { Text = $"Cấp {snapshot.Player.Level}  •  XP {snapshot.Player.Xp}\nCảnh giới {snapshot.Player.Rank}\nCông {DisplayWhole(snapshot.Player.Attack)}  •  Thủ {DisplayWhole(snapshot.Player.Defense)}", SizeFlagsVertical = Control.SizeFlags.ExpandFill });
         var progressionActions = new HBoxContainer();
         if (_application.CanonicalContent?.ActiveProfileId == "beta_01")
         {
@@ -524,7 +578,7 @@ public partial class Arena : Node2D
             upgrade.Pressed += () => { if (GameplayCommandsBlocked || !Save(showMessage: false)) return; if (!_application.UpgradeCanonicalProfile()) { Toast("Cần ở shrine, ngoài giao tranh."); return; } if (Save(showMessage: false)) { Toast("Đã nâng profile Full 01, giữ tiến trình cũ."); RefreshSnapshot(); } };
             progressionActions.AddChild(upgrade);
         }
-        var breakthrough = new Button { Text = "Thử phá cảnh", CustomMinimumSize = new Vector2(180, 32) }; StyleActionButton(breakthrough); breakthrough.Pressed += () => { if (GameplayCommandsBlocked) return; var succeeded = _application.AttemptPlayerBreakthrough(); var durable = !succeeded || Save(showMessage: false); Toast(succeeded && durable ? "Phá cảnh thành công." : succeeded ? "Phá cảnh đang chờ lưu bền vững." : "Chưa đủ điều kiện phá cảnh."); if (durable) RefreshSnapshot(); }; progressionActions.AddChild(breakthrough); progression.AddChild(progressionActions);
+        var breakthrough = new Button { Text = "Thử phá cảnh", CustomMinimumSize = new Vector2(132, 24) }; StyleActionButton(breakthrough); breakthrough.Pressed += () => { if (GameplayCommandsBlocked) return; var succeeded = _application.AttemptPlayerBreakthrough(); var durable = !succeeded || Save(showMessage: false); Toast(succeeded && durable ? "Phá cảnh thành công." : succeeded ? "Phá cảnh đang chờ lưu bền vững." : "Chưa đủ điều kiện phá cảnh."); if (durable) RefreshSnapshot(); }; progressionActions.AddChild(breakthrough); progression.AddChild(progressionActions);
 
         var banner = snapshot.SoulBanners.FirstOrDefault();
         if (_application.CanonicalContent is not null)
@@ -612,26 +666,14 @@ public partial class Arena : Node2D
         Rebuild(); window.PopupCentered();
     }
 
+    private void ToggleDetails()
+    {
+        _detailsOverlay.Visible = !_detailsOverlay.Visible;
+        GetViewport().SetInputAsHandled();
+    }
+
     // A deliberately narrow, development-only viewer for clips that have no safe gameplay event
     // yet. It reads the catalog only; it never dispatches Simulation commands or touches saves.
-    private void AddAssetTrialAccessButton()
-    {
-        if (_assetCatalog.CatalogVersion != "asset-integration-trial-v001") return;
-
-        // The Feature panel has a fixed-height, non-scrolling content area. Keep the Trial
-        // route outside it so the review surface is always visible and clickable.
-        var openTrial = new Button
-        {
-            Text = "Mở Asset Integration Trial (F10)",
-            TooltipText = "Trình xem phát triển chỉ đọc cho 149 asset Trial đã được ủy quyền.",
-            Position = new Vector2(16, 236),
-            Size = new Vector2(414, 38),
-            ZIndex = 10
-        };
-        StyleActionButton(openTrial);
-        openTrial.Pressed += OpenAssetTrialViewer;
-        GetNode<CanvasLayer>("Hud").AddChild(openTrial);
-    }
 
     private void OpenAssetTrialViewer()
     {
@@ -781,7 +823,7 @@ public partial class Arena : Node2D
         var possession = new Label { Text = _application.ActivePossessionSoulId is { } active ? $"Đảo chiều Hồn Liên: {active} ({Math.Ceiling(_application.PossessionRemainingSeconds())}s)" : "Đảo chiều Hồn Liên: không hoạt động" }; _featureList.AddChild(possession);
         foreach (var soul in snapshot.OwnedSouls.Where(soul => banner?.BoundSoulIds.Contains(soul.Id) == true))
         {
-            var link = _application.SoulLinks().First(item => item.SoulId == soul.Id); var runtime = _application.SoulRuntime(soul.Id); var row = new HBoxContainer(); row.AddChild(new Label { Text = $"{soul.DisplayName}: {link.State} · Tải {link.SoulCost} · Ổn định {link.Stability:P0}", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
+            var link = _application.SoulLinks().First(item => item.SoulId == soul.Id); var runtime = _application.SoulRuntime(soul.Id); var row = new HBoxContainer(); row.AddChild(new Label { Text = $"{soul.DisplayName}: {link.State} · Tải {DisplayWhole(link.SoulCost)} · Ổn định {link.Stability:P0}", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
             var summon = new Button { Text = runtime.Status == SoulRuntimeStatus.Summoned ? "Thu hồi" : "Triệu hồi", Disabled = runtime.Status is SoulRuntimeStatus.Dispersed or SoulRuntimeStatus.Possessed };
             StyleActionButton(summon);
             summon.Pressed += () => { if (GameplayCommandsBlocked) return; if (runtime.Status == SoulRuntimeStatus.Summoned) _application.UnsummonSoul(soul.Id); else _application.SummonSoul(soul.Id, banner!.Id, new SimVec2(_snapshot!.Player.Position.X + 36, _snapshot.Player.Position.Y)); RefreshSnapshot(); }; row.AddChild(summon);
@@ -792,24 +834,31 @@ public partial class Arena : Node2D
     {
         GetNode<Window>("/root").Theme = FancyUi.BuildTooltipTheme();
 
-        FancyUi.ApplyPanel(GetNode<Panel>("Hud/Panel"), main: true);
-        FancyUi.ApplyPanel(GetNode<Panel>("Hud/CurrencyPanel"), main: false);
-        FancyUi.ApplyPanel(GetNode<Panel>("Hud/SoulPanel"), main: false);
-        FancyUi.ApplyPanel(GetNode<Panel>("Hud/FeaturePanel"), main: true);
+        FancyUi.ApplyPanel(GetNode<PanelContainer>("Hud/HudRoot/TopMargin/TopRow/StatusPanel"), main: true);
+        FancyUi.ApplyPanel(GetNode<PanelContainer>("Hud/HudRoot/TopMargin/TopRow/CurrencyPanel"), main: false);
+        FancyUi.ApplyPanel(GetNode<PanelContainer>("Hud/HudRoot/DetailsOverlay"), main: true);
+        StyleActionButton(GetNode<Button>("Hud/HudRoot/BottomMargin/BottomRow/DetailsToggle"), fontSize: 9);
+        StyleActionButton(GetNode<Button>("Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Header/CloseDetails"), fontSize: 9);
 
         FancyUi.ApplyTabs(_screens);
         _screens.SetTabTitle(0, "Túi Đồ");
         _screens.SetTabTitle(1, "Tiến Hóa");
         _screens.SetTabTitle(2, "Hồn Phiên");
+        _screens.SetTabTitle(3, "Hồn");
+        _screens.SetTabTitle(4, "Hành động");
 
-        foreach (var labelPath in new[] { "Hud/Panel/Status", "Hud/CurrencyPanel/Currency", "Hud/MapCaption", "Hud/SoulPanel/Title", "Hud/Help", "Hud/Toast" })
+        foreach (var labelPath in new[] { "Hud/HudRoot/TopMargin/TopRow/StatusPanel/StatusMargin/Status", "Hud/HudRoot/TopMargin/TopRow/CurrencyPanel/CurrencyMargin/Currency", "Hud/HudRoot/BottomMargin/BottomRow/CombatSoulState", "Hud/HudRoot/BottomMargin/BottomRow/MapCaption", "Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Header/Title", "Hud/HudRoot/Toast" })
             GetNode<Label>(labelPath).AddThemeColorOverride("font_color", FancyUi.TextBrush);
-        GetNode<Label>("Hud/SoulPanel/Title").AddThemeFontSizeOverride("font_size", 18);
-        GetNode<Label>("Hud/CurrencyPanel/Currency").AddThemeFontSizeOverride("font_size", 17);
+        GetNode<Label>("Hud/HudRoot/TopMargin/TopRow/StatusPanel/StatusMargin/Status").AddThemeFontSizeOverride("font_size", 10);
+        GetNode<Label>("Hud/HudRoot/TopMargin/TopRow/CurrencyPanel/CurrencyMargin/Currency").AddThemeFontSizeOverride("font_size", 9);
+        GetNode<Label>("Hud/HudRoot/BottomMargin/BottomRow/CombatSoulState").AddThemeFontSizeOverride("font_size", 9);
+        GetNode<Label>("Hud/HudRoot/BottomMargin/BottomRow/MapCaption").AddThemeFontSizeOverride("font_size", 9);
+        GetNode<Label>("Hud/HudRoot/Toast").AddThemeFontSizeOverride("font_size", 10);
+        GetNode<Label>("Hud/HudRoot/DetailsOverlay/DetailsMargin/DetailsColumn/Header/Title").AddThemeFontSizeOverride("font_size", 13);
 
     }
 
-    private static void StyleActionButton(Button button, bool destructive = false)
+    private static void StyleActionButton(Button button, bool destructive = false, int fontSize = 10)
     {
         FancyUi.ApplyButton(button);
         if (destructive)
@@ -824,6 +873,7 @@ public partial class Arena : Node2D
         }
         button.AddThemeColorOverride("font_pressed_color", FancyUi.TextDim);
         button.AddThemeColorOverride("font_disabled_color", FancyUi.TextDim);
+        button.AddThemeFontSizeOverride("font_size", fontSize);
     }
 
     private static Vector2 ToGodot(SimVec2 value) => new((float)value.X, (float)value.Y);
@@ -1035,6 +1085,94 @@ public partial class Arena : Node2D
 
     private static string? MissingAssetId(AnimatedSprite2D sprite) => sprite.HasMeta("trial_missing_asset_id") ? sprite.GetMeta("trial_missing_asset_id").AsString() : null;
 
+    // These presentation sizes all begin from the source 64×64 object canvas.
+    // They establish a legible Ash Graves hierarchy without touching any sprite
+    // pixels, gameplay positions, collision footprints, or camera scale.
+    private static float WorldObjectVisualScale(string type) => type switch
+    {
+        "debris" => 0.50f,
+        "rock" => 0.56f,
+        "chest" => 0.62f,
+        "pillar" => 0.78f,
+        "npc" => 0.88f,
+        "shrine" => 1.19f,
+        "landmark" => 1.25f,
+        "tree_or_spire" => 1.28f,
+        "portal" => 1.44f,
+        "arena" => 1.50f,
+        "secret" => 1.09f,
+        _ => 0.75f
+    };
+
+    private static float WorldObjectMissingRadius(string type) => type switch
+    {
+        "portal" or "arena" => 22,
+        "shrine" or "landmark" or "tree_or_spire" => 18,
+        "npc" => 14,
+        _ => 12
+    };
+
+    private void DrawGroundShadow(Vector2 origin, float visualWidth, float alpha)
+    {
+        var radius = Mathf.Max(5, visualWidth * 0.28f);
+        DrawCircle(origin + new Vector2(0, 1), radius, new Color(0.035f, 0.028f, 0.045f, alpha));
+    }
+
+    private void DrawWorldAsset(Texture2D texture, CanonicalAssetEntry asset, Vector2 origin, float scale, Color modulate)
+    {
+        var size = new Vector2(asset.FrameSize.X * scale, asset.FrameSize.Y * scale);
+        DrawGroundShadow(origin, size.X, 0.34f);
+        DrawTextureRect(texture, new Rect2(origin - asset.Pivot * scale, size), false, modulate);
+    }
+
+    /// <summary>
+    /// Adds only visual composition around canonical anchors.  The road network,
+    /// region positions and collisions remain owned by the V2.5 layout; the four
+    /// marker groups deliberately remain pass-through scenery rather than making
+    /// a visual request change navigation.
+    /// </summary>
+    private void DrawAshGravesVisualComposition(CanonicalLayoutBlueprintDefinition layout)
+    {
+        if (!_assetCatalog.TryGet("world.ash_graves.pillar", out var pillar) ||
+            !_assetCatalog.TryGet("world.ash_graves.rock", out var rock) ||
+            !_assetCatalog.TryGet("world.ash_graves.debris", out var debris)) return;
+
+        var shrine = ToGodot(V25WorldLayout.At(layout, layout.ShrineTile));
+        var landmark = ToGodot(V25WorldLayout.At(layout, layout.LandmarkTile, "Field"));
+        var exit = ToGodot(V25WorldLayout.At(layout, layout.ExitTile));
+        DrawAshGravesFocalClearing(shrine, new Vector2(160, 128));
+        DrawAshGravesFocalClearing(landmark, new Vector2(192, 160));
+        DrawAshGravesFocalClearing(exit, new Vector2(176, 144));
+
+        // These off-path positions frame the initial Shrine rather than replacing
+        // any missing NPC or gate. They use the exact trial assets and are not
+        // interaction targets or collision producers.
+        var campDressing = new (CanonicalAssetEntry Asset, Vector2 Offset, float Scale)[]
+        {
+            (pillar, new Vector2(128, -160), 0.78f),
+            (rock, new Vector2(256, -160), 0.56f),
+            (debris, new Vector2(160, 160), 0.50f),
+            (pillar, new Vector2(288, 160), 0.78f),
+        };
+        foreach (var dressing in campDressing)
+            DrawWorldAsset(MapTexture(dressing.Asset), dressing.Asset, shrine + dressing.Offset, dressing.Scale, new Color(0.92f, 0.92f, 0.98f, 0.9f));
+    }
+
+    private void DrawAshGravesFocalClearing(Vector2 center, Vector2 size)
+    {
+        var bounds = new Rect2(center - size * 0.5f, size);
+        DrawRect(bounds, new Color(0.06f, 0.045f, 0.065f, 0.18f));
+        DrawRect(bounds, new Color(0.45f, 0.36f, 0.42f, 0.16f), false, 2);
+    }
+
+    private Texture2D MapTexture(CanonicalAssetEntry asset)
+    {
+        if (_mapTextures.TryGetValue(asset.AssetId, out var texture)) return texture;
+        texture = LoadMapTexture(asset) ?? throw new InvalidOperationException($"Cannot load map texture '{asset.AssetId}'.");
+        _mapTextures.Add(asset.AssetId, texture);
+        return texture;
+    }
+
     /// <summary>
     /// The source package defines mask00..mask15 as NESW Wang bits. This renderer derives those
     /// bits only from the already-authoritative visual layout (roads, Ruins chunk, outer wall),
@@ -1045,7 +1183,7 @@ public partial class Arena : Node2D
         if (_snapshot?.CurrentRegionId != "ash_graves" || _application.CanonicalContent is null || !_assetCatalog.TryGet("world.ash_graves.ground.mask15", out var ground)) return false;
         var layout = _application.CanonicalContent.Content.LayoutBlueprint;
         var tileSize = layout.TileSize;
-        if (tileSize != ground.FrameSize.X || tileSize != ground.FrameSize.Y) return false;
+        if (tileSize != BaseTileSize || tileSize != ground.FrameSize.X || tileSize != ground.FrameSize.Y) return false;
         var player = ToGodot(_snapshot.Player.Position);
         var maxTileX = Math.Max(0, (int)Math.Ceiling(_snapshot.World.Width / tileSize));
         var maxTileY = Math.Max(0, (int)Math.Ceiling(_snapshot.World.Height / tileSize));
@@ -1112,6 +1250,6 @@ public partial class Arena : Node2D
     {
         var rect = new Rect2(origin - new Vector2(radius, radius), new Vector2(radius * 2, radius * 2));
         DrawRect(rect, new Color("#ff00ff"), false, 2); DrawLine(rect.Position, rect.End, new Color("#ff00ff"), 2); DrawLine(new Vector2(rect.End.X, rect.Position.Y), new Vector2(rect.Position.X, rect.End.Y), new Color("#ff00ff"), 2);
-        DrawString(ThemeDB.FallbackFont, origin + new Vector2(-radius, -radius - 3), $"MISSING: {assetId}", fontSize: 9, modulate: new Color("#ffd4ff"));
+        if (ShowPresentationDebug) DrawString(ThemeDB.FallbackFont, origin + new Vector2(-radius, -radius - 3), $"MISSING: {assetId}", fontSize: 9, modulate: new Color("#ffd4ff"));
     }
 }
