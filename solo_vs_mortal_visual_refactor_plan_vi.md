@@ -24,7 +24,7 @@
 | Phase | Nội dung | Trạng thái | Evidence / Ghi chú |
 |---|---|---|---|
 | Phase 0 | Freeze & Measure — audit asset/presentation hiện tại | [x] COMPLETE | 2026-09-11 — evidence `docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.md/.json`; tool `tools/AssetAudit` |
-| Phase 1 | Repair Animation Assets — sửa animation thật | [-] IN PROGRESS | 2026-09-11 — Player move S/W/E/N đã thay bằng 6 frame riêng/clip từ `player.slice_01/batch-004`; technical QA pass, native-motion và Godot review còn chờ user. |
+| Phase 1 | Repair Animation Assets — sửa animation thật | [-] IN PROGRESS | 2026-09-11 — Code tasks 1A/1B/1C all [x]; exit criteria require user asset generation + playtesting. Player move clips (user_review_pending, identical frames) now show MISSING marker; only integration_trial_authorized / user_reuse_authorized clips render. Validation runs at startup under DEBUG. |
 | Phase 2 | World Scale Contract — chốt hệ thống tỉ lệ thế giới | [ ] TODO | |
 | Phase 3 | Readability — làm rõ Player/quái/vật thể | [ ] TODO | |
 | Phase 4 | Semantic World Layers — refactor cách build map | [ ] TODO | |
@@ -372,23 +372,32 @@ Mỗi clip thiếu phải được classify:
 - `src/Presentation/CanonicalAssetCatalog.cs`
 - `src/Presentation/Arena.cs`
 
+### Evidence
+
+- **P1.18-P1.22 (`CanonicalAssetCatalog.ValidateActorAnimation`)**: chạy một lần trong `Arena._Ready` dưới `#if DEBUG`; mỗi issue log `ANIMATION_INTEGRITY` qua `GD.PushWarning`, không block catalog. Quy tắc: min frame theo clip (idle 2, move 4, attack 2, hit 1, death 2,...), unique frame-content hash thật từ pixel vùng frame, frameSize/pivot đồng nhất trong từng actor family (prefix trước `.clip.direction`).
+- **P1.23 (`IsGameplayApproved`)**: `BuildCanonicalActorSprite` chỉ nạp clip có `approvalStatus ∈ {integration_trial_authorized, user_reuse_authorized}`; clip chỉ "tồn tại" (như `player.base.move.*` = `user_review_pending`) không còn được gameplay dùng → rơi xuống `missing` marker đúng AssetId yêu cầu.
+- **P1.24 (`F8`)**: debug-only overlay Label hiển thị `asset`, `animation`, `Frame/Count`, `elapsed` (tính từ frame durations + `FrameProgress`), `scale`. Không ảnh hưởng gameplay.
+- **P1.17/P1.25** const: `BuildFrames` vẫn duration-driven (`SetAnimationSpeed(name,1000)` + `DurationMs`/frame); không đổi movement speed để che lỗi animation.
+- Build: `dotnet build` succeeded (0 errors; 1 pre-existing warning `Arena.cs(313)` dereference on `null!` `_playerSprite`).
+- User-action required (not code): exit criteria cần asset generation mới (`player.base.move` verified pass) + playtest thực; xem Phần bên dưới.
+
 ### Tasks
 
-- [ ] **P1.17** Giữ duration-driven `BuildFrames`.
-- [ ] **P1.18** Add catalog validation cho actor animation.
-- [ ] **P1.19** Validate minimum frame count theo clip.
-- [ ] **P1.20** Validate unique frame-content hash.
-- [ ] **P1.21** Validate frame dimensions consistency.
-- [ ] **P1.22** Validate pivot family consistency.
-- [ ] **P1.23** Tách “clip tồn tại” khỏi “clip được phép dùng trong gameplay”.
-- [ ] **P1.24** Thêm debug-only animation overlay:
+- [x] **P1.17** Giữ duration-driven `BuildFrames`.
+- [x] **P1.18** Add catalog validation cho actor animation.
+- [x] **P1.19** Validate minimum frame count theo clip.
+- [x] **P1.20** Validate unique frame-content hash.
+- [x] **P1.21** Validate frame dimensions consistency.
+- [x] **P1.22** Validate pivot family consistency.
+- [x] **P1.23** Tách "clip tồn tại" khỏi "clip được phép dùng trong gameplay".
+- [x] **P1.24** Thêm debug-only animation overlay:
   - AssetId
   - animation
   - current frame
   - frame count
   - elapsed time
   - scale
-- [ ] **P1.25** Không đổi movement speed để che lỗi animation.
+- [x] **P1.25** Không đổi movement speed để che lỗi animation.
 
 ### Exit Criteria
 

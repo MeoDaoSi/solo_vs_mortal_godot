@@ -37,6 +37,23 @@ public sealed class CanonicalAssetCatalog
     private static readonly HashSet<string> FrameFields = new(StringComparer.Ordinal) { "rect", "durationMs" };
     private static readonly HashSet<string> LayerFields = new(StringComparer.Ordinal) { "zIndex", "ySortEnabled" };
     private static readonly HashSet<string> QaFields = new(StringComparer.Ordinal) { "technical", "visual", "inEngine" };
+    // Phase 1C (P1.23): an asset exists in the catalog even when it is not yet
+    // approved for gameplay. Gameplay-use approval is a separate contract that
+    // the Arena layer enforces; these statuses grant gameplay use.
+    private static readonly HashSet<string> GameplayApprovedStatuses = new(StringComparer.Ordinal) { "integration_trial_authorized", "user_reuse_authorized" };
+    // Phase 1C (P1.19): technical minimum frame counts per animated clip. These are
+    // asset-integrity thresholds only; they never change gameplay balance or timing.
+    private static readonly IReadOnlyDictionary<string, int> MinimumFramesByClip = new Dictionary<string, int>(StringComparer.Ordinal)
+    {
+        ["idle"] = 2,
+        ["move"] = 4,
+        ["attack"] = 2,
+        ["hit"] = 1,
+        ["death"] = 2,
+        ["disperse"] = 2,
+        ["summon"] = 2,
+        ["recall"] = 2,
+    };
     private readonly IReadOnlyDictionary<string, CanonicalAssetEntry> _assets;
     private readonly Dictionary<string, Texture2D> _textures = new(StringComparer.Ordinal);
 
@@ -119,6 +136,77 @@ public sealed class CanonicalAssetCatalog
         foreach (var frame in entry.Frames)
             frames.AddFrame(name, new AtlasTexture { Atlas = texture, Region = frame.Region, FilterClip = true }, frame.DurationMs);
         return frames;
+    }
+
+    /// <summary>Phase 1C (P1.23): gameplay code may only drive approved clips. Existence in the
+    /// catalog is one contract; user/trial approval is a separate contract. The Arena layer asks
+    /// this instead of inlining a copy of the approval status list.</summary>
+    public static bool IsGameplayApproved(string approvalStatus) => GameplayApprovedStatuses.Contains(approvalStatus);
+
+    /// <summary>
+    /// Phase 1C (P1.18-P1.22): validates actor-animation integrity without blocking the catalog.
+    /// Issues are returned as diagnostic text rather than thrown, because a missing or degenerate
+    /// clip is a known integration state (visible as the missing marker), not a load error.
+    /// </summary>
+    public IReadOnlyList<string> ValidateActorAnimation()
+    {
+        var issues = new List<string>();
+        foreach (var entry in _assets.Values)
+        {
+            var candidate = ActorClipFamily(entry.AssetId);
+            if (candidate is null) continue;
+            if (MinimumFramesByClip.TryGetValue(entry.Clip, out var minimum) && entry.Frames.Count < minimum)
+                issues.Add($"P1.19 {entry.AssetId}: clip '{entry.Clip}' has {entry.Frames.Count} frame(s); minimum is {minimum}.");
+            var contentHashes = FrameContentHashes(entry);
+            if (entry.Frames.Count >= 2 && contentHashes.Distinct().Count() == 1)
+                issues.Add($"P1.20 {entry.AssetId}: all {entry.Frames.Count} frame(s) are pixel-identical; the clip cannot animate.");
+        }
+        foreach (var family in _assets.Values.Select(entry => ActorClipFamily(entry.AssetId)).Where(id => id is not null).Distinct().Cast<string>())
+        {
+            var members = _assets.Values.Where(entry => ActorClipFamily(entry.AssetId) == family).ToArray();
+            var sizes = members.Select(entry => entry.FrameSize).Distinct().ToArray();
+            if (sizes.Length > 1)
+                issues.Add($"P1.21 {family}: frameSize differs across the actor family ({string.Join(", ", sizes.Select(size => $"{size.X}x{size.Y}"))}).");
+            var pivots = members.Select(entry => entry.Pivot).Distinct().ToArray();
+            if (pivots.Length > 1)
+                issues.Add($"P1.22 {family}: pivot differs across the actor family ({string.Join(", ", pivots.Select(pivot => $"({pivot.X:F1},{pivot.Y:F1})"))}).");
+        }
+        return issues;
+    }
+
+    private static IReadOnlyList<string> FrameContentHashes(CanonicalAssetEntry entry)
+    {
+        var image = Image.LoadFromFile(entry.AbsoluteFile);
+        if (image.IsEmpty()) return Array.Empty<string>();
+        var hashes = new List<string>();
+        foreach (var frame in entry.Frames)
+        {
+            var region = frame.Region;
+            var x0 = (int)region.Position.X; var y0 = (int)region.Position.Y;
+            var width = (int)region.Size.X; var height = (int)region.Size.Y;
+            using var hashState = System.Security.Cryptography.IncrementalHash.CreateHash(System.Security.Cryptography.HashAlgorithmName.SHA256);
+            for (var y = 0; y < height; y++)
+            for (var x = 0; x < width; x++)
+            {
+                var pixel = image.GetPixel(x0 + x, y0 + y);
+                byte[] rgba = { (byte)pixel.R8, (byte)pixel.G8, (byte)pixel.B8, (byte)pixel.A8 };
+                hashState.AppendData(rgba);
+            }
+            hashes.Add(Convert.ToHexString(hashState.GetHashAndReset()).ToLowerInvariant());
+        }
+        return hashes;
+    }
+
+    // Identifies the actor-family prefix of an animated clip AssetId (e.g. "player.base" in
+    // "player.base.move.s"). Non-actor entries return null and are skipped by animation checks.
+    private static string? ActorClipFamily(string assetId)
+    {
+        var parts = assetId.Split('.');
+        if (parts.Length < 3) return null;
+        var clip = parts[^2]; var direction = parts[^1];
+        if (direction is not ("s" or "w" or "e" or "n")) return null;
+        if (clip is not ("idle" or "move" or "attack" or "hit" or "death" or "disperse" or "summon" or "recall")) return null;
+        return string.Join('.', parts.Take(parts.Length - 2));
     }
 
     /// <summary>

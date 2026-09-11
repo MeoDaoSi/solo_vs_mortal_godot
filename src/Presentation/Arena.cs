@@ -66,6 +66,11 @@ public partial class Arena : Node2D
     private Vector2 _playerPresentationPosition;
     private bool _presentationPositionsInitialized;
     private double _animationProbeRemaining;
+#if DEBUG
+    private Label? _animationOverlay;
+    private bool _showAnimationOverlay;
+    private string _animationOverlayAssetId = "";
+#endif
     private string _facing = "front";
     private string _lastSoulSignature = "";
     private string _lastFeatureSignature = "";
@@ -107,6 +112,11 @@ public partial class Arena : Node2D
 #if DEBUG
         if (_legacySavePreserved)
             GD.Print("MOVEMENT_RECOVERY legacy_v6_preserved=true; fresh_v25_session=true; gameplay_input_blocked=false");
+        foreach (var issue in _assetCatalog.ValidateActorAnimation())
+            GD.PushWarning($"ANIMATION_INTEGRITY {issue}");
+        _animationOverlay = new Label { OffsetLeft = 8, OffsetTop = 64, OffsetRight = 340, OffsetBottom = 144, ZIndex = 1000 };
+        _animationOverlay.AddThemeColorOverride("font_color", new Color(1f, 0.88f, 0.25f));
+        AddChild(_animationOverlay);
 #endif
         RefreshSnapshot();
     }
@@ -285,6 +295,19 @@ public partial class Arena : Node2D
     public override void _Process(double delta)
     {
         if (!_presentationPositionsInitialized) return;
+#if DEBUG
+        if (_showAnimationOverlay && _animationOverlay is not null && _playerSprite is not null)
+        {
+            var frames = _playerSprite.SpriteFrames; var anim = _playerSprite.Animation;
+            var count = frames.GetFrameCount(anim);
+            var frame = _playerSprite.Frame;
+            var elapsed = 0.0;
+            for (var i = 0; i < frame; i++) elapsed += frames.GetFrameDuration(anim, i);
+            if (count > 0 && frame < count) elapsed += frames.GetFrameDuration(anim, frame) * _playerSprite.FrameProgress;
+            elapsed /= 1000.0;
+            _animationOverlay.Text = $"asset={_animationOverlayAssetId}\nanim={anim}  frame={frame}/{count}  elapsed={elapsed:0.00}s  scale={_playerSprite.Scale.X:F2}";
+        }
+#endif
         var blend = 1f - Mathf.Exp((float)(-16.0 * delta));
         _playerPresentationPosition = _playerPresentationPosition.Lerp(_playerPresentationTarget, blend);
         _playerSprite.Position = SnapToPixel(_playerPresentationPosition);
@@ -306,6 +329,15 @@ public partial class Arena : Node2D
             GetViewport().SetInputAsHandled();
             return;
         }
+#if DEBUG
+        if (@event is InputEventKey overlayKey && overlayKey.Pressed && !overlayKey.Echo && overlayKey.Keycode == Key.F8)
+        {
+            _showAnimationOverlay = !_showAnimationOverlay;
+            if (_animationOverlay is not null) _animationOverlay.Visible = _showAnimationOverlay;
+            GetViewport().SetInputAsHandled();
+            return;
+        }
+#endif
         if (@event is InputEventKey detailsKey && detailsKey.Pressed && !detailsKey.Echo && (detailsKey.Keycode == Key.I || detailsKey.Keycode == Key.Escape && _detailsOverlay.Visible))
         {
             ToggleDetails();
@@ -1101,7 +1133,7 @@ public partial class Arena : Node2D
     private AnimatedSprite2D BuildCanonicalActorSprite(string assetIdPrefix, int missingZIndex)
     {
         var animations = _assetCatalog.Assets.Values
-            .Where(asset => asset.AssetId.StartsWith(assetIdPrefix + ".", StringComparison.Ordinal) && asset.Direction is "s" or "w" or "e" or "n" && asset.Clip is "idle" or "move" or "attack" or "hit" or "death" or "disperse" or "summon" or "recall")
+            .Where(asset => asset.AssetId.StartsWith(assetIdPrefix + ".", StringComparison.Ordinal) && asset.Direction is "s" or "w" or "e" or "n" && asset.Clip is "idle" or "move" or "attack" or "hit" or "death" or "disperse" or "summon" or "recall" && CanonicalAssetCatalog.IsGameplayApproved(asset.ApprovalStatus))
             .ToDictionary(asset => ActorAnimationName(asset.Clip, asset.Direction), asset => asset, StringComparer.Ordinal);
         if (animations.Count == 0) return BuildMissingActorSprite(missingZIndex);
         var anchor = animations.Values.First();
@@ -1126,6 +1158,9 @@ public partial class Arena : Node2D
         var fallbackScale = requiredAssetId.StartsWith("player.base.", StringComparison.Ordinal) ? 1.35f : 1f;
         sprite.Scale = Vector2.One * _visualMetrics.ScaleFor(requiredAssetId, fallbackScale);
         if (frames.HasAnimation(resolved) && (sprite.Animation != resolved || !sprite.IsPlaying())) sprite.Play(resolved);
+#if DEBUG
+        if (sprite == _playerSprite) _animationOverlayAssetId = requiredAssetId;
+#endif
     }
 
     private static string CanonicalClip(string action) => action == "walk" ? "move" : action;
