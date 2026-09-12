@@ -1,0 +1,36 @@
+{
+  "source": "raw/pillar.png",
+  "sourceSha256": "a58e6933a60696ab3e9aa91131156e5c497d8c2526847c90afcb7d57a014311f",
+  "crop": [
+    138,
+    121,
+    681,
+    1435
+  ],
+  "sourceFoot": [
+    478,
+    1556
+  ],
+  "uniformScale": 0.06689895470383275,
+  "familyTransformId": "p3-pillar-v1-single-source",
+  "canvas": [
+    64,
+    112
+  ],
+  "pivot": [
+    32,
+    106
+  ],
+  "palette": [
+    "#161820",
+    "#272B36",
+    "#414653",
+    "#626777",
+    "#343635",
+    "#54564F",
+    "#797969",
+    "#A2A18A"
+  ],
+  "output": "runtime/pillar.png",
+  "opaqueTile": false
+}

@@ -74,6 +74,7 @@ public partial class Arena : Node2D
     private bool _animationOverlayReviewPending;
     private List<WorldObjectSnapshot> _teleportCandidates = new();
     private int _teleportCycleIndex;
+    private NativeReadabilitySamples? _nativeReadabilitySamples;
 #endif
     private string _facing = "front";
     private string _lastSoulSignature = "";
@@ -320,6 +321,9 @@ public partial class Arena : Node2D
         _playerPresentationPosition = _playerPresentationPosition.Lerp(_playerPresentationTarget, blend);
         _playerSprite.Position = SnapToPixel(_playerPresentationPosition);
         _camera.Position = SnapToPixel(_playerPresentationPosition);
+#if DEBUG
+        if (_nativeReadabilitySamples is not null) _nativeReadabilitySamples.Position = _camera.Position;
+#endif
         UpdateActorPresentationPositions(_monsterSprites, "enemy", blend);
         UpdateActorPresentationPositions(_allySprites, "ally", blend);
         // Dynamic actor shadows/health bars redraw at the presentation cadence.
@@ -338,6 +342,24 @@ public partial class Arena : Node2D
             return;
         }
 #if DEBUG
+        if (@event is InputEventKey samplesKey && samplesKey.Pressed && !samplesKey.Echo && samplesKey.Keycode == Key.F7)
+        {
+            if (_nativeReadabilitySamples is null)
+            {
+                _nativeReadabilitySamples = new NativeReadabilitySamples { Position = _camera.Position };
+                AddChild(_nativeReadabilitySamples);
+                _nativeReadabilitySamples.LoadSamples();
+            }
+            else _nativeReadabilitySamples.Visible = !_nativeReadabilitySamples.Visible;
+            GetViewport().SetInputAsHandled();
+            return;
+        }
+        if (@event is InputEventKey captureKey && captureKey.Pressed && !captureKey.Echo && captureKey.Keycode == Key.F12)
+        {
+            CaptureNativeReadabilityFrame();
+            GetViewport().SetInputAsHandled();
+            return;
+        }
         if (@event is InputEventKey overlayKey && overlayKey.Pressed && !overlayKey.Echo && overlayKey.Keycode == Key.F8)
         {
             _showAnimationOverlay = !_showAnimationOverlay;
@@ -367,6 +389,21 @@ public partial class Arena : Node2D
     }
 
     public override void _ExitTree() { if (_application is not null && !_saveWritesBlocked) Save(showMessage: false); }
+
+#if DEBUG
+    // User-triggered evidence capture from the actual Arena viewport, before desktop scaling.
+    // This performs no gameplay validation and changes no simulation state.
+    private async void CaptureNativeReadabilityFrame()
+    {
+        await ToSignal(RenderingServer.Singleton, RenderingServer.SignalName.FramePostDraw);
+        var image = GetViewport().GetTexture().GetImage();
+        var directory = ProjectSettings.GlobalizePath("res://docs/V2.5/readability/captures");
+        System.IO.Directory.CreateDirectory(directory);
+        var path = System.IO.Path.Combine(directory, $"arena-{DateTime.UtcNow:yyyyMMdd-HHmmss-fff}.png");
+        var result = image.SavePng(path);
+        GD.Print($"NATIVE_READABILITY_CAPTURE {image.GetWidth()}x{image.GetHeight()} {result}: {path}; user review pending");
+    }
+#endif
 
     public override void _Draw()
     {

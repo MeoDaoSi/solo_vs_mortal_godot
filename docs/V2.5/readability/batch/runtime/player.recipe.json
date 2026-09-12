@@ -1,0 +1,63 @@
+{
+  "recipe": {
+    "source": "raw/player.png",
+    "sourceSha256": "b0f4f60b0e303d68a3bd50939cbc848eb1b6239ee8b51b05cf3bb306124c11e4",
+    "crop": [
+      300,
+      80,
+      640,
+      1140
+    ],
+    "sourceFoot": [
+      620,
+      1206
+    ],
+    "uniformScale": 0.04950495049504951,
+    "familyTransformId": "player-readability-v1-south-only",
+    "canvas": [
+      64,
+      64
+    ],
+    "pivot": [
+      32,
+      60
+    ],
+    "palette": [
+      "#161820",
+      "#272B36",
+      "#414653",
+      "#626777",
+      "#655344",
+      "#9B8564",
+      "#D0B88A",
+      "#F1DDB0",
+      "#332C40",
+      "#54435D",
+      "#7A607D",
+      "#B87825",
+      "#E9B94A"
+    ],
+    "output": "runtime/player.png"
+  },
+  "sourceSize": [
+    1240,
+    1269
+  ],
+  "placement": [
+    16,
+    4
+  ],
+  "actualResize": [
+    32,
+    56
+  ],
+  "opaqueBounds": [
+    17,
+    5,
+    47,
+    59
+  ],
+  "outputSha256": "db4760f1e3608d13accf490181550b12e2851cc096a5a67f3344732f0e81519e",
+  "userReview": "pending",
+  "note": "Normalization facts only; inspect pre-palette and final native PNG"
+}

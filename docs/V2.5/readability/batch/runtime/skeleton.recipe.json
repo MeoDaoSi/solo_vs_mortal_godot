@@ -1,0 +1,63 @@
+{
+  "recipe": {
+    "source": "raw/skeleton.png",
+    "sourceSha256": "a3bd027d3757450a7ac57b2ad0ebd47988abfede95f2a2c2abed517369ca2ad0",
+    "crop": [
+      156,
+      188,
+      908,
+      955
+    ],
+    "sourceFoot": [
+      610,
+      1143
+    ],
+    "uniformScale": 0.05759162303664921,
+    "familyTransformId": "p3-skeleton-v1-single-source",
+    "canvas": [
+      64,
+      64
+    ],
+    "pivot": [
+      32,
+      60
+    ],
+    "palette": [
+      "#161820",
+      "#272B36",
+      "#414653",
+      "#626777",
+      "#655344",
+      "#9B8564",
+      "#D0B88A",
+      "#F1DDB0",
+      "#332C40",
+      "#54435D",
+      "#7A607D",
+      "#AA879E"
+    ],
+    "output": "runtime/skeleton.png",
+    "opaqueTile": false
+  },
+  "sourceSize": [
+    1254,
+    1254
+  ],
+  "placement": [
+    6,
+    5
+  ],
+  "actualResize": [
+    52,
+    55
+  ],
+  "opaqueBounds": [
+    7,
+    5,
+    58,
+    60
+  ],
+  "outputSha256": "4e0f6e7407629e1b8d3d829fc8366b2404dcb52446b2695491ae110488892723",
+  "userReview": "pending",
+  "note": "Normalization facts only; inspect pre-palette and final native PNG"
+}

@@ -1,0 +1,40 @@
+{
+  "source": "raw/chest.png",
+  "sourceSha256": "abe5009b611c2db0e9c2246a392ad47d39fcc02924154a594afb29f38ba205f1",
+  "crop": [
+    196,
+    238,
+    884,
+    850
+  ],
+  "sourceFoot": [
+    638,
+    1088
+  ],
+  "uniformScale": 0.03529411764705882,
+  "familyTransformId": "p3-chest-v1-single-source",
+  "canvas": [
+    64,
+    64
+  ],
+  "pivot": [
+    32,
+    56
+  ],
+  "palette": [
+    "#161820",
+    "#272B36",
+    "#414653",
+    "#626777",
+    "#343635",
+    "#54564F",
+    "#797969",
+    "#A2A18A",
+    "#655344",
+    "#9B8564",
+    "#D0B88A",
+    "#F1DDB0"
+  ],
+  "output": "runtime/chest.png",
+  "opaqueTile": false
+}

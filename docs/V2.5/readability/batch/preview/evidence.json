@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "manifestSha256": "87df616e7efea67e7716663a82b498da8fc6607e453ad0023218f95e7efd1807",
+  "frames": [
+    {
+      "assetId": "player.readability.sample.s",
+      "sha256": "775c7e6645dabc31eefcc3c826a3ab950c8a985625037c69705a5a33ea7e3a99",
+      "frame": 0,
+      "canvas": [
+        64,
+        64
+      ],
+      "bounds": [
+        17,
+        5,
+        47,
+        60
+      ],
+      "pivot": [
+        32,
+        60
+      ]
+    },
+    {
+      "assetId": "soul.skeleton.readability.sample.s",
+      "sha256": "4e0f6e7407629e1b8d3d829fc8366b2404dcb52446b2695491ae110488892723",
+      "frame": 0,
+      "canvas": [
+        64,
+        64
+      ],
+      "bounds": [
+        7,
+        5,
+        58,
+        60
+      ],
+      "pivot": [
+        32,
+        60
+      ]
+    },
+    {
+      "assetId": "world.ash_graves.readability.pillar",
+      "sha256": "16ef53887dc55aa15b3125cc114095a12ceec487d0949dde38fce72e1f86f20b",
+      "frame": 0,
+      "canvas": [
+        64,
+        112
+      ],
+      "bounds": [
+        9,
+        10,
+        55,
+        106
+      ],
+      "pivot": [
+        32,
+        106
+      ]
+    },
+    {
+      "assetId": "world.ash_graves.readability.chest",
+      "sha256": "bce8b00385829f364c6f8b80cbc3e20661e1f24b6d95cf40966edd9295b1dff9",
+      "frame": 0,
+      "canvas": [
+        64,
+        64
+      ],
+      "bounds": [
+        16,
+        26,
+        47,
+        56
+      ],
+      "pivot": [
+        32,
+        56
+      ]
+    },
+    {
+      "assetId": "world.ash_graves.readability.ground",
+      "sha256": "1afbb525031bd8299705ac210d49e041c190fb7c8b8d739acda0d50ee2751a24",
+      "frame": 0,
+      "canvas": [
+        32,
+        32
+      ],
+      "bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "pivot": [
+        0,
+        0
+      ]
+    }
+  ],
+  "previews": {
+    "native-1x.png": "5a3306abd410cd658fecf21a4f035e054f038994ecdb83318addf9ab89deb071",
+    "native-2x.png": "be4bc8b53d56a989c83f6448483a69f27f2f816523a8bc020c57de93d2237191",
+    "grayscale-1x.png": "e43f4bd057f4436597fa91e7a742d2cf55603446dac9a4ad5ac7208781430701",
+    "silhouette-1x.png": "5d6d3e273f4c09aea27d275a49e3975c37df3a2e94f9b85449ec7ba28652562b",
+    "dark-ground-1x.png": "41702b1b49ba40836b76b2453a5143df00393f19bd8aa8e43070978ef08aedb7",
+    "busy-ground-1x.png": "a4777e66409a691cf4a2ebceb8a603046be7283c0323031a7c746b9a16037f46",
+    "props-player-1x.png": "7f383faefe6edf5d177d208af25e728d8265d5bfd6aa986a2ed197d383b31c1f",
+    "terrain-repeat-1x.png": "214cf45788fe1fca749661d315f86fd1a3b1b4d5e7f1488839a38742aed3aee9",
+    "terrain-family-patch-1x.png": "9be0a93261cf0c92b55dc9818a05ae75eade8004f2c819160f80a0fb62198f73"
+  },
+  "userReview": "pending",
+  "scope": "Offline PNG review. Busy ground is a diagnostic pattern; terrain patch is family comparison, not transition certification."
+}

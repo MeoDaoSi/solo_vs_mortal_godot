@@ -1,0 +1,50 @@
+{
+  "samples": [
+    {
+      "file": "player-v2.png",
+      "pivot": [
+        32,
+        60
+      ],
+      "label": "player",
+      "sha256": "775c7e6645dabc31eefcc3c826a3ab950c8a985625037c69705a5a33ea7e3a99"
+    },
+    {
+      "file": "skeleton.png",
+      "pivot": [
+        32,
+        60
+      ],
+      "label": "skeleton",
+      "sha256": "4e0f6e7407629e1b8d3d829fc8366b2404dcb52446b2695491ae110488892723"
+    },
+    {
+      "file": "pillar.png",
+      "pivot": [
+        32,
+        106
+      ],
+      "label": "pillar",
+      "sha256": "16ef53887dc55aa15b3125cc114095a12ceec487d0949dde38fce72e1f86f20b"
+    },
+    {
+      "file": "chest.png",
+      "pivot": [
+        32,
+        56
+      ],
+      "label": "chest",
+      "sha256": "bce8b00385829f364c6f8b80cbc3e20661e1f24b6d95cf40966edd9295b1dff9"
+    },
+    {
+      "file": "terrain.png",
+      "pivot": [
+        0,
+        0
+      ],
+      "label": "terrain",
+      "sha256": "1afbb525031bd8299705ac210d49e041c190fb7c8b8d739acda0d50ee2751a24"
+    }
+  ],
+  "scope": "P3.0 static calibration only; not canonical catalog replacements or animation approval"
+}

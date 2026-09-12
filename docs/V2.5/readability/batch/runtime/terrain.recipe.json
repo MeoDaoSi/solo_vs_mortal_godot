@@ -1,0 +1,63 @@
+{
+  "recipe": {
+    "source": "raw/terrain.png",
+    "sourceSha256": "60a27c937550941c6c0cf5aa97962a20470b894fdc3d1b48a1e453f9edd691d1",
+    "crop": [
+      0,
+      0,
+      1254,
+      1254
+    ],
+    "sourceFoot": [
+      0,
+      0
+    ],
+    "uniformScale": 0.025518341307814992,
+    "familyTransformId": "p3-terrain-v1-single-source",
+    "canvas": [
+      32,
+      32
+    ],
+    "pivot": [
+      0,
+      0
+    ],
+    "palette": [
+      "#161820",
+      "#272B36",
+      "#414653",
+      "#626777",
+      "#343635",
+      "#54564F",
+      "#797969",
+      "#A2A18A",
+      "#293C36",
+      "#46624D",
+      "#718560",
+      "#A1AD7C"
+    ],
+    "output": "runtime/terrain.png",
+    "opaqueTile": true
+  },
+  "sourceSize": [
+    1254,
+    1254
+  ],
+  "placement": [
+    0,
+    0
+  ],
+  "actualResize": [
+    32,
+    32
+  ],
+  "opaqueBounds": [
+    0,
+    0,
+    32,
+    32
+  ],
+  "outputSha256": "1afbb525031bd8299705ac210d49e041c190fb7c8b8d739acda0d50ee2751a24",
+  "userReview": "pending",
+  "note": "Normalization facts only; inspect pre-palette and final native PNG"
+}

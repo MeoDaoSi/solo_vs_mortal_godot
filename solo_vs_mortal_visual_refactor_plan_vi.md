@@ -522,6 +522,20 @@ metricScale * obj.PresentationScale
 
 # Phase 3 — Readability (làm rõ Player / enemy / object)
 
+## P3.0 Native Pixel Readability Root-Cause Audit
+
+**BLOCKING — chưa resolved; dừng P3.1+ tới khi user review hình ảnh.**
+
+- Diagnosis: kết hợp asset workflow, fractional raster scaling và terrain composition. Chi tiết: [root-cause audit](docs/V2.5/readability/root-cause-audit.md).
+- Godot: viewport 640×360/integer stretch/nearest đã có; PNG được load trực tiếp. Scale actor/prop vẫn fractional; bounds Player move cũ làm chiều cao tính ra khoảng 56–77px thay vì 55px. Chưa đổi World Scale ratios hoặc camera.
+- Asset skill: đã thêm native readability contract, preview 1×/2×, explicit normalization recipes và readiness gate. Đã đồng bộ validator/preview evidence sang asset repository; giữ nguyên executable behavior của các normalizer cũ, ghi rõ dùng để tái lập lịch sử.
+- Batch nhỏ: Player south, Skeleton south, pillar, chest, ground; raw/prompt/recipe/native preview nằm trong `docs/V2.5/readability/batch`. Đây là static calibration, không phải animation/canonical replacement.
+- User **REJECT chest revision 2** ngày 2026-09-12: quá xấu. Không tích hợp hoặc dùng làm reference; readability phải giữ phong cách/chất liệu đã chốt.
+- Godot review: F7 bật/tắt static sample row trong Arena, F12 lưu viewport thật. Đã có `before/arena-native-640x360.png` và `batch/arena-samples-native-640x360.png` dưới `docs/V2.5/readability`. Đây là before/sample comparison, chưa thay gameplay assets và chưa có user acceptance.
+- PLAYER_READABILITY_DEBT: armor/body separation, native cluster quality, equipped weapon separation chưa resolved. PLAYER_DIRECTION_ASSET_DEBT: north/back, cross-direction anatomy và motion chưa resolved; sample south không đóng các debt này.
+- PHASE_4_ASSET_SKILL_BLOCKER: ground/path/ruin vẫn cần semantic family/transition kit; hash-selected square patches và rectangular clearings là composition debt. Không triển khai full Phase 4.
+- `dotnet build` đã pass (1 nullable warning); không chạy automated gameplay tests. Checklist manual trong `docs/V2.5/source-audit.md` thuộc user.
+
 ## 3A. Value & Silhouette Separation
 
 Test asset trên:

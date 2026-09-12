@@ -1,0 +1,723 @@
+[
+  {
+    "assetId": "player.base.idle.s",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      22,
+      19,
+      42,
+      56
+    ],
+    "allFrameBounds": [
+      [
+        22,
+        19,
+        42,
+        56
+      ],
+      [
+        22,
+        19,
+        42,
+        56
+      ],
+      [
+        22,
+        19,
+        42,
+        56
+      ],
+      [
+        22,
+        19,
+        42,
+        56
+      ]
+    ],
+    "metricOpaqueBounds": [
+      22,
+      19,
+      20,
+      37
+    ],
+    "targetVisibleHeight": 55.0,
+    "scale": 1.4864864864864864,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 55.0,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "player.base.idle.n",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      23,
+      23,
+      41,
+      56
+    ],
+    "allFrameBounds": [
+      [
+        23,
+        23,
+        41,
+        56
+      ],
+      [
+        23,
+        23,
+        41,
+        56
+      ],
+      [
+        23,
+        23,
+        41,
+        56
+      ],
+      [
+        23,
+        23,
+        41,
+        56
+      ]
+    ],
+    "metricOpaqueBounds": [
+      23,
+      23,
+      18,
+      33
+    ],
+    "targetVisibleHeight": 55.0,
+    "scale": 1.6666666666666667,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 55.0,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "player.base.idle.w",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      23,
+      28,
+      41,
+      56
+    ],
+    "allFrameBounds": [
+      [
+        23,
+        28,
+        41,
+        56
+      ],
+      [
+        23,
+        28,
+        41,
+        56
+      ],
+      [
+        23,
+        28,
+        41,
+        56
+      ],
+      [
+        23,
+        28,
+        41,
+        56
+      ]
+    ],
+    "metricOpaqueBounds": [
+      23,
+      28,
+      18,
+      28
+    ],
+    "targetVisibleHeight": 55.0,
+    "scale": 1.9642857142857142,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 55.0,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "player.base.idle.e",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      24,
+      23,
+      40,
+      56
+    ],
+    "allFrameBounds": [
+      [
+        24,
+        23,
+        40,
+        56
+      ],
+      [
+        24,
+        23,
+        40,
+        56
+      ],
+      [
+        24,
+        23,
+        40,
+        56
+      ],
+      [
+        24,
+        23,
+        40,
+        56
+      ]
+    ],
+    "metricOpaqueBounds": [
+      24,
+      23,
+      16,
+      33
+    ],
+    "targetVisibleHeight": 55.0,
+    "scale": 1.6666666666666667,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 55.0,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "player.base.move.s",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      21,
+      15,
+      43,
+      57
+    ],
+    "allFrameBounds": [
+      [
+        21,
+        15,
+        43,
+        57
+      ],
+      [
+        21,
+        20,
+        43,
+        57
+      ],
+      [
+        21,
+        15,
+        42,
+        57
+      ],
+      [
+        22,
+        15,
+        43,
+        57
+      ],
+      [
+        21,
+        18,
+        43,
+        57
+      ],
+      [
+        22,
+        16,
+        42,
+        57
+      ]
+    ],
+    "metricOpaqueBounds": [
+      21,
+      15,
+      22,
+      41
+    ],
+    "targetVisibleHeight": 55.0,
+    "scale": 1.3414634146341464,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 56.34146341463415,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "player.base.move.n",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      22,
+      15,
+      42,
+      57
+    ],
+    "allFrameBounds": [
+      [
+        22,
+        15,
+        42,
+        57
+      ],
+      [
+        21,
+        20,
+        44,
+        57
+      ],
+      [
+        22,
+        16,
+        43,
+        57
+      ],
+      [
+        22,
+        15,
+        43,
+        57
+      ],
+      [
+        22,
+        19,
+        43,
+        57
+      ],
+      [
+        21,
+        16,
+        43,
+        57
+      ]
+    ],
+    "metricOpaqueBounds": [
+      22,
+      18,
+      20,
+      38
+    ],
+    "targetVisibleHeight": 55.0,
+    "scale": 1.4473684210526316,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 60.78947368421053,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "player.base.move.w",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      18,
+      15,
+      47,
+      57
+    ],
+    "allFrameBounds": [
+      [
+        18,
+        15,
+        47,
+        57
+      ],
+      [
+        20,
+        28,
+        43,
+        57
+      ],
+      [
+        21,
+        24,
+        43,
+        57
+      ],
+      [
+        21,
+        21,
+        44,
+        57
+      ],
+      [
+        19,
+        26,
+        42,
+        57
+      ],
+      [
+        21,
+        25,
+        42,
+        57
+      ]
+    ],
+    "metricOpaqueBounds": [
+      20,
+      20,
+      24,
+      36
+    ],
+    "targetVisibleHeight": 55.0,
+    "scale": 1.5277777777777777,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 64.16666666666666,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "player.base.move.e",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      16,
+      15,
+      47,
+      57
+    ],
+    "allFrameBounds": [
+      [
+        16,
+        15,
+        47,
+        57
+      ],
+      [
+        18,
+        22,
+        46,
+        57
+      ],
+      [
+        21,
+        22,
+        44,
+        57
+      ],
+      [
+        20,
+        22,
+        44,
+        57
+      ],
+      [
+        19,
+        23,
+        45,
+        57
+      ],
+      [
+        20,
+        21,
+        43,
+        57
+      ]
+    ],
+    "metricOpaqueBounds": [
+      22,
+      26,
+      20,
+      30
+    ],
+    "targetVisibleHeight": 55.0,
+    "scale": 1.8333333333333333,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 77.0,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "soul.skeleton.rank01.enemy.south",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      15,
+      12,
+      49,
+      56
+    ],
+    "allFrameBounds": [
+      [
+        15,
+        12,
+        49,
+        56
+      ]
+    ],
+    "metricOpaqueBounds": [
+      15,
+      12,
+      34,
+      44
+    ],
+    "targetVisibleHeight": 55.0,
+    "scale": 1.25,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 55.0,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "soul.skeleton.rank01.ally.south",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      13,
+      12,
+      50,
+      56
+    ],
+    "allFrameBounds": [
+      [
+        13,
+        12,
+        50,
+        56
+      ]
+    ],
+    "metricOpaqueBounds": [
+      13,
+      12,
+      37,
+      44
+    ],
+    "targetVisibleHeight": 55.0,
+    "scale": 1.25,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 55.0,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "world.ash_graves.pillar",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      18,
+      5,
+      47,
+      54
+    ],
+    "allFrameBounds": [
+      [
+        18,
+        5,
+        47,
+        54
+      ]
+    ],
+    "metricOpaqueBounds": [
+      18,
+      5,
+      29,
+      49
+    ],
+    "targetVisibleHeight": 96.25,
+    "scale": 1.9642857142857142,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 96.25,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "world.ash_graves.chest",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      16,
+      21,
+      45,
+      49
+    ],
+    "allFrameBounds": [
+      [
+        16,
+        21,
+        45,
+        49
+      ]
+    ],
+    "metricOpaqueBounds": [
+      16,
+      21,
+      29,
+      28
+    ],
+    "targetVisibleHeight": 30.250000000000004,
+    "scale": 1.080357142857143,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 30.250000000000004,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "world.ash_graves.shrine",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      15,
+      7,
+      51,
+      50
+    ],
+    "allFrameBounds": [
+      [
+        15,
+        7,
+        51,
+        50
+      ]
+    ],
+    "metricOpaqueBounds": [
+      15,
+      7,
+      36,
+      43
+    ],
+    "targetVisibleHeight": 126.49999999999999,
+    "scale": 2.9418604651162785,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 126.49999999999997,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "world.ash_graves.portal",
+    "frameSize": [
+      64,
+      64
+    ],
+    "firstFrameBounds": [
+      10,
+      8,
+      53,
+      52
+    ],
+    "allFrameBounds": [
+      [
+        10,
+        8,
+        53,
+        52
+      ]
+    ],
+    "metricOpaqueBounds": [
+      10,
+      8,
+      43,
+      44
+    ],
+    "targetVisibleHeight": 165.0,
+    "scale": 3.75,
+    "scaleClass": "arbitrary fractional",
+    "idealVisibleHeight": 165.0,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "world.ash_graves.ground.mask15",
+    "frameSize": [
+      32,
+      32
+    ],
+    "firstFrameBounds": [
+      0,
+      0,
+      32,
+      32
+    ],
+    "allFrameBounds": [
+      [
+        0,
+        0,
+        32,
+        32
+      ]
+    ],
+    "metricOpaqueBounds": null,
+    "targetVisibleHeight": null,
+    "scale": 1.0,
+    "scaleClass": "integer",
+    "idealVisibleHeight": 32.0,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "world.ash_graves.path.mask15",
+    "frameSize": [
+      32,
+      32
+    ],
+    "firstFrameBounds": [
+      0,
+      0,
+      32,
+      32
+    ],
+    "allFrameBounds": [
+      [
+        0,
+        0,
+        32,
+        32
+      ]
+    ],
+    "metricOpaqueBounds": null,
+    "targetVisibleHeight": null,
+    "scale": 1.0,
+    "scaleClass": "integer",
+    "idealVisibleHeight": 32.0,
+    "scope": "offline nearest approximation; engine measurement pending"
+  },
+  {
+    "assetId": "world.ash_graves.ruin.mask15",
+    "frameSize": [
+      32,
+      32
+    ],
+    "firstFrameBounds": [
+      0,
+      0,
+      32,
+      32
+    ],
+    "allFrameBounds": [
+      [
+        0,
+        0,
+        32,
+        32
+      ]
+    ],
+    "metricOpaqueBounds": null,
+    "targetVisibleHeight": null,
+    "scale": 1.0,
+    "scaleClass": "integer",
+    "idealVisibleHeight": 32.0,
+    "scope": "offline nearest approximation; engine measurement pending"
+  }
+]
