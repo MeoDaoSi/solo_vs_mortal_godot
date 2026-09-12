@@ -24,7 +24,7 @@
 | Phase | Nội dung | Trạng thái | Evidence / Ghi chú |
 |---|---|---|---|
 | Phase 0 | Freeze & Measure — audit asset/presentation hiện tại | [x] COMPLETE | 2026-09-11 — evidence `docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.md/.json`; tool `tools/AssetAudit` |
-| Phase 1 | Repair Animation Assets — sửa animation thật | [-] IN PROGRESS | 2026-09-11 — Code tasks 1A/1B/1C all [x]; exit criteria require user asset generation + playtesting. Player move clips (user_review_pending, identical frames) now show MISSING marker; only integration_trial_authorized / user_reuse_authorized clips render. Validation runs at startup under DEBUG. REGRESSION (1C/runtime acceptance, 2026-09-12): player facing khóa theo phím nhấn trước (Input.GetVector dominance + cancel) — đã fix `UpdatePlayerFacing` (most-recently-pressed), chờ user manual pass. |
+| Phase 1 | Repair Animation Assets — sửa animation thật | [-] IN PROGRESS | 2026-09-11 — Code tasks 1A/1B/1C all [x]; exit criteria require user asset generation + playtesting. Player move clips (`user_review_pending`) showed MISSING marker; only `integration_trial_authorized`/`user_reuse_authorized` rendered. Validation runs at startup under DEBUG. REGRESSIONS 2026-09-12: (1) P1.23 review workflow blocked in-engine user review (`player.base.move.*` unresolved → Player slides); fix: Debug-only `includeReviewPending` path + F8 overlay `approval=` field; catalog approval status unchanged; Release build has no review overload. (2) player facing locked by Input vector dominance; fix: `UpdatePlayerFacing` (`Input.IsActionJustPressed`, most-recently-pressed). Debug/Release builds both clean; Debug Arena headless startup exit 0. Waiting user manual pass. |
 | Phase 2 | World Scale Contract — chốt hệ thống tỉ lệ thế giới | [-] IN PROGRESS | 2026-09-11 — Code tasks 2B/2C/2D all [x]; data `data/v2.5/world-scale-policy.v2.5.json` (status=proposed). User decision: baseline 55px + policy chỉ áp trong VisualScaleLab, runtime giữ nguyên tới khi user approve. Chờ user chạy ScaleLab + approve. REGRESSION (2026-09-12): policy `groundFootprintTiles` dùng int parser → `InvalidDataException` tại `_Ready` làm Arena không khởi động ("Đang khởi tạo..."); đã fix bằng `FloatPair` (finite, ≥0), real Godot headless Arena startup exit 0. |
 | Phase 3 | Readability — làm rõ Player/quái/vật thể | [ ] TODO | |
 | Phase 4 | Semantic World Layers — refactor cách build map | [ ] TODO | |
@@ -376,7 +376,12 @@ Mỗi clip thiếu phải được classify:
 
 - **P1.18-P1.22 (`CanonicalAssetCatalog.ValidateActorAnimation`)**: chạy một lần trong `Arena._Ready` dưới `#if DEBUG`; mỗi issue log `ANIMATION_INTEGRITY` qua `GD.PushWarning`, không block catalog. Quy tắc: min frame theo clip (idle 2, move 4, attack 2, hit 1, death 2,...), unique frame-content hash thật từ pixel vùng frame, frameSize/pivot đồng nhất trong từng actor family (prefix trước `.clip.direction`).
 - **P1.23 (`IsGameplayApproved`)**: `BuildCanonicalActorSprite` chỉ nạp clip có `approvalStatus ∈ {integration_trial_authorized, user_reuse_authorized}`; clip chỉ "tồn tại" (như `player.base.move.*` = `user_review_pending`) không còn được gameplay dùng → rơi xuống `missing` marker đúng AssetId yêu cầu.
-- **P1.24 (`F8`)**: debug-only overlay Label hiển thị `asset`, `animation`, `Frame/Count`, `elapsed` (tính từ frame durations + `FrameProgress`), `scale`. Không ảnh hưởng gameplay.
+- **REGRESSION review workflow (2026-09-12):** P1.23 nguyên bản khiến user không thể review `player.base.move.*` trong-engine: mọi yêu cầu move đều resolve về animation rỗng `missing` (Player trượt, facing đổi chỉ thấy sau khi thả phím). Fix — tách hai contract rõ ràng:
+  - **Gameplay/release:** chỉ nạp clip approved; overload `BuildCanonicalActorSprite(prefix, z)` (strict) là đường duy nhất trong Release; overload có `includeReviewPending` chỉ tồn tại dưới `#if DEBUG` → override **không thể** biên dịch vào release.
+  - **User gameplay-review (Debug):** `BuildPlayerSprite` gọi overload review để nạp thêm clip Player `user_review_pending` (chỉ `player.base.*`, monster/world object vẫn strict); approval status trong catalog không đổi.
+  - **F8 overlay:** thêm dòng `approval={status}` + hậu tố `(USER_REVIEW_PENDING)` khi clip đang hiển thị thực sự là `user_review_pending` (tra cứu catalog theo AssetId tại `PlayActorAnimation`).
+  - Bằng chứng kỹ thuật: `frameSize {64,64}`/`pivot 32,56` đồng nhất cho idle+move nên sprite review build được; `player.base.move.*` (6 frame) không bị P1.20 báo identical → cycle chạy liên tục; Debug headless Arena startup exit 0; Release build 0 warning/0 error. Chưa phải visual/gameplay approval.
+- **P1.24 (`F8`)**: debug-only overlay Label hiển thị `asset`, `approval` (+ `USER_REVIEW_PENDING`), `animation`, `Frame/Count`, `elapsed` (tính từ frame durations + `FrameProgress`), `scale`. Không ảnh hưởng gameplay.
 - **P1.17/P1.25** const: `BuildFrames` vẫn duration-driven (`SetAnimationSpeed(name,1000)` + `DurationMs`/frame); không đổi movement speed để che lỗi animation.
 - **REGRESSION runtime acceptance (2026-09-12):** player facing bị khóa theo trục Input vector (`abs(X) > abs(Y)`) — giữ W nhấn D không chuyển sang right; bấm cặp đối nghịch bị cancel thay vì chuyển hướng. Fix: `Arena.cs:UpdatePlayerFacing` theo `Input.IsActionJustPressed` (most-recently-pressed, n=back/s=front/w=left/e=right), tách khỏi input vector (vẫn dùng cho movement/action). Chưa phải gameplay pass; manual direction-switch checklist thuộc user.
 - Build: `dotnet build` succeeded (0 errors; 1 pre-existing warning `Arena.cs(313)` dereference on `null!` `_playerSprite`) — checked lại sau fix facing, vẫn 0 error/1 warning cũ.
@@ -393,6 +398,7 @@ Mỗi clip thiếu phải được classify:
 - [x] **P1.23** Tách "clip tồn tại" khỏi "clip được phép dùng trong gameplay".
 - [x] **P1.24** Thêm debug-only animation overlay:
   - AssetId
+  - approval status (+ `USER_REVIEW_PENDING`)
   - animation
   - current frame
   - frame count

@@ -70,6 +70,8 @@ public partial class Arena : Node2D
     private Label? _animationOverlay;
     private bool _showAnimationOverlay;
     private string _animationOverlayAssetId = "";
+    private string _animationOverlayApproval = "";
+    private bool _animationOverlayReviewPending;
 #endif
     private string _facing = "front";
     private string _lastSoulSignature = "";
@@ -309,7 +311,7 @@ public partial class Arena : Node2D
             for (var i = 0; i < frame; i++) elapsed += frames.GetFrameDuration(anim, i);
             if (count > 0 && frame < count) elapsed += frames.GetFrameDuration(anim, frame) * _playerSprite.FrameProgress;
             elapsed /= 1000.0;
-            _animationOverlay.Text = $"asset={_animationOverlayAssetId}\nanim={anim}  frame={frame}/{count}  elapsed={elapsed:0.00}s  scale={_playerSprite.Scale.X:F2}";
+            _animationOverlay.Text = $"asset={_animationOverlayAssetId}\napproval={_animationOverlayApproval}{(_animationOverlayReviewPending ? " (USER_REVIEW_PENDING)" : "")}\nanim={anim}  frame={frame}/{count}  elapsed={elapsed:0.00}s  scale={_playerSprite.Scale.X:F2}";
         }
 #endif
         var blend = 1f - Mathf.Exp((float)(-16.0 * delta));
@@ -1049,10 +1051,14 @@ public partial class Arena : Node2D
         return result;
     }
 
-    private AnimatedSprite2D BuildPlayerSprite(int rank)
+private AnimatedSprite2D BuildPlayerSprite(int rank)
     {
         _ = rank;
+#if DEBUG
+        var sprite = BuildCanonicalActorSprite("player.base", 20, includeReviewPending: true);
+#else
         var sprite = BuildCanonicalActorSprite("player.base", 20);
+#endif
         PlayActorAnimation(sprite, PlayerAnimationName("idle", _facing), PlayerAssetId("idle", FacingToDirection(_facing)));
         return sprite;
     }
@@ -1135,10 +1141,22 @@ var move = Input.GetVector("move_left", "move_right", "move_up", "move_down");
     private static string PlayerAssetId(string clip, string direction) => $"player.base.{clip}.{direction}";
     private static string SoulPickupAssetId(string speciesId, int rank) => $"soul.{speciesId}.rank{rank:D2}.pickup";
 
-    private AnimatedSprite2D BuildCanonicalActorSprite(string assetIdPrefix, int missingZIndex)
+// Strict gameplay filter: only integration_trial_authorized / user_reuse_authorized clips load in normal/release gameplay.
+    private AnimatedSprite2D BuildCanonicalActorSprite(string assetIdPrefix, int missingZIndex) =>
+        BuildCanonicalActorSpriteCore(assetIdPrefix, missingZIndex, includeReviewPending: false);
+
+#if DEBUG
+    // User gameplay-review path: Debug builds may also load user_review_pending Player clips so the user can
+    // review them in the real scene. Catalog approval status is never modified. This overload does not compile
+    // into Release, so the review override is impossible outside Debug.
+    private AnimatedSprite2D BuildCanonicalActorSprite(string assetIdPrefix, int missingZIndex, bool includeReviewPending) =>
+        BuildCanonicalActorSpriteCore(assetIdPrefix, missingZIndex, includeReviewPending);
+#endif
+
+    private AnimatedSprite2D BuildCanonicalActorSpriteCore(string assetIdPrefix, int missingZIndex, bool includeReviewPending)
     {
         var animations = _assetCatalog.Assets.Values
-            .Where(asset => asset.AssetId.StartsWith(assetIdPrefix + ".", StringComparison.Ordinal) && asset.Direction is "s" or "w" or "e" or "n" && asset.Clip is "idle" or "move" or "attack" or "hit" or "death" or "disperse" or "summon" or "recall" && CanonicalAssetCatalog.IsGameplayApproved(asset.ApprovalStatus))
+            .Where(asset => asset.AssetId.StartsWith(assetIdPrefix + ".", StringComparison.Ordinal) && asset.Direction is "s" or "w" or "e" or "n" && asset.Clip is "idle" or "move" or "attack" or "hit" or "death" or "disperse" or "summon" or "recall" && (CanonicalAssetCatalog.IsGameplayApproved(asset.ApprovalStatus) || (includeReviewPending && asset.ApprovalStatus == "user_review_pending")))
             .ToDictionary(asset => ActorAnimationName(asset.Clip, asset.Direction), asset => asset, StringComparer.Ordinal);
         if (animations.Count == 0) return BuildMissingActorSprite(missingZIndex);
         var anchor = animations.Values.First();
@@ -1164,7 +1182,12 @@ var move = Input.GetVector("move_left", "move_right", "move_up", "move_down");
         sprite.Scale = Vector2.One * _visualMetrics.ScaleFor(requiredAssetId, fallbackScale);
         if (frames.HasAnimation(resolved) && (sprite.Animation != resolved || !sprite.IsPlaying())) sprite.Play(resolved);
 #if DEBUG
-        if (sprite == _playerSprite) _animationOverlayAssetId = requiredAssetId;
+        if (sprite == _playerSprite)
+        {
+            _animationOverlayAssetId = requiredAssetId;
+            _animationOverlayReviewPending = _assetCatalog.Assets.TryGetValue(requiredAssetId, out var overlayEntry) && overlayEntry.ApprovalStatus == "user_review_pending";
+            _animationOverlayApproval = overlayEntry?.ApprovalStatus ?? "not_in_catalog";
+        }
 #endif
     }
 
