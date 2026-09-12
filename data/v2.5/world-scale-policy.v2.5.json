@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "styleId": "svm-ash-soulfire",
+  "baseTileSize": 32,
+  "status": "proposed",
+  "basis": "Target World Scale Model (plan section 3). Not yet user-approved; runtime Arena keeps current sizes until VisualScaleLab approval.",
+  "playerBaselineVisibleHeightPx": 55,
+  "categories": [
+    { "id": "player", "label": "Player", "minHeightRatio": 1.0, "maxHeightRatio": 1.0 },
+    { "id": "soul_loot", "label": "Soul pickup / small loot", "minHeightRatio": 0.25, "maxHeightRatio": 0.40 },
+    { "id": "low_prop", "label": "Debris / low rock", "minHeightRatio": 0.25, "maxHeightRatio": 0.50 },
+    { "id": "chest", "label": "Chest", "minHeightRatio": 0.45, "maxHeightRatio": 0.60 },
+    { "id": "small_creature", "label": "Small slime", "minHeightRatio": 0.35, "maxHeightRatio": 0.55 },
+    { "id": "creature", "label": "Goblin adult / skeleton / wolf", "minHeightRatio": 0.55, "maxHeightRatio": 1.05 },
+    { "id": "large_creature", "label": "Goblin chieftain / large goblin", "minHeightRatio": 1.05, "maxHeightRatio": 1.20 },
+    { "id": "grave_marker", "label": "Stone grave marker", "minHeightRatio": 1.10, "maxHeightRatio": 1.40 },
+    { "id": "architectural_prop", "label": "Tall statue / ritual pillar", "minHeightRatio": 1.50, "maxHeightRatio": 2.30 },
+    { "id": "shrine", "label": "Shrine", "minHeightRatio": 1.80, "maxHeightRatio": 2.80 },
+    { "id": "portal", "label": "Major portal / gate", "minHeightRatio": 2.50, "maxHeightRatio": 3.50 },
+    { "id": "landmark", "label": "Landmark / spire", "minHeightRatio": 2.00, "maxHeightRatio": 4.00 }
+  ],
+  "species": [
+    { "speciesId": "player", "representation": "player", "rankRange": [1, 1], "visualHeightRatio": 1.00, "category": "player" },
+    { "speciesId": "goblin", "representation": "enemy", "rankRange": [1, 3], "visualHeightRatio": 0.90, "category": "creature" },
+    { "speciesId": "skeleton", "representation": "enemy", "rankRange": [1, 5], "visualHeightRatio": 1.00, "category": "creature" },
+    { "speciesId": "skeleton", "representation": "ally", "rankRange": [1, 5], "visualHeightRatio": 1.00, "category": "creature" }
+  ],
+  "worldObjects": [
+    { "assetId": "world.ash_graves.debris", "class": "low_prop", "visualHeightRatio": 0.35, "groundFootprintTiles": [0.75, 0.5], "anchor": "feet_or_base", "scaleOverride": null },
+    { "assetId": "world.ash_graves.rock", "class": "low_prop", "visualHeightRatio": 0.40, "groundFootprintTiles": [0.63, 0.5], "anchor": "feet_or_base", "scaleOverride": null },
+    { "assetId": "world.ash_graves.chest", "class": "chest", "visualHeightRatio": 0.55, "groundFootprintTiles": [0.75, 0.6], "anchor": "feet_or_base", "scaleOverride": null },
+    { "assetId": "world.ash_graves.pillar", "class": "architectural_prop", "visualHeightRatio": 1.75, "groundFootprintTiles": [1.0, 0.5], "anchor": "feet_or_base", "scaleOverride": null },
+    { "assetId": "world.ash_graves.shrine", "class": "shrine", "visualHeightRatio": 2.30, "groundFootprintTiles": [2.75, 1.25], "anchor": "feet_or_base", "scaleOverride": null },
+    { "assetId": "world.ash_graves.landmark", "class": "landmark", "visualHeightRatio": 3.00, "groundFootprintTiles": [1.0, 0.5], "anchor": "feet_or_base", "scaleOverride": null },
+    { "assetId": "world.ash_graves.tree_or_spire", "class": "landmark", "visualHeightRatio": 2.00, "groundFootprintTiles": [1.0, 0.7], "anchor": "feet_or_base", "scaleOverride": null },
+    { "assetId": "world.ash_graves.portal", "class": "portal", "visualHeightRatio": 3.00, "groundFootprintTiles": [4.0, 1.5], "anchor": "feet_or_base", "scaleOverride": null },
+    { "assetId": "world.ash_graves.seal", "class": "low_prop", "visualHeightRatio": 0.45, "groundFootprintTiles": [2.0, 1.0], "anchor": "feet_or_base", "scaleOverride": null },
+    { "assetId": "world.ash_graves.banner", "class": "architectural_prop", "visualHeightRatio": 1.60, "groundFootprintTiles": [1.0, 0.5], "anchor": "feet_or_base", "scaleOverride": null },
+    { "assetId": "world.ash_graves.bridge_segment", "class": "architectural_prop", "visualHeightRatio": 1.75, "groundFootprintTiles": [2.5, 1.0], "anchor": "feet_or_base", "scaleOverride": null },
+    { "assetId": "world.ash_graves.torch", "class": "architectural_prop", "visualHeightRatio": 1.60, "groundFootprintTiles": [0.5, 0.4], "anchor": "feet_or_base", "scaleOverride": null },
+    { "assetId": "soul.skeleton.rank01.pickup", "class": "soul_loot", "visualHeightRatio": 0.32, "groundFootprintTiles": [0.44, 0.5], "anchor": "feet_or_base", "scaleOverride": null }
+  ],
+  "overrides": []
+}

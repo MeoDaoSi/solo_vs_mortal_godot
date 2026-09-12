@@ -25,7 +25,7 @@
 |---|---|---|---|
 | Phase 0 | Freeze & Measure — audit asset/presentation hiện tại | [x] COMPLETE | 2026-09-11 — evidence `docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.md/.json`; tool `tools/AssetAudit` |
 | Phase 1 | Repair Animation Assets — sửa animation thật | [-] IN PROGRESS | 2026-09-11 — Code tasks 1A/1B/1C all [x]; exit criteria require user asset generation + playtesting. Player move clips (user_review_pending, identical frames) now show MISSING marker; only integration_trial_authorized / user_reuse_authorized clips render. Validation runs at startup under DEBUG. |
-| Phase 2 | World Scale Contract — chốt hệ thống tỉ lệ thế giới | [ ] TODO | |
+| Phase 2 | World Scale Contract — chốt hệ thống tỉ lệ thế giới | [-] IN PROGRESS | 2026-09-11 — Code tasks 2B/2C/2D all [x]; data `data/v2.5/world-scale-policy.v2.5.json` (status=proposed). User decision: baseline 55px + policy chỉ áp trong VisualScaleLab, runtime giữ nguyên tới khi user approve. Chờ user chạy ScaleLab + approve. |
 | Phase 3 | Readability — làm rõ Player/quái/vật thể | [ ] TODO | |
 | Phase 4 | Semantic World Layers — refactor cách build map | [ ] TODO | |
 | Phase 5 | Y-sort / Occlusion / Anchoring | [ ] TODO | |
@@ -38,7 +38,7 @@
 |---|---|---|---|
 | A | Asset Truth Audit | [x] COMPLETE | Phase 0 evidence `docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.md/.json` |
 | B | Player Animation Replacement | [ ] TODO | |
-| C | World Scale Contract + VisualScaleLab | [ ] TODO | |
+| C | World Scale Contract + VisualScaleLab | [-] IN PROGRESS | Phase 2 data/refactor/lab code done; chờ user approve qua ScaleLab |
 | D | Runtime Scale Application | [ ] TODO | |
 | E | Semantic Ash Graves Foundation | [ ] TODO | |
 | F | Environment Integration | [ ] TODO | |
@@ -416,12 +416,12 @@ Mỗi clip thiếu phải được classify:
 
 Với mọi actor/world object đang thấy trong Ash Graves:
 
-- [ ] **P2.1** Measure opaque body bounds.
-- [ ] **P2.2** Identify ground/contact anchor.
-- [ ] **P2.3** Classify physical category.
-- [ ] **P2.4** Assign relative height ratio vs Player.
-- [ ] **P2.5** Record ground footprint riêng.
-- [ ] **P2.6** Không dùng visual height làm collision footprint.
+- [x] **P2.1** Measure opaque body bounds. — facts trong `presentation-visual-metrics.v2.5.json` (đo Phase 0).
+- [x] **P2.2** Identify ground/contact anchor. — `groundPivot` per asset = pivot canonical.
+- [x] **P2.3** Classify physical category. — `categories` (12 range class) trong policy file.
+- [x] **P2.4** Assign relative height ratio vs Player. — `visualHeightRatio` per world object/species (proposed từ bảng section 3).
+- [x] **P2.5** Record ground footprint riêng. — `groundFootprintTiles` tách khỏi visual height.
+- [x] **P2.6** Không dùng visual height làm collision footprint. — `collisionFootprint` vẫn null; collision do layout sở hữu.
 
 ---
 
@@ -448,13 +448,13 @@ Dữ liệu design được user approve:
 
 ### Tasks
 
-- [ ] **P2.7** Split measurement và policy.
-- [ ] **P2.8** Refactor `PresentationVisualMetrics.cs`.
-- [ ] **P2.9** Add `VisualScaleFor(assetId)`.
-- [ ] **P2.10** Add `VisibleHeightFor(assetId)`.
-- [ ] **P2.11** Add `GroundFootprintFor(assetId)`.
-- [ ] **P2.12** Validate ratio range theo class.
-- [ ] **P2.13** Warning/reject nếu `architectural_prop ≈ player` mà không có explicit override.
+- [x] **P2.7** Split measurement và policy. — policy file mới `data/v2.5/world-scale-policy.v2.5.json` (player baseline, categories, species, world objects, overrides); metrics file giữ facts + `intendedFootprint` đang hiệu lực để runtime scale không đổi.
+- [x] **P2.8** Refactor `PresentationVisualMetrics.cs`. — `Load(metricsPath, policyPath, catalog)` + nhóm record policy.
+- [x] **P2.9** Add `VisualScaleFor(assetId)`. — scale derive từ baseline × ratio (lab-only).
+- [x] **P2.10** Add `VisibleHeightFor(assetId)`. — baseline × ratio.
+- [x] **P2.11** Add `GroundFootprintFor(assetId)`. — tiles × tileSize.
+- [x] **P2.12** Validate ratio range theo class. — `ValidateWorldScalePolicy()` (RATIO_RANGE/UNKNOWN_CLASS/UNKNOWN_CATEGORY/INVALID_OVERRIDE).
+- [x] **P2.13** Warning/reject nếu `architectural_prop ≈ player` mà không có explicit override. — ARCHITECTURAL_PROP_NEAR_PLAYER.
 
 ---
 
@@ -468,11 +468,11 @@ metricScale * obj.PresentationScale
 
 ### Tasks
 
-- [ ] **P2.14** Chọn một owner chính cho physical scale.
-- [ ] **P2.15** `PresentationVisualMetrics/WorldScalePolicy` sở hữu scale chính.
-- [ ] **P2.16** Instance override chỉ được phép trong khoảng hẹp, ví dụ `0.8–1.2`.
-- [ ] **P2.17** Log warning nếu override vượt safe range.
-- [ ] **P2.18** Không dùng range arbitrary `0.1–3.0`.
+- [x] **P2.14** Chọn một owner chính cho physical scale. — `PresentationVisualMetrics.ResolveWorldScale`.
+- [x] **P2.15** `PresentationVisualMetrics/WorldScalePolicy` sở hữu scale chính. — Arena.cs:380 dùng `ResolveWorldScale`.
+- [x] **P2.16** Instance override chỉ được phép trong khoảng hẹp, ví dụ `0.8–1.2`. — `InstanceOverrideMin/Max`.
+- [x] **P2.17** Log warning nếu override vượt safe range. — `GD.PushWarning` đúng 1 lần/asset.
+- [x] **P2.18** Không dùng range arbitrary `0.1–3.0`. — đã bỏ clamp 0.1–3.0.
 
 ---
 
@@ -497,10 +497,10 @@ Hiển thị cùng ground line:
 
 ### Tasks
 
-- [ ] **P2.19** Tạo scene.
-- [ ] **P2.20** Hiển thị calculated visible height.
-- [ ] **P2.21** Hiển thị ratio.
-- [ ] **P2.22** Không chỉnh scale bằng gameplay screenshot trước khi Scale Lab pass.
+- [x] **P2.19** Tạo scene. — `scenes/VisualScaleLab.tscn` + `src/Presentation/VisualScaleLab.cs` (debug-only, standalone run).
+- [x] **P2.20** Hiển thị calculated visible height. — label `target Xpx (cur Ypx)` per representative.
+- [x] **P2.21** Hiển thị ratio. — label `ratio N`.
+- [x] **P2.22** Không chỉnh scale bằng gameplay screenshot trước khi Scale Lab pass. — runtime Arena giữ nguyên kích thước; policy chỉ đọc bởi ScaleLab + validation.
 
 ### Exit Criteria
 
@@ -511,6 +511,15 @@ Hiển thị cùng ground line:
 - [ ] Loot/rock/chest nhỏ hợp lý.
 - [?] Chờ user approve Scale Lab.
 - [ ] Sau approve, Phase 2 = `[x] COMPLETE`.
+
+### Evidence
+
+- **User decisions (2026-09-11):** Player baseline visible height = **55px** (giữ hiện tại); World Scale Policy **chỉ áp trong VisualScaleLab**, runtime giữ nguyên kích thước tới khi approve.
+- `data/v2.5/world-scale-policy.v2.5.json` — policy status=proposed: `playerBaselineVisibleHeightPx=55`, 12 `categories` (range theo bảng section 3), 4 `species` (player 1.00 / goblin 0.90 / skeleton 1.00), 13 `worldObjects` (class + `visualHeightRatio` + `groundFootprintTiles` + `anchor` + `scaleOverride`), `overrides=[]`.
+- `src/Presentation/PresentationVisualMetrics.cs` — refactor 2B: `Load(metrics, policy, catalog)`, `VisualScaleFor`, `VisibleHeightFor`, `GroundFootprintFor`, `ValidateWorldScalePolicy` (P2.12/2.13), `ResolveWorldScale` (2C: instance override clamp 0.8–1.2 + warning-once).
+- `src/Presentation/Arena.cs` — load policy + push policy warnings (DEBUG) tại `_Ready`; world-object scale tại `Arena.cs:380` chuyển sang `ResolveWorldScale` (bỏ clamp 0.1–3.0). Canonical world objects đều có `PresentationScale=1` nên runtime visual không đổi.
+- `scenes/VisualScaleLab.tscn` + `src/Presentation/VisualScaleLab.cs` — debug scene: ground line + Player baseline 55px; 9 representatives (Player, Goblin [MISSING], Skeleton, Soul pickup, Chest, Grave marker, Pillar, Shrine, Portal) hiển thị `ratio` + `target Xpx (cur Ypx)`.
+- Evidence kỹ thuật: `dotnet build solo_vs_mortal_godot.sln -c Debug` pass, 0 error / 1 pre-existing warning (`Arena.cs:317` null-safety, không do Phase 2). JSON integrity: policy worldObjects 13/13 đều tồn tại trong metrics (23) và catalog (149). Chưa phải visual/gameplay approval.
 
 ---
 

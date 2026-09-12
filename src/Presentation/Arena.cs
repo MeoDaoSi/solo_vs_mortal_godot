@@ -96,7 +96,11 @@ public partial class Arena : Node2D
         ApplyHudVisualDesign();
         _application = GameApplication.CreateFromDefinitionsDirectory(ProjectSettings.GlobalizePath("res://data/configs"));
         _assetCatalog = CanonicalAssetCatalog.Load(ProjectSettings.GlobalizePath("res://"), ProjectSettings.GlobalizePath("res://data/v2.5/asset-catalog.v2.5.json"));
-        _visualMetrics = PresentationVisualMetrics.Load(ProjectSettings.GlobalizePath("res://data/v2.5/presentation-visual-metrics.v2.5.json"), _assetCatalog);
+        _visualMetrics = PresentationVisualMetrics.Load(ProjectSettings.GlobalizePath("res://data/v2.5/presentation-visual-metrics.v2.5.json"), ProjectSettings.GlobalizePath("res://data/v2.5/world-scale-policy.v2.5.json"), _assetCatalog);
+#if DEBUG
+        foreach (var issue in _visualMetrics.ValidateWorldScalePolicy())
+            GD.PushWarning(issue);
+#endif
         _v25Store = CreateSaveStore(_selectedSaveSlot);
         _application.Start();
         _ashGravesTerrain = new AshGravesTerrainLayer { ZIndex = -5 };
@@ -373,7 +377,7 @@ public partial class Arena : Node2D
             var p = ToGodot(obj.Position);
             if (obj.Type == "wall") continue;
             if (ShowPresentationDebug && (obj.Type is "npc" or "shrine" or "chest" or "landmark" or "portal" or "secret")) DrawString(ThemeDB.FallbackFont, p + new Vector2(-24, -20), obj.Id, fontSize: 9);
-            var scale = _visualMetrics.ScaleFor(obj.AssetId) * (float)System.Math.Clamp(obj.PresentationScale, 0.1, 3);
+            var scale = _visualMetrics.ResolveWorldScale(obj.AssetId, (float)obj.PresentationScale);
             if (_mapTextures.TryGetValue(obj.AssetId, out var texture) && _assetCatalog.TryGet(obj.AssetId, out var asset))
                 DrawWorldAsset(texture, asset, p, scale, new Color(1, 1, 1, 0.96f));
             else
