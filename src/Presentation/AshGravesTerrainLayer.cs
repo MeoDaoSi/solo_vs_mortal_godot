@@ -66,7 +66,7 @@ public sealed partial class AshGravesTerrainLayer : Node2D
             if (IsFocalClearing(x, y))
                 canvas.DrawRect(tileRect, new Color("#29242d"));
             else if (IsAshTexturePatch(x, y) && TryAsset("ground", 15, out var ground))
-                DrawTile(canvas, ground, tileRect, new Color(1, 1, 1, 0.38f));
+                DrawTile(canvas, ground, tileRect, Colors.White);
         }
 
         bool Road(int x, int y) => IsRoadTile(x, y);
@@ -76,8 +76,8 @@ public sealed partial class AshGravesTerrainLayer : Node2D
         for (var x = startX; x < startX + countX; x++)
         {
             var tileRect = new Rect2(x * BaseTileSize, y * BaseTileSize, BaseTileSize, BaseTileSize);
-            if (Ruin(x, y) && TryAsset("ruin", WangMask(Ruin, x, y), out var ruin)) DrawTile(canvas, ruin, tileRect, new Color(0.78f, 0.76f, 0.84f, 0.65f));
-            if (Road(x, y) && TryAsset("path", WangMask(Road, x, y), out var path)) DrawTile(canvas, path, tileRect, new Color(1, 0.96f, 0.87f, 1));
+            if (Ruin(x, y) && TryAsset("ruin", WangMask(Ruin, x, y), out var ruin)) DrawTile(canvas, ruin, tileRect, Colors.White);
+            if (Road(x, y) && TryAsset("path", WangMask(Road, x, y), out var path)) DrawTile(canvas, path, tileRect, Colors.White);
             if (Wall(x, y) && TryAsset("wall", WangMask(Wall, x, y), out var wall)) DrawTile(canvas, wall, tileRect, Colors.White);
         }
         DrawCornerCap(canvas, "nw", 0, 0, startX, startY, countX, countY);

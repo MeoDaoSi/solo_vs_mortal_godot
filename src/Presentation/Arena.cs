@@ -74,7 +74,8 @@ public partial class Arena : Node2D
     private bool _animationOverlayReviewPending;
     private List<WorldObjectSnapshot> _teleportCandidates = new();
     private int _teleportCycleIndex;
-    private NativeReadabilitySamples? _nativeReadabilitySamples;
+    private IReadOnlyDictionary<string, string> _staticArtTrialAssets = new Dictionary<string, string>();
+    private string? _selectedArtTrialAssetId;
 #endif
     private string _facing = "front";
     private string _lastSoulSignature = "";
@@ -103,6 +104,7 @@ public partial class Arena : Node2D
         _assetCatalog = CanonicalAssetCatalog.Load(ProjectSettings.GlobalizePath("res://"), ProjectSettings.GlobalizePath("res://data/v2.5/asset-catalog.v2.5.json"));
         _visualMetrics = PresentationVisualMetrics.Load(ProjectSettings.GlobalizePath("res://data/v2.5/presentation-visual-metrics.v2.5.json"), ProjectSettings.GlobalizePath("res://data/v2.5/world-scale-policy.v2.5.json"), _assetCatalog);
 #if DEBUG
+        (_selectedArtTrialAssetId, _staticArtTrialAssets) = LoadArtTrial(_assetCatalog);
         foreach (var issue in _visualMetrics.ValidateWorldScalePolicy())
             GD.PushWarning(issue);
 #endif
@@ -305,7 +307,7 @@ public partial class Arena : Node2D
     {
         if (!_presentationPositionsInitialized) return;
 #if DEBUG
-        if (_showAnimationOverlay && _animationOverlay is not null && _playerSprite is not null)
+        if (_showAnimationOverlay && _animationOverlay is not null)
         {
             var frames = _playerSprite.SpriteFrames; var anim = _playerSprite.Animation;
             var count = frames.GetFrameCount(anim);
@@ -321,9 +323,6 @@ public partial class Arena : Node2D
         _playerPresentationPosition = _playerPresentationPosition.Lerp(_playerPresentationTarget, blend);
         _playerSprite.Position = SnapToPixel(_playerPresentationPosition);
         _camera.Position = SnapToPixel(_playerPresentationPosition);
-#if DEBUG
-        if (_nativeReadabilitySamples is not null) _nativeReadabilitySamples.Position = _camera.Position;
-#endif
         UpdateActorPresentationPositions(_monsterSprites, "enemy", blend);
         UpdateActorPresentationPositions(_allySprites, "ally", blend);
         // Dynamic actor shadows/health bars redraw at the presentation cadence.
@@ -333,30 +332,10 @@ public partial class Arena : Node2D
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        // This development-only route is deliberately independent of the gameplay UI and
-        // remains available while gameplay commands are paused or save writes are blocked.
-        if (@event is InputEventKey trialKey && trialKey.Pressed && !trialKey.Echo && trialKey.Keycode == Key.F10 && _assetCatalog.CatalogVersion == "asset-integration-trial-v001")
-        {
-            OpenAssetTrialViewer();
-            GetViewport().SetInputAsHandled();
-            return;
-        }
 #if DEBUG
         if (@event is InputEventKey samplesKey && samplesKey.Pressed && !samplesKey.Echo && samplesKey.Keycode == Key.F7)
         {
-            if (_nativeReadabilitySamples is null)
-            {
-                _nativeReadabilitySamples = new NativeReadabilitySamples { Position = _camera.Position };
-                AddChild(_nativeReadabilitySamples);
-                _nativeReadabilitySamples.LoadSamples();
-            }
-            else _nativeReadabilitySamples.Visible = !_nativeReadabilitySamples.Visible;
-            GetViewport().SetInputAsHandled();
-            return;
-        }
-        if (@event is InputEventKey captureKey && captureKey.Pressed && !captureKey.Echo && captureKey.Keycode == Key.F12)
-        {
-            CaptureNativeReadabilityFrame();
+            ReloadArtTrial();
             GetViewport().SetInputAsHandled();
             return;
         }
@@ -389,21 +368,6 @@ public partial class Arena : Node2D
     }
 
     public override void _ExitTree() { if (_application is not null && !_saveWritesBlocked) Save(showMessage: false); }
-
-#if DEBUG
-    // User-triggered evidence capture from the actual Arena viewport, before desktop scaling.
-    // This performs no gameplay validation and changes no simulation state.
-    private async void CaptureNativeReadabilityFrame()
-    {
-        await ToSignal(RenderingServer.Singleton, RenderingServer.SignalName.FramePostDraw);
-        var image = GetViewport().GetTexture().GetImage();
-        var directory = ProjectSettings.GlobalizePath("res://docs/V2.5/readability/captures");
-        System.IO.Directory.CreateDirectory(directory);
-        var path = System.IO.Path.Combine(directory, $"arena-{DateTime.UtcNow:yyyyMMdd-HHmmss-fff}.png");
-        var result = image.SavePng(path);
-        GD.Print($"NATIVE_READABILITY_CAPTURE {image.GetWidth()}x{image.GetHeight()} {result}: {path}; user review pending");
-    }
-#endif
 
     public override void _Draw()
     {
@@ -807,47 +771,6 @@ public partial class Arena : Node2D
         GetViewport().SetInputAsHandled();
     }
 
-    // A deliberately narrow, development-only viewer for clips that have no safe gameplay event
-    // yet. It reads the catalog only; it never dispatches Simulation commands or touches saves.
-
-    private void OpenAssetTrialViewer()
-    {
-        var entries = _assetCatalog.Assets.Values.OrderBy(asset => asset.AssetId, StringComparer.Ordinal).ToArray();
-        if (entries.Length == 0) return;
-        var window = new Window { Title = "Asset Integration Trial v001", Size = new Vector2I(980, 670) };
-        AddChild(window); window.CloseRequested += () => window.QueueFree();
-        var root = new VBoxContainer(); root.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect); root.OffsetLeft = 18; root.OffsetTop = 16; root.OffsetRight = -18; root.OffsetBottom = -16; window.AddChild(root);
-        root.AddChild(new Label { Text = "149 authorized assets • animation timing is source metadata • no visual, motion, or in-engine approval is implied.", AutowrapMode = TextServer.AutowrapMode.WordSmart });
-        root.AddChild(new Label { Text = "12 Skeleton Enemy clips remain MISSING because their source state is integration_ready, outside the Trial authorization base states. Sword overlay is intentionally disabled: WEAPON_ALIGNMENT_METADATA_GAP.", AutowrapMode = TextServer.AutowrapMode.WordSmart, Modulate = new Color("#f2d795") });
-        var selector = new OptionButton { CustomMinimumSize = new Vector2(0, 36) };
-        foreach (var entry in entries) selector.AddItem(entry.AssetId);
-        root.AddChild(selector);
-        var metadata = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(0, 54) }; root.AddChild(metadata);
-        var stage = new Control { CustomMinimumSize = new Vector2(0, 440), SizeFlagsVertical = Control.SizeFlags.ExpandFill }; root.AddChild(stage);
-        var selected = new AnimatedSprite2D { Position = new Vector2(760, 210), Centered = false, Scale = Vector2.One * 2, ZIndex = 2 }; stage.AddChild(selected);
-        var selectedCaption = new Label { Text = "Selected asset • 2× display only", Position = new Vector2(650, 350), Size = new Vector2(280, 30), HorizontalAlignment = HorizontalAlignment.Center }; stage.AddChild(selectedCaption);
-
-        void AddScaleComparison(string assetId, string caption, Vector2 origin)
-        {
-            if (!_assetCatalog.TryGet(assetId, out var entry)) return;
-            var actor = new AnimatedSprite2D { SpriteFrames = _assetCatalog.BuildFrames(entry, "trial"), Position = origin, Centered = false, Offset = -entry.Pivot, Scale = Vector2.One * 2 };
-            actor.Play("trial"); stage.AddChild(actor);
-            stage.AddChild(new Label { Text = caption, Position = origin + new Vector2(-70, 84), Size = new Vector2(140, 24), HorizontalAlignment = HorizontalAlignment.Center });
-        }
-        AddScaleComparison("player.base.idle.s", "Player", new Vector2(150, 210));
-        AddScaleComparison("soul.skeleton.rank01.enemy.south", "Enemy static compatibility", new Vector2(350, 210));
-        AddScaleComparison("soul.skeleton.rank01.ally.idle.s", "Ally", new Vector2(550, 210));
-
-        void ShowEntry(long index)
-        {
-            var entry = entries[checked((int)index)];
-            selected.SpriteFrames = _assetCatalog.BuildFrames(entry, "trial"); selected.Offset = -entry.Pivot; selected.Play("trial");
-            metadata.Text = $"{entry.AssetId}\nrole={entry.Role}; representation={entry.Representation}; clip={entry.Clip}; direction={entry.Direction}; frames={entry.Frames.Count}; durations={string.Join(", ", entry.Frames.Select(frame => frame.DurationMs + "ms"))}; pivot=({entry.Pivot.X}, {entry.Pivot.Y}); technical={entry.TechnicalQa}; visual={entry.VisualQa}; inEngine={entry.InEngineQa}; approval={entry.ApprovalStatus}";
-        }
-        selector.ItemSelected += ShowEntry; selector.Select(0); ShowEntry(0);
-        window.PopupCentered();
-    }
-
     private static string inventorySignature(IReadOnlyList<InventoryItem> items) => string.Join(';', items.Select(item => $"{item.StableId}:{item.Count}"));
 
     private void RebuildFeaturePanel(GameSnapshot snapshot)
@@ -856,10 +779,6 @@ public partial class Arena : Node2D
         if (_application.CanonicalContent is not null)
         {
             _featureList.AddChild(new Label { Text = $"Hồn Phiên canonical · Rank {_application.CanonicalBannerRank}\nSpecies Soul: {snapshot.OwnedSouls.Count} · Mỗi species một Ally", ThemeTypeVariation = "HeaderMedium" });
-            if (_assetCatalog.CatalogVersion == "asset-integration-trial-v001")
-            {
-                var openTrial = new Button { Text = "Mở Asset Integration Trial (149 assets)" }; StyleActionButton(openTrial); openTrial.Pressed += OpenAssetTrialViewer; _featureList.AddChild(openTrial);
-            }
             var canonicalPossession = new Label { Text = _application.ActivePossessionSoulId is { } canonicalActiveId ? $"Phụ hồn: {canonicalActiveId} ({Math.Ceiling(_application.PossessionRemainingSeconds())}s)" : "Phụ hồn: không hoạt động" };
             _featureList.AddChild(canonicalPossession);
             if (_application.ActivePossessionSoulId is not null)
@@ -1223,8 +1142,20 @@ var move = Input.GetVector("move_left", "move_right", "move_up", "move_down");
 
     private AnimatedSprite2D BuildCanonicalActorSpriteCore(string assetIdPrefix, int missingZIndex, bool includeReviewPending)
     {
+#if DEBUG
+        // Explicit single-pose art trial in the actual actor position. It is not an animation
+        // alias and cannot substitute another species or rank. Release never holds this pose.
+        if (_staticArtTrialAssets.TryGetValue(assetIdPrefix, out var trialId)
+            && _assetCatalog.TryGet(trialId, out var trial))
+        {
+            var preview = new AnimatedSprite2D { SpriteFrames = _assetCatalog.BuildFrames(trial, "art_trial"), Centered = false,
+                Offset = -trial.Pivot, ZIndex = missingZIndex, YSortEnabled = true, TextureFilter = TextureFilterEnum.Nearest };
+            preview.SetMeta("static_art_trial_id", trialId);
+            return preview;
+        }
+#endif
         var animations = _assetCatalog.Assets.Values
-            .Where(asset => asset.AssetId.StartsWith(assetIdPrefix + ".", StringComparison.Ordinal) && asset.Direction is "s" or "w" or "e" or "n" && asset.Clip is "idle" or "move" or "attack" or "hit" or "death" or "disperse" or "summon" or "recall" && (CanonicalAssetCatalog.IsGameplayApproved(asset.ApprovalStatus) || (includeReviewPending && asset.ApprovalStatus == "user_review_pending")))
+            .Where(asset => asset.AssetId.StartsWith(assetIdPrefix + ".", StringComparison.Ordinal) && asset.Direction is "s" or "w" or "e" or "n" && asset.Clip is "idle" or "move" or "attack" or "hit" or "death" or "disperse" or "summon" or "recall" && (CanonicalAssetCatalog.IsGameplayApproved(asset.ApprovalStatus) || ((includeReviewPending || IsSelectedArtTrial(asset.AssetId)) && asset.ApprovalStatus == "user_review_pending")))
             .ToDictionary(asset => ActorAnimationName(asset.Clip, asset.Direction), asset => asset, StringComparer.Ordinal);
         if (animations.Count == 0) return BuildMissingActorSprite(missingZIndex);
         var anchor = animations.Values.First();
@@ -1242,6 +1173,13 @@ var move = Input.GetVector("move_left", "move_right", "move_up", "move_down");
 
     private void PlayActorAnimation(AnimatedSprite2D sprite, string requested, string requiredAssetId)
     {
+#if DEBUG
+        if (sprite.HasMeta("static_art_trial_id"))
+        {
+            requiredAssetId = sprite.GetMeta("static_art_trial_id").AsString();
+            requested = "art_trial";
+        }
+#endif
         var frames = sprite.SpriteFrames;
         var resolved = frames.HasAnimation(requested) ? requested : "missing";
         if (resolved == "missing") sprite.SetMeta("trial_missing_asset_id", requiredAssetId);
@@ -1342,7 +1280,10 @@ private static string CanonicalClip(string action) => action == "walk" ? "move" 
     private void DrawGroundShadow(Vector2 origin, float visualWidth, float alpha)
     {
         var radius = Mathf.Max(5, visualWidth * 0.28f);
-        DrawCircle(origin + new Vector2(0, 1), radius, new Color(0.035f, 0.028f, 0.045f, alpha));
+        // Ground contact is a shallow ellipse, independent of the sprite's tall canvas.
+        DrawSetTransform(origin + new Vector2(0, 1), 0, new Vector2(1, 0.35f));
+        DrawCircle(Vector2.Zero, radius, new Color(0.035f, 0.028f, 0.045f, alpha));
+        DrawSetTransform(Vector2.Zero);
     }
 
     private void DrawActorGrounding(Vector2 origin, Color accent, float radius, float shadowAlpha)
@@ -1354,7 +1295,8 @@ private static string CanonicalClip(string action) => action == "walk" ? "move" 
     private void DrawWorldAsset(Texture2D texture, CanonicalAssetEntry asset, Vector2 origin, float scale, Color modulate)
     {
         var size = new Vector2(asset.FrameSize.X * scale, asset.FrameSize.Y * scale);
-        DrawGroundShadow(origin, size.X, 0.34f);
+        var bodyWidth = _visualMetrics.TryGet(asset.AssetId, out var metric) ? metric.OpaqueBounds.Size.X * scale : size.X;
+        DrawGroundShadow(origin, bodyWidth, 0.34f);
         DrawTextureRect(texture, new Rect2(origin - asset.Pivot * scale, size), false, modulate);
     }
 

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "catalogId": "v2.5.asset-integration-trial",
-  "catalogVersion": "asset-integration-trial-v001",
+  "catalogVersion": "single-asset-v1",
   "complete": false,
-  "sourceExport": "assets/v2.5/asset-integration-trial-v001/provenance.json",
+  "sourceExport": "asset-production-system/art/assets.json",
   "assets": [
     {
       "assetId": "soul.skeleton.rank01.enemy.attack.s",
@@ -2756,13 +2756,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          24,
-          24
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -2796,13 +2796,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -2836,13 +2836,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -2876,13 +2876,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -2916,13 +2916,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -2956,13 +2956,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -3081,13 +3081,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -3206,13 +3206,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -3331,13 +3331,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -3443,8 +3443,8 @@
     },
     {
       "assetId": "player.base.idle.s",
-      "relativeFile": "assets/v2.5/asset-integration-trial-v001/textures/player.base.idle.s.png",
-      "sha256": "27223e65f959083d729e2f784b23220806bfa4a298da6592579b7a6dd830e88b",
+      "relativeFile": "assets/art/player.base.idle.s.png",
+      "sha256": "dfb6233e9b742e4e4938b79e0210ada5e3f3cc3cbe49098d8ea6046235c5397b",
       "role": "actor",
       "representation": "ui",
       "rank": 1,
@@ -3462,43 +3462,16 @@
             64,
             64
           ],
-          "durationMs": 200
-        },
-        {
-          "rect": [
-            64,
-            0,
-            64,
-            64
-          ],
-          "durationMs": 200
-        },
-        {
-          "rect": [
-            128,
-            0,
-            64,
-            64
-          ],
-          "durationMs": 200
-        },
-        {
-          "rect": [
-            192,
-            0,
-            64,
-            64
-          ],
-          "durationMs": 200
+          "durationMs": 1000
         }
       ],
       "pivot": [
         32,
-        56
+        60
       ],
       "sockets": [],
       "layering": {
-        "zIndex": 12,
+        "zIndex": 20,
         "ySortEnabled": true
       },
       "qa": {
@@ -3506,7 +3479,7 @@
         "visual": false,
         "inEngine": false
       },
-      "approvalStatus": "integration_trial_authorized"
+      "approvalStatus": "user_review_pending"
     },
     {
       "assetId": "player.base.idle.w",
@@ -4940,13 +4913,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -4980,13 +4953,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5020,13 +4993,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5060,13 +5033,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5100,13 +5073,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5140,13 +5113,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5180,13 +5153,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5220,13 +5193,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5260,13 +5233,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5300,13 +5273,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5340,13 +5313,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5380,13 +5353,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5420,13 +5393,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5460,13 +5433,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5500,13 +5473,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5540,13 +5513,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5580,13 +5553,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5620,13 +5593,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5660,13 +5633,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5700,13 +5673,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5740,13 +5713,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5780,13 +5753,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5820,13 +5793,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5860,13 +5833,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5900,13 +5873,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5940,13 +5913,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -5980,13 +5953,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6020,13 +5993,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6060,13 +6033,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6100,13 +6073,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6140,13 +6113,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6180,13 +6153,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6220,13 +6193,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6260,13 +6233,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6300,13 +6273,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6340,13 +6313,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6380,13 +6353,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6420,13 +6393,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6460,13 +6433,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6500,13 +6473,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6540,13 +6513,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6580,13 +6553,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6620,13 +6593,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6660,13 +6633,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6700,13 +6673,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6740,13 +6713,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6780,13 +6753,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6820,13 +6793,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6860,13 +6833,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6900,13 +6873,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6940,13 +6913,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -6980,13 +6953,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7020,13 +6993,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7060,13 +7033,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7100,13 +7073,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7140,13 +7113,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7180,13 +7153,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7220,13 +7193,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7260,13 +7233,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7300,13 +7273,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7340,13 +7313,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7380,13 +7353,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7420,13 +7393,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7460,13 +7433,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7500,13 +7473,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7540,13 +7513,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7580,13 +7553,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7620,13 +7593,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          32,
-          32
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7660,13 +7633,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7700,13 +7673,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7740,13 +7713,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7780,13 +7753,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7820,13 +7793,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7860,13 +7833,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7900,13 +7873,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7940,13 +7913,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -7980,13 +7953,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -8020,13 +7993,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -8060,13 +8033,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [
@@ -8100,13 +8073,13 @@
       ],
       "frames": [
         {
-        "rect": [
-          0,
-          0,
-          64,
-          64
-        ],
-        "durationMs": 1000
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "durationMs": 1000
         }
       ],
       "pivot": [

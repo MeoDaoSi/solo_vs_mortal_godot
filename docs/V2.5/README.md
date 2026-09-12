@@ -4,6 +4,7 @@ The closed gameplay authority is outside this checkout at `C:/ws/asset-productio
 
 ## Current records
 
+- Art workflow (2026-09-13): [one asset → import → user review](../../../asset-production-system/solo-vs-mortal-art/SKILL.md). The production repository's old batches, raw images, masters, dashboards and QA files have been deleted at the user's request. The game now imports `assets/art/player.base.idle.s.png` as a single static Debug trial; F7 reloads art in Arena, F8 shows optional frame/scale metadata. Other live legacy images are retained pending separate cleanup approval, following an automatic review rejection of a destructive live-catalog reset. Older asset reports below are historical, not the active production workflow.
 - [Implementation progress](IMPLEMENTATION_PROGRESS_V2.5_2026-09-09.md) is append-only implementation evidence. Its original plan is preserved and later work is recorded under the append-only journal.
 - [Current implementation status](CURRENT_IMPLEMENTATION_STATUS.md) is the one-place current-state index. It points to evidence without rewriting historical plans or audit records.
 - [Asset dependency inventory](ASSET_DEPENDENCY_INVENTORY_V2.5.md) records protected groups, canonical runtime mappings, and the deletion gates for part 6.

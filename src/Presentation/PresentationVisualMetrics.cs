@@ -58,8 +58,15 @@ public sealed class PresentationVisualMetrics
 
     public float VisibleHeightFor(string assetId, float fallback = 0f) => TryResolveRatio(assetId, out var ratio) ? _policy.PlayerBaselineVisibleHeightPx * ratio : fallback;
 
-    public float VisualScaleFor(string assetId, float fallback = 1f) =>
-        TryResolveRatio(assetId, out var ratio) && TryGet(assetId, out var metric) ? (_policy.PlayerBaselineVisibleHeightPx * ratio) / metric.OpaqueBounds.Size.Y : fallback;
+    public float VisualScaleFor(string assetId, float fallback = 1f)
+    {
+        if (!TryResolveRatio(assetId, out var ratio) || !TryGet(assetId, out var metric)) return fallback;
+        var intendedHeight = _policy.PlayerBaselineVisibleHeightPx * ratio;
+        // New art is authored at its final integer raster height. Preserve its texel grid
+        // when the physical policy rounds by at most half a pixel; do not stretch it again.
+        return Math.Abs(intendedHeight - metric.OpaqueBounds.Size.Y) <= 0.5f
+            ? 1f : intendedHeight / metric.OpaqueBounds.Size.Y;
+    }
 
     public Vector2 GroundFootprintFor(string assetId, Vector2 fallback) =>
         _policy.WorldObjects.TryGetValue(assetId, out var obj) ? obj.GroundFootprintTiles * BaseTileSize : fallback;

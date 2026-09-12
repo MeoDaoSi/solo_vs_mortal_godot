@@ -1,9 +1,11 @@
 # Solo vs Mortal — current V2.5 implementation status
 
-**Updated:** 2026-09-10  
+**Updated:** 2026-09-13 (art workflow; gameplay status unchanged)
 **Status source:** this file is the current-state index only. It does not rewrite the historical plans in `work-items.json`, `implementation-tasks-4-8.json`, or `source-audit.md`. The append-only evidence remains in [implementation progress](IMPLEMENTATION_PROGRESS_V2.5_2026-09-09.md).
 
 ## Authority and validation boundary
+
+Art now follows the production repository's `solo-vs-mortal-art/SKILL.md`: one final PNG at a time, immediate Arena import, user visual review, then stop. The first replacement is `assets/art/player.base.idle.s.png`, a single south pose on a 64×64 canvas with 55px visible height and pivot (32,60). Debug holds this pose while moving; F7 reloads imported art. It is not completed animation. Production batches/raw/QA have been reset; other live legacy game art remains pending cleanup authorization after the automatic review blocked a whole-catalog deletion. Historical package/approval records below do not govern this new workflow.
 
 Gameplay authority is `C:/ws/asset-production-system/Solo_vs_Mortal_Gameplay_System_V2.5.md`, revision `2026-09-08.closed-1`, with its hash-pinned `game_spec` bundle. The user is the sole gameplay tester. The technical results below are not gameplay acceptance.
 
