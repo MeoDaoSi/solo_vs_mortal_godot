@@ -72,6 +72,8 @@ public partial class Arena : Node2D
     private string _animationOverlayAssetId = "";
     private string _animationOverlayApproval = "";
     private bool _animationOverlayReviewPending;
+    private List<WorldObjectSnapshot> _teleportCandidates = new();
+    private int _teleportCycleIndex;
 #endif
     private string _facing = "front";
     private string _lastSoulSignature = "";
@@ -343,6 +345,12 @@ public partial class Arena : Node2D
             GetViewport().SetInputAsHandled();
             return;
         }
+        if (@event is InputEventKey teleportKey && teleportKey.Pressed && !teleportKey.Echo && teleportKey.Keycode == Key.F9)
+        {
+            TeleportPlayerCycle();
+            GetViewport().SetInputAsHandled();
+            return;
+        }
 #endif
         if (@event is InputEventKey detailsKey && detailsKey.Pressed && !detailsKey.Echo && (detailsKey.Keycode == Key.I || detailsKey.Keycode == Key.Escape && _detailsOverlay.Visible))
         {
@@ -390,7 +398,7 @@ public partial class Arena : Node2D
         foreach (var soul in _snapshot.WorldSouls)
         {
             var p = ToGodot(soul.Position); var assetId = SoulPickupAssetId(soul.OriginSpeciesId, soul.OriginRank);
-            var scale = _visualMetrics.ScaleFor(assetId);
+            var scale = _visualMetrics.ResolveWorldScale(assetId, 1f);
             DrawGroundShadow(p, 14, 0.34f);
             if (_assetCatalog.TryGet(assetId, out var asset)) DrawCanonicalFrame(asset, p, scale);
             else DrawMissingAssetMarker(p, assetId, 10);
@@ -1151,6 +1159,29 @@ var move = Input.GetVector("move_left", "move_right", "move_up", "move_down");
     // into Release, so the review override is impossible outside Debug.
     private AnimatedSprite2D BuildCanonicalActorSprite(string assetIdPrefix, int missingZIndex, bool includeReviewPending) =>
         BuildCanonicalActorSpriteCore(assetIdPrefix, missingZIndex, includeReviewPending);
+
+    // Dev-only teleport aid: hop the logical Player next to canonical world objects so the user can inspect
+    // the World Scale Policy hierarchy in the real scene. Presentation/sim position only; no gameplay,
+    // balance, or save change. This method does not compile into Release.
+    private void TeleportPlayerCycle()
+    {
+        if (_teleportCandidates.Count == 0)
+        {
+            _teleportCandidates = _application.WorldObjects()
+                .Where(item => !item.Destroyed && item.Type != "wall" && _mapTextures.ContainsKey(item.AssetId) && _assetCatalog.TryGet(item.AssetId, out _))
+                .OrderBy(item => item.Position.DistanceTo(_snapshot!.Player.Position))
+                .ToList();
+            if (_teleportCandidates.Count == 0) { Toast("DEBUG F9: không có canonical world object để teleport."); return; }
+        }
+        var target = _teleportCandidates[_teleportCycleIndex % _teleportCandidates.Count];
+        _teleportCycleIndex = (_teleportCycleIndex + 1) % _teleportCandidates.Count;
+        _application.DebugTeleportPlayer(new SimVec2(target.Position.X + 80, target.Position.Y + 88));
+        RefreshSnapshot();
+        var scale = _visualMetrics.ResolveWorldScale(target.AssetId, 1f);
+        var height = _visualMetrics.VisibleHeightFor(target.AssetId);
+        var opaque = _visualMetrics.TryGet(target.AssetId, out var metric) ? metric.OpaqueBounds.Size.Y : 0f;
+        Toast($"[DEBUG F9 {_teleportCycleIndex}/{_teleportCandidates.Count}] {target.AssetId} — visibleHeight {height:0.#}px · scale {scale:0.###} · opaqueH {opaque:0.#}");
+    }
 #endif
 
     private AnimatedSprite2D BuildCanonicalActorSpriteCore(string assetIdPrefix, int missingZIndex, bool includeReviewPending)
@@ -1179,7 +1210,7 @@ var move = Input.GetVector("move_left", "move_right", "move_up", "move_down");
         if (resolved == "missing") sprite.SetMeta("trial_missing_asset_id", requiredAssetId);
         else if (sprite.HasMeta("trial_missing_asset_id")) sprite.RemoveMeta("trial_missing_asset_id");
         var fallbackScale = requiredAssetId.StartsWith("player.base.", StringComparison.Ordinal) ? 1.35f : 1f;
-        sprite.Scale = Vector2.One * _visualMetrics.ScaleFor(requiredAssetId, fallbackScale);
+        sprite.Scale = Vector2.One * _visualMetrics.VisualScaleFor(requiredAssetId, fallbackScale);
         if (frames.HasAnimation(resolved) && (sprite.Animation != resolved || !sprite.IsPlaying())) sprite.Play(resolved);
 #if DEBUG
         if (sprite == _playerSprite)
@@ -1319,7 +1350,7 @@ private static string CanonicalClip(string action) => action == "walk" ? "move" 
             texture = LoadMapTexture(asset) ?? throw new InvalidOperationException($"Cannot load Ash Graves dressing '{assetId}'.");
             _mapTextures.Add(assetId, texture);
         }
-        DrawWorldAsset(texture, asset, origin, _visualMetrics.ScaleFor(assetId), new Color(1, 1, 1, opacity));
+        DrawWorldAsset(texture, asset, origin, _visualMetrics.ResolveWorldScale(assetId, 1f), new Color(1, 1, 1, opacity));
     }
 
     private void DrawCanonicalFrame(CanonicalAssetEntry asset, Vector2 origin, float scale = 1)

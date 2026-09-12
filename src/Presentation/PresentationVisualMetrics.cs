@@ -69,7 +69,7 @@ public sealed class PresentationVisualMetrics
         var clamped = Mathf.Clamp(instanceOverride, InstanceOverrideMin, InstanceOverrideMax);
         if (Math.Abs(clamped - instanceOverride) > 0.0001f && _overrideOverrideWarned.Add(assetId))
             GD.PushWarning($"WORLD_SCALE_OVERRIDE asset '{assetId}' instance override {instanceOverride:0.###} is outside safe range {InstanceOverrideMin:0.#}-{InstanceOverrideMax:0.#}; clamped to {clamped:0.###}.");
-        return ScaleFor(assetId) * clamped;
+        return VisualScaleFor(assetId) * clamped;
     }
 
     public IReadOnlyList<string> ValidateWorldScalePolicy()

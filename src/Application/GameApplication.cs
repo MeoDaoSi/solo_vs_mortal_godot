@@ -80,6 +80,11 @@ public sealed class GameApplication
     public string SpawnMonster(string definitionId, int? level = null, Vec2? position = null) => _session.SpawnMonster(definitionId, level, position).Uid;
     public void AddPlayerXp(double amount) => _session.Progression.AddPlayerXp(amount);
     public bool AttemptPlayerBreakthrough(PillId? pillId = null) => _session.Progression.AttemptPlayerBreakthrough(CanonicalContent is null ? pillId : null);
+
+#if DEBUG
+    /// <summary>DEBUG-only dev aid: reposition the logical player for in-scene scale inspection.</summary>
+    public void DebugTeleportPlayer(Vec2 position) => _session.Player.SetPosition(position);
+#endif
     public V25BannerUpgradeResult AttemptCanonicalBannerUpgrade() { var result = _session.SoulBanners.UpgradeCanonical(); if (result.Success && !result.AlreadyApplied) _session.RequireCanonicalDurableCommit(); return result; }
     public int CanonicalBannerRank => _session.SoulBanners.CanonicalBannerRank;
     public void RecordCanonicalSyncSource(string sourceId, string eventId, bool atShrine = false, bool currentSpeciesPossession = false) { (_session.Sync ?? throw new InvalidOperationException("Canonical Sync is not enabled.")).RecordSourceEvent(sourceId, eventId, atShrine, currentSpeciesPossession); _session.RequireCanonicalDurableCommit(); }

@@ -25,7 +25,7 @@
 |---|---|---|---|
 | Phase 0 | Freeze & Measure — audit asset/presentation hiện tại | [x] COMPLETE | 2026-09-11 — evidence `docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.md/.json`; tool `tools/AssetAudit` |
 | Phase 1 | Repair Animation Assets — sửa animation thật | [-] IN PROGRESS | 2026-09-11 — Code tasks 1A/1B/1C all [x]; exit criteria require user asset generation + playtesting. Player move clips (`user_review_pending`) showed MISSING marker; only `integration_trial_authorized`/`user_reuse_authorized` rendered. Validation runs at startup under DEBUG. REGRESSIONS 2026-09-12: (1) P1.23 review workflow blocked in-engine user review (`player.base.move.*` unresolved → Player slides); fix: Debug-only `includeReviewPending` path + F8 overlay `approval=` field; catalog approval status unchanged; Release build has no review overload. (2) player facing locked by Input vector dominance; fix: `UpdatePlayerFacing` (`Input.IsActionJustPressed`, most-recently-pressed). Debug/Release builds both clean; Debug Arena headless startup exit 0. Waiting user manual pass. |
-| Phase 2 | World Scale Contract — chốt hệ thống tỉ lệ thế giới | [-] IN PROGRESS | 2026-09-11 — Code tasks 2B/2C/2D all [x]; data `data/v2.5/world-scale-policy.v2.5.json` (status=proposed). User decision: baseline 55px + policy chỉ áp trong VisualScaleLab, runtime giữ nguyên tới khi user approve. Chờ user chạy ScaleLab + approve. REGRESSION (2026-09-12): policy `groundFootprintTiles` dùng int parser → `InvalidDataException` tại `_Ready` làm Arena không khởi động ("Đang khởi tạo..."); đã fix bằng `FloatPair` (finite, ≥0), real Godot headless Arena startup exit 0. |
+| Phase 2 | World Scale Contract — chốt hệ thống tỉ lệ thế giới | [-] IN PROGRESS | 2026-09-12 — Code tasks 2B/2C done; VisualScaleLab removed theo user directive; policy áp TRỰC TIẾP Arena runtime: `ResolveWorldScale`/actor sprite/`soul` pickup/map dressing dùng `VisualScaleFor` (policy-derived) thay `ScaleFor` (legacy intendedFootprint). REGRESSION đã fix (2026-09-12): `groundFootprintTiles` int parser → `FloatPair` fix; real Godot Arena startup smoke exit 0. Exit criteria: user approve real Arena gameplay screenshot (Player ≈ 55px; pillar/statue rõ lớn hơn Player; shrine/portal lớn rõ ràng; loot/chest/low props nhỏ rõ ràng). Chờ user manual pass. |
 | Phase 3 | Readability — làm rõ Player/quái/vật thể | [ ] TODO | |
 | Phase 4 | Semantic World Layers — refactor cách build map | [ ] TODO | |
 | Phase 5 | Y-sort / Occlusion / Anchoring | [ ] TODO | |
@@ -38,8 +38,8 @@
 |---|---|---|---|
 | A | Asset Truth Audit | [x] COMPLETE | Phase 0 evidence `docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.md/.json` |
 | B | Player Animation Replacement | [ ] TODO | |
-| C | World Scale Contract + VisualScaleLab | [-] IN PROGRESS | Phase 2 data/refactor/lab code done; regression `groundFootprintTiles` float-parse fix + real Godot Arena startup smoke (exit 0) done 2026-09-12; chờ user approve qua ScaleLab + facing manual pass |
-| D | Runtime Scale Application | [ ] TODO | |
+| C | World Scale Contract + Runtime Scale Application | [-] IN PROGRESS | 2026-09-12: VisualScaleLab removed; policy áp TRỰC TIẾP Arena runtime qua `ResolveWorldScale`/`VisualScaleFor` (world objects, actor sprites, soul pickups, map dressing); regression `groundFootprintTiles` float-parse fix + Arena startup smoke (exit 0); chờ user verify real Arena gameplay screenshot (Phase 2 exit criteria) + facing manual pass |
+| D | Runtime Scale Application | [-] MERGED vào C | 2026-09-12: áp trực tiếp với VisualScaleLab removed — không còn lab approval gate; exit criteria chuyển sang user-approved Arena gameplay screenshot |
 | E | Semantic Ash Graves Foundation | [ ] TODO | |
 | F | Environment Integration | [ ] TODO | |
 | G | Readability Polish | [ ] TODO | |
@@ -456,9 +456,9 @@ Dữ liệu design được user approve:
 
 ### Tasks
 
-- [x] **P2.7** Split measurement và policy. — policy file mới `data/v2.5/world-scale-policy.v2.5.json` (player baseline, categories, species, world objects, overrides); metrics file giữ facts + `intendedFootprint` đang hiệu lực để runtime scale không đổi.
+- [x] **P2.7** Split measurement và policy. — policy file mới `data/v2.5/world-scale-policy.v2.5.json` (player baseline, categories, species, world objects, overrides); metrics file giữ facts; runtime scale áp policy trực tiếp (không còn giữ nguyên intendedFootprint scale).
 - [x] **P2.8** Refactor `PresentationVisualMetrics.cs`. — `Load(metricsPath, policyPath, catalog)` + nhóm record policy.
-- [x] **P2.9** Add `VisualScaleFor(assetId)`. — scale derive từ baseline × ratio (lab-only).
+- [x] **P2.9** Add `VisualScaleFor(assetId)`. — scale derive từ baseline × ratio; dùng TRỰC TIẾP tại runtime Arena (ResolveWorldScale/actor/dressing/pickup).
 - [x] **P2.10** Add `VisibleHeightFor(assetId)`. — baseline × ratio.
 - [x] **P2.11** Add `GroundFootprintFor(assetId)`. — tiles × tileSize.
 - [x] **P2.12** Validate ratio range theo class. — `ValidateWorldScalePolicy()` (RATIO_RANGE/UNKNOWN_CLASS/UNKNOWN_CATEGORY/INVALID_OVERRIDE).
@@ -477,56 +477,43 @@ metricScale * obj.PresentationScale
 ### Tasks
 
 - [x] **P2.14** Chọn một owner chính cho physical scale. — `PresentationVisualMetrics.ResolveWorldScale`.
-- [x] **P2.15** `PresentationVisualMetrics/WorldScalePolicy` sở hữu scale chính. — Arena.cs:380 dùng `ResolveWorldScale`.
+- [x] **P2.15** `PresentationVisualMetrics/WorldScalePolicy` sở hữu scale chính. — Arena.cs:380 dùng `ResolveWorldScale` (= `VisualScaleFor` × override, policy-driven từ 2026-09-12).
 - [x] **P2.16** Instance override chỉ được phép trong khoảng hẹp, ví dụ `0.8–1.2`. — `InstanceOverrideMin/Max`.
 - [x] **P2.17** Log warning nếu override vượt safe range. — `GD.PushWarning` đúng 1 lần/asset.
 - [x] **P2.18** Không dùng range arbitrary `0.1–3.0`. — đã bỏ clamp 0.1–3.0.
 
 ---
 
-## 2D. VisualScaleLab
+## 2D. Runtime World Scale Application
 
-Tạo debug-only scene:
-
-```text
-VisualScaleLab
-```
-
-Hiển thị cùng ground line:
-
-- Player
-- adult Goblin
-- Skeleton
-- chest
-- grave marker
-- pillar/statue
-- shrine
-- portal
+(VisualScaleLab removed theo user directive 2026-09-12 — không còn debug-scene calibration gate. Policy áp trực tiếp vào Arena runtime.)
 
 ### Tasks
 
-- [x] **P2.19** Tạo scene. — `scenes/VisualScaleLab.tscn` + `src/Presentation/VisualScaleLab.cs` (debug-only, standalone run).
-- [x] **P2.20** Hiển thị calculated visible height. — label `target Xpx (cur Ypx)` per representative.
-- [x] **P2.21** Hiển thị ratio. — label `ratio N`.
-- [x] **P2.22** Không chỉnh scale bằng gameplay screenshot trước khi Scale Lab pass. — runtime Arena giữ nguyên kích thước; policy chỉ đọc bởi ScaleLab + validation.
+- [x] **P2.19** Xóa `scenes/VisualScaleLab.tscn` + `src/Presentation/VisualScaleLab.cs` (+ `.uid`) và mọi reference (plan, policy basis, launch instructions) — không còn dead scene/menu entry.
+- [x] **P2.20** `ResolveWorldScale` lấy scale chính từ `VisualScaleFor(assetId)` (= baseline 55 × visualHeightRatio ÷ opaque H), KHÔNG còn `ScaleFor` (legacy intendedFootprint). — `PresentationVisualMetrics.cs:72`.
+- [x] **P2.21** Actor sprite (Player/quái/ally) dùng `VisualScaleFor(requiredAssetId, fallback)` thay `ScaleFor`. — `Arena.cs:1182` (Player ≈ 55px; species goblin 0.90 / skeleton 1.00 khi asset đo được).
+- [x] **P2.22** World objects canonical + soul pickups + map dressing dùng `ResolveWorldScale(assetId, 1)`. — `Arena.cs:382/:393/:1322`. Instance override vẫn clamp 0.8–1.2 + warning-once.
+- [x] **P2.23** Ground footprint tách khỏi visual height — policy `groundFootprintTiles` chỉ là footprint data; runtime không dùng visual height làm collision footprint (collision vẫn từ simulation blocking).
+- [x] **P2.24** Dev aid `F9` (DEBUG-only): teleport Player tới canonical world object gần nhất (cycle); toast hiển thị `visibleHeight/scale/opaqueH`; `GameApplication.DebugTeleportPlayer` chỉ compile ở Debug.
 
 ### Exit Criteria
 
-- [ ] Player rõ là human-size.
+- [ ] Player giữ ≈ 55 logical px visible height trong Arena thật.
 - [ ] Goblin/Skeleton đọc như creature ngang tầm người.
-- [ ] Grave/statue/pillar đọc như architecture.
-- [ ] Shrine/portal lớn rõ ràng.
-- [ ] Loot/rock/chest nhỏ hợp lý.
-- [?] Chờ user approve Scale Lab.
-- [ ] Sau approve, Phase 2 = `[x] COMPLETE`.
+- [ ] Pillar/statue KHÔNG còn ≈ Player-size — lớn rõ ràng hơn Player.
+- [ ] Shrine/portal lớn rõ ràng hơn Player/architecture.
+- [ ] Loot/chest/rock/debris nhỏ rõ ràng hơn Player.
+- [ ] Không regression collision / movement / animation / camera / pivot / ground contact.
+- [?] User approve real Arena gameplay screenshot (explicit chat instruction) → Phase 2 = `[x] COMPLETE`.
 
 ### Evidence
 
-- **User decisions (2026-09-11):** Player baseline visible height = **55px** (giữ hiện tại); World Scale Policy **chỉ áp trong VisualScaleLab**, runtime giữ nguyên kích thước tới khi approve.
+- **User decisions (2026-09-11 + 2026-09-12):** Player baseline visible height = **55px** (giữ hiện tại). 2026-09-12: **xóa VisualScaleLab**, policy **áp trực tiếp** Arena runtime — không còn lab-approval gate; Phase 2 exit criteria = user xác nhận real Arena gameplay screenshot.
 - `data/v2.5/world-scale-policy.v2.5.json` — policy status=proposed: `playerBaselineVisibleHeightPx=55`, 12 `categories` (range theo bảng section 3), 4 `species` (player 1.00 / goblin 0.90 / skeleton 1.00), 13 `worldObjects` (class + `visualHeightRatio` + `groundFootprintTiles` + `anchor` + `scaleOverride`), `overrides=[]`.
 - `src/Presentation/PresentationVisualMetrics.cs` — refactor 2B: `Load(metrics, policy, catalog)`, `VisualScaleFor`, `VisibleHeightFor`, `GroundFootprintFor`, `ValidateWorldScalePolicy` (P2.12/2.13), `ResolveWorldScale` (2C: instance override clamp 0.8–1.2 + warning-once).
-- `src/Presentation/Arena.cs` — load policy + push policy warnings (DEBUG) tại `_Ready`; world-object scale tại `Arena.cs:380` chuyển sang `ResolveWorldScale` (bỏ clamp 0.1–3.0). Canonical world objects đều có `PresentationScale=1` nên runtime visual không đổi.
-- `scenes/VisualScaleLab.tscn` + `src/Presentation/VisualScaleLab.cs` — debug scene: ground line + Player baseline 55px; 9 representatives (Player, Goblin [MISSING], Skeleton, Soul pickup, Chest, Grave marker, Pillar, Shrine, Portal) hiển thị `ratio` + `target Xpx (cur Ypx)`.
+- `src/Presentation/Arena.cs` — load policy + push policy warnings (DEBUG) tại `_Ready`; `ResolveWorldScale` (= `VisualScaleFor` × override) dùng cho world objects `Arena.cs:382`, soul pickups `Arena.cs:393`, map dressing `Arena.cs:1322`; actor sprites dùng `VisualScaleFor` tại `Arena.cs:1182`. Instance override vẫn clamp 0.8–1.2.
+- **Removed (2026-09-12):** `scenes/VisualScaleLab.tscn` + `src/Presentation/VisualScaleLab.cs` + `VisualScaleLab.cs.uid` — xóa toàn bộ reference khỏi source/plan/policy.
 - Evidence kỹ thuật: `dotnet build solo_vs_mortal_godot.sln -c Debug` pass, 0 error / 1 pre-existing warning (`Arena.cs:317` null-safety, không do Phase 2). JSON integrity: policy worldObjects 13/13 đều tồn tại trong metrics (23) và catalog (149). Chưa phải visual/gameplay approval.
 - **REGRESSION _Ready crash (2026-09-12, user runtime report):** policy `groundFootprintTiles` phân số qua `Pair()` (int-only `TryGetInt32`) → `InvalidDataException` trước `RefreshSnapshot`, Arena xám "Đang khởi tạo...". Fix: parser float riêng `FloatPair` (đúng 2 phần tử, `TryGetSingle`, `float.IsFinite`, ≥ 0) cho `groundFootprintTiles`; giữ nguyên giá trị phân số trong policy; `Pair()` (int) vẫn dùng cho canvas/frame int-contract.
 - **Runtime evidence (2026-09-12, user-authorized smoke):** thực thi scene gốc `Arena.tscn` bằng Godot 4.7.2 mono headless với `C:/Users/levan/Downloads/Godot/Godot.exe --headless --path … --quit-after 15` → exit 0, không có exception; log đạt `PIXEL_RENDERING_FOUNDATION` + `ASH_GRAVES_STATIC_TERRAIN_CACHE` + cảnh báo `ANIMATION_INTEGRITY` có sẵn. Startup regression xác nhận đã hết. Không phải gameplay/visual approval.
@@ -1575,7 +1562,7 @@ Các file này chỉ cần fix bugs, không cần refactor visual.
 - [ ] Asset audit report generation.
 - [ ] Duplicate-frame validation.
 - [ ] World Scale Contract.
-- [ ] VisualScaleLab.
+- [ ] Runtime world scale application (policy trực tiếp — VisualScaleLab removed).
 - [ ] Verify Player animation không bị code restart.
 
 ## P1 — Map Architecture
@@ -1636,9 +1623,9 @@ Không sửa map.
 
 ---
 
-## Work Item C — World Scale Contract
+## Work Item C — World Scale Contract + Runtime Application
 
-Implement scale model + `VisualScaleLab`.
+Implement scale model + apply trực tiếp vào Arena runtime (VisualScaleLab removed theo user directive).
 
 Không rewrite terrain.
 
@@ -1648,24 +1635,26 @@ Không rewrite terrain.
 - [ ] Player baseline defined.
 - [ ] Species/object classes defined.
 - [ ] Duplicate scale owner removed.
-- [ ] VisualScaleLab created.
-- [?] User approves lineup.
+- [ ] Runtime world scale từ policy (`ResolveWorldScale`/`VisualScaleFor`) — world objects, actor, pickup, dressing.
+- [x] Debug `F9` teleport dev aid (DEBUG-only) — user teleport tới từng canonical world object để kiểm tra hierarchy.
+- [?] User approves real Arena gameplay screenshot.
 - [ ] Sau approve → `[x] COMPLETE`.
 
 ---
 
 ## Work Item D — Runtime Scale Application
 
-Áp scale đã approve vào gameplay world.
+(Đã merge vào Work Item C theo user directive 2026-09-12 — áp thẳng, không còn lab approval gate. Giữ mục này làm checklist runtime thực tế.)
 
 ### Checklist
 
-- [ ] Player scale applied.
-- [ ] Enemy scale applied.
-- [ ] World prop scale applied.
-- [ ] Shadow scale applied.
-- [ ] Y-sort anchor rechecked.
-- [?] User gameplay screenshot review.
+- [x] Player scale applied (`VisualScaleFor` — ≈55px).
+- [x] Enemy scale applied (khi asset đo được; skeleton/goblin chưa measure → fallback native, ghi trong runtime report).
+- [x] World prop scale applied (`ResolveWorldScale`).
+- [x] Soul pickup + map dressing scale applied.
+- [ ] Shadow scale applied — ngoài scope runtime task này; giữ nguyên cho tới Phase 3/G (hạn chế regression).
+- [ ] Y-sort/ground anchor rechecked — cần user verify không lệch pivot.
+- [?] User gameplay screenshot review (real Arena).
 - [ ] Sau approve → `[x] COMPLETE`.
 
 ---

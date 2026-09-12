@@ -3,7 +3,7 @@
   "styleId": "svm-ash-soulfire",
   "baseTileSize": 32,
   "status": "proposed",
-  "basis": "Target World Scale Model (plan section 3). Not yet user-approved; runtime Arena keeps current sizes until VisualScaleLab approval.",
+  "basis": "Target World Scale Model (plan section 3). Not yet user-approved; runtime Arena applies the policy directly via PresentationVisualMetrics.ResolveWorldScale/VisualScaleFor. Awaiting user approval of a real Arena gameplay screenshot.",
   "playerBaselineVisibleHeightPx": 55,
   "categories": [
     { "id": "player", "label": "Player", "minHeightRatio": 1.0, "maxHeightRatio": 1.0 },
