@@ -1068,7 +1068,8 @@ public partial class Arena : Node2D
             var monsterAction = monster.AiState switch { Simulation.State.MonsterAiState.Chase => "walk", Simulation.State.MonsterAiState.Attack => "attack", Simulation.State.MonsterAiState.Hit => "hit", _ => "idle" };
             var clip = CanonicalClip(monsterAction); PlayActorAnimation(sprite, ActorAnimationName(clip, direction), ActorAssetId(monster.SpeciesId, monster.Rank, "enemy", clip, direction));
         }
-        var move = Input.GetVector("move_left", "move_right", "move_up", "move_down"); if (move != Vector2.Zero) _facing = System.Math.Abs(move.X) > System.Math.Abs(move.Y) ? move.X < 0 ? "left" : "right" : move.Y < 0 ? "back" : "front";
+var move = Input.GetVector("move_left", "move_right", "move_up", "move_down");
+        UpdatePlayerFacing();
         var action = Input.IsActionPressed("attack") ? "attack" : move != Vector2.Zero ? "move" : "idle";
         PlayActorAnimation(_playerSprite, PlayerAnimationName(action, _facing), PlayerAssetId(action, FacingToDirection(_facing)));
     }
@@ -1167,10 +1168,18 @@ public partial class Arena : Node2D
 #endif
     }
 
-    private static string CanonicalClip(string action) => action == "walk" ? "move" : action;
+private static string CanonicalClip(string action) => action == "walk" ? "move" : action;
     private static string ActorAnimationName(string clip, string direction) => $"{clip}_{direction}";
     private static string PlayerAnimationName(string clip, string facing) => ActorAnimationName(clip, FacingToDirection(facing));
     private static string FacingToDirection(string facing) => facing switch { "back" => "n", "left" => "w", "right" => "e", _ => "s" };
+
+    private void UpdatePlayerFacing()
+    {
+        if (Input.IsActionJustPressed("move_up")) _facing = "back";
+        else if (Input.IsActionJustPressed("move_down")) _facing = "front";
+        else if (Input.IsActionJustPressed("move_left")) _facing = "left";
+        else if (Input.IsActionJustPressed("move_right")) _facing = "right";
+    }
 
     // Facing is deliberately transient Presentation state. It is inferred from the snapshot's
     // observable position delta and is never written into Simulation or a save payload.

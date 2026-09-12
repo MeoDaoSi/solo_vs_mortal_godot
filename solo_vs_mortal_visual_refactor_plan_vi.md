@@ -24,8 +24,8 @@
 | Phase | Nội dung | Trạng thái | Evidence / Ghi chú |
 |---|---|---|---|
 | Phase 0 | Freeze & Measure — audit asset/presentation hiện tại | [x] COMPLETE | 2026-09-11 — evidence `docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.md/.json`; tool `tools/AssetAudit` |
-| Phase 1 | Repair Animation Assets — sửa animation thật | [-] IN PROGRESS | 2026-09-11 — Code tasks 1A/1B/1C all [x]; exit criteria require user asset generation + playtesting. Player move clips (user_review_pending, identical frames) now show MISSING marker; only integration_trial_authorized / user_reuse_authorized clips render. Validation runs at startup under DEBUG. |
-| Phase 2 | World Scale Contract — chốt hệ thống tỉ lệ thế giới | [-] IN PROGRESS | 2026-09-11 — Code tasks 2B/2C/2D all [x]; data `data/v2.5/world-scale-policy.v2.5.json` (status=proposed). User decision: baseline 55px + policy chỉ áp trong VisualScaleLab, runtime giữ nguyên tới khi user approve. Chờ user chạy ScaleLab + approve. |
+| Phase 1 | Repair Animation Assets — sửa animation thật | [-] IN PROGRESS | 2026-09-11 — Code tasks 1A/1B/1C all [x]; exit criteria require user asset generation + playtesting. Player move clips (user_review_pending, identical frames) now show MISSING marker; only integration_trial_authorized / user_reuse_authorized clips render. Validation runs at startup under DEBUG. REGRESSION (1C/runtime acceptance, 2026-09-12): player facing khóa theo phím nhấn trước (Input.GetVector dominance + cancel) — đã fix `UpdatePlayerFacing` (most-recently-pressed), chờ user manual pass. |
+| Phase 2 | World Scale Contract — chốt hệ thống tỉ lệ thế giới | [-] IN PROGRESS | 2026-09-11 — Code tasks 2B/2C/2D all [x]; data `data/v2.5/world-scale-policy.v2.5.json` (status=proposed). User decision: baseline 55px + policy chỉ áp trong VisualScaleLab, runtime giữ nguyên tới khi user approve. Chờ user chạy ScaleLab + approve. REGRESSION (2026-09-12): policy `groundFootprintTiles` dùng int parser → `InvalidDataException` tại `_Ready` làm Arena không khởi động ("Đang khởi tạo..."); đã fix bằng `FloatPair` (finite, ≥0), real Godot headless Arena startup exit 0. |
 | Phase 3 | Readability — làm rõ Player/quái/vật thể | [ ] TODO | |
 | Phase 4 | Semantic World Layers — refactor cách build map | [ ] TODO | |
 | Phase 5 | Y-sort / Occlusion / Anchoring | [ ] TODO | |
@@ -38,7 +38,7 @@
 |---|---|---|---|
 | A | Asset Truth Audit | [x] COMPLETE | Phase 0 evidence `docs/V2.5/VISUAL_ASSET_AUDIT_2026-09-11.md/.json` |
 | B | Player Animation Replacement | [ ] TODO | |
-| C | World Scale Contract + VisualScaleLab | [-] IN PROGRESS | Phase 2 data/refactor/lab code done; chờ user approve qua ScaleLab |
+| C | World Scale Contract + VisualScaleLab | [-] IN PROGRESS | Phase 2 data/refactor/lab code done; regression `groundFootprintTiles` float-parse fix + real Godot Arena startup smoke (exit 0) done 2026-09-12; chờ user approve qua ScaleLab + facing manual pass |
 | D | Runtime Scale Application | [ ] TODO | |
 | E | Semantic Ash Graves Foundation | [ ] TODO | |
 | F | Environment Integration | [ ] TODO | |
@@ -378,7 +378,8 @@ Mỗi clip thiếu phải được classify:
 - **P1.23 (`IsGameplayApproved`)**: `BuildCanonicalActorSprite` chỉ nạp clip có `approvalStatus ∈ {integration_trial_authorized, user_reuse_authorized}`; clip chỉ "tồn tại" (như `player.base.move.*` = `user_review_pending`) không còn được gameplay dùng → rơi xuống `missing` marker đúng AssetId yêu cầu.
 - **P1.24 (`F8`)**: debug-only overlay Label hiển thị `asset`, `animation`, `Frame/Count`, `elapsed` (tính từ frame durations + `FrameProgress`), `scale`. Không ảnh hưởng gameplay.
 - **P1.17/P1.25** const: `BuildFrames` vẫn duration-driven (`SetAnimationSpeed(name,1000)` + `DurationMs`/frame); không đổi movement speed để che lỗi animation.
-- Build: `dotnet build` succeeded (0 errors; 1 pre-existing warning `Arena.cs(313)` dereference on `null!` `_playerSprite`).
+- **REGRESSION runtime acceptance (2026-09-12):** player facing bị khóa theo trục Input vector (`abs(X) > abs(Y)`) — giữ W nhấn D không chuyển sang right; bấm cặp đối nghịch bị cancel thay vì chuyển hướng. Fix: `Arena.cs:UpdatePlayerFacing` theo `Input.IsActionJustPressed` (most-recently-pressed, n=back/s=front/w=left/e=right), tách khỏi input vector (vẫn dùng cho movement/action). Chưa phải gameplay pass; manual direction-switch checklist thuộc user.
+- Build: `dotnet build` succeeded (0 errors; 1 pre-existing warning `Arena.cs(313)` dereference on `null!` `_playerSprite`) — checked lại sau fix facing, vẫn 0 error/1 warning cũ.
 - User-action required (not code): exit criteria cần asset generation mới (`player.base.move` verified pass) + playtest thực; xem Phần bên dưới.
 
 ### Tasks
@@ -405,6 +406,7 @@ Mỗi clip thiếu phải được classify:
 - [ ] Player move có body/leg cycle thật.
 - [ ] Player không còn cảm giác một ảnh tĩnh trượt trên nền.
 - [ ] 4 hướng đều visual pass.
+- [ ] Facing switch đúng khi giữ phím này nhấn phím khác (most-recently-pressed): W+D→right, D+W→back, A+S→front, S+A→left, W/S, A/D; thả hết → idle giữ hướng cuối.
 - [?] User review screenshot/gameplay.
 - [ ] Sau khi user accept, Phase 1 = `[x] COMPLETE`.
 
@@ -520,6 +522,8 @@ Hiển thị cùng ground line:
 - `src/Presentation/Arena.cs` — load policy + push policy warnings (DEBUG) tại `_Ready`; world-object scale tại `Arena.cs:380` chuyển sang `ResolveWorldScale` (bỏ clamp 0.1–3.0). Canonical world objects đều có `PresentationScale=1` nên runtime visual không đổi.
 - `scenes/VisualScaleLab.tscn` + `src/Presentation/VisualScaleLab.cs` — debug scene: ground line + Player baseline 55px; 9 representatives (Player, Goblin [MISSING], Skeleton, Soul pickup, Chest, Grave marker, Pillar, Shrine, Portal) hiển thị `ratio` + `target Xpx (cur Ypx)`.
 - Evidence kỹ thuật: `dotnet build solo_vs_mortal_godot.sln -c Debug` pass, 0 error / 1 pre-existing warning (`Arena.cs:317` null-safety, không do Phase 2). JSON integrity: policy worldObjects 13/13 đều tồn tại trong metrics (23) và catalog (149). Chưa phải visual/gameplay approval.
+- **REGRESSION _Ready crash (2026-09-12, user runtime report):** policy `groundFootprintTiles` phân số qua `Pair()` (int-only `TryGetInt32`) → `InvalidDataException` trước `RefreshSnapshot`, Arena xám "Đang khởi tạo...". Fix: parser float riêng `FloatPair` (đúng 2 phần tử, `TryGetSingle`, `float.IsFinite`, ≥ 0) cho `groundFootprintTiles`; giữ nguyên giá trị phân số trong policy; `Pair()` (int) vẫn dùng cho canvas/frame int-contract.
+- **Runtime evidence (2026-09-12, user-authorized smoke):** thực thi scene gốc `Arena.tscn` bằng Godot 4.7.2 mono headless với `C:/Users/levan/Downloads/Godot/Godot.exe --headless --path … --quit-after 15` → exit 0, không có exception; log đạt `PIXEL_RENDERING_FOUNDATION` + `ASH_GRAVES_STATIC_TERRAIN_CACHE` + cảnh báo `ANIMATION_INTEGRITY` có sẵn. Startup regression xác nhận đã hết. Không phải gameplay/visual approval.
 
 ---
 

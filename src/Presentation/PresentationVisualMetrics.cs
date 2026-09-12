@@ -182,7 +182,7 @@ public sealed class PresentationVisualMetrics
             if (!categoriesById.ContainsKey(className)) throw new InvalidDataException($"World scale object '{assetId}' references unknown class '{className}'.");
             var ratio = Require(item, "visualHeightRatio", JsonValueKind.Number).GetSingle();
             if (ratio <= 0f) throw new InvalidDataException($"World scale object '{assetId}' requires a positive visualHeightRatio.");
-            var tiles = Pair(Require(item, "groundFootprintTiles", JsonValueKind.Array), "groundFootprintTiles", 0);
+            var tiles = FloatPair(Require(item, "groundFootprintTiles", JsonValueKind.Array), "groundFootprintTiles", 0f);
             var anchor = item.TryGetProperty("anchor", out var anchorValue) && anchorValue.ValueKind == JsonValueKind.String ? anchorValue.GetString() : "feet_or_base";
             float? scaleOverride = null;
             if (item.TryGetProperty("scaleOverride", out var overrideValue) && overrideValue.ValueKind == JsonValueKind.Number)
@@ -250,6 +250,13 @@ public sealed class PresentationVisualMetrics
         if (values.GetArrayLength() != 2 || !values[0].TryGetInt32(out var x) || !values[1].TryGetInt32(out var y) || x < minimum || y < minimum)
             throw new InvalidDataException($"Presentation visual metrics '{name}' must be an integer pair >= {minimum}.");
         return new Vector2I(x, y);
+    }
+
+    private static Vector2 FloatPair(JsonElement values, string name, float minimum)
+    {
+        if (values.GetArrayLength() != 2 || !values[0].TryGetSingle(out var x) || !values[1].TryGetSingle(out var y) || !float.IsFinite(x) || !float.IsFinite(y) || x < minimum || y < minimum)
+            throw new InvalidDataException($"World scale policy '{name}' must be a finite float pair >= {minimum}.");
+        return new Vector2(x, y);
     }
 
     private static Rect2I Quad(JsonElement values, string name)
